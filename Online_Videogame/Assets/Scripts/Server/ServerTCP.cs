@@ -5,7 +5,6 @@ using System.Threading;
 using TMPro;
 using System.Text;
 using System.Collections.Generic;
-using UnityEditor.VersionControl;
 using System;
 
 public class ServerTCP : MonoBehaviour
@@ -80,8 +79,12 @@ public class ServerTCP : MonoBehaviour
     }
     public void StopServer()
     {
-        if (socket != null && socket.Connected)
+        Debug.Log("SERVER_CLOSING: The server is shutting down.");
+
+        if (socket != null)
         {
+            Debug.Log("Closing sockets...");
+
             foreach (User user in connectedUsers)
             {
                 try
@@ -91,41 +94,59 @@ public class ServerTCP : MonoBehaviour
                 }
                 catch (SocketException ex)
                 {
-                    serverText += "\nError closing client socket: " + ex.Message;
+                    Debug.Log("\nError closing client socket: " + ex.Message);
                 }
             }
 
             connectedUsers.Clear();
             socket.Close();
             socket = null;
-            serverText += "\nServer stopped.";
+            Debug.Log("\nTCP Server stopped.");
             serverRunning = false;
+        }
+        else
+        {
+            Debug.Log("Socket is already null, nothing to close.");
         }
     }
     void CheckNewConnections()
     {
-        while (true)
+        while (serverRunning)
         {
-            User newUser = new User();
-            newUser.socket = socket.Accept();
+            try
+            {
+                User newUser = new User();
+                newUser.socket = socket.Accept();
 
-            //Check the username
-            byte[] nameData = new byte[1024];
-            int nameLength = newUser.socket.Receive(nameData);
-            newUser.name = Encoding.ASCII.GetString(nameData, 0, nameLength);
+                // Ckeck the username
+                byte[] nameData = new byte[1024];
+                int nameLength = newUser.socket.Receive(nameData);
+                newUser.name = Encoding.ASCII.GetString(nameData, 0, nameLength);
 
-            IPEndPoint clientEndPoint = (IPEndPoint)newUser.socket.RemoteEndPoint;
-            serverText += $"\nUser connected: {newUser.name} ({clientEndPoint.Address} at port {clientEndPoint.Port})";
+                IPEndPoint clientEndPoint = (IPEndPoint)newUser.socket.RemoteEndPoint;
+                serverText += $"\nUser connected: {newUser.name} ({clientEndPoint.Address} at port {clientEndPoint.Port})";
 
-            connectedUsers.Add(newUser); // Add the user to the list of connected users
+                connectedUsers.Add(newUser); // Add user to users list
 
-            // Send server name to the connected user
-            byte[] serverNameData = Encoding.ASCII.GetBytes(UserData.username);
-            newUser.socket.Send(serverNameData);
+                // Send the server name to the new connected user
+                byte[] serverNameData = Encoding.ASCII.GetBytes(UserData.username);
+                newUser.socket.Send(serverNameData);
 
-
-            Thread newConnection = new Thread(() => Receive(newUser));
-            newConnection.Start();
+                Thread newConnection = new Thread(() => Receive(newUser));
+                newConnection.Start();
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode == SocketError.Interrupted)
+                {
+                    Debug.Log("Socket operation was interrupted, exiting the loop.");
+                    break; // Exit loop if socket operation is interrupted
+                }
+                else
+                {
+                    Debug.Log($"Socket error: {ex.Message}");
+                }
+            }
         }
     }
 
@@ -141,26 +162,26 @@ public class ServerTCP : MonoBehaviour
                 recv = user.socket.Receive(data);
                 if (recv == 0)
                 {
-                    // Cliente desconectado
+                    // Disconnected client
                     serverText += $"\n{user.name} disconnected.";
                     connectedUsers.Remove(user);
                     user.socket.Shutdown(SocketShutdown.Both);
                     user.socket.Close();
-                    break;  // Salir del bucle
+                    break;  // Exit loop
                 }
                 else
                 {
                     string receivedMessage = Encoding.ASCII.GetString(data, 0, recv);
                     serverText += $"\n{user.name}: {receivedMessage}";
 
-                    // Broadcast de mensaje
+                    // Message broadcast
                     Thread answer = new Thread(() => Send(user, receivedMessage));
                     answer.Start();
                 }
             }
             catch (SocketException ex)
             {
-                // Manejar la desconexión
+                // Handling disconnection
                 serverText += $"\nError: {ex.Message}. {user.name} has disconnected.";
                 connectedUsers.Remove(user);
                 user.socket.Close();
@@ -169,8 +190,7 @@ public class ServerTCP : MonoBehaviour
         }
     }
 
-
-    // Esta funcion sirve para REENVIAR los mensajes de otros a todos los clientes
+    // This function is used to FORWARD messages from others to all clients.
     void Send(User sender, string message)
     {
         string finalMessage = $"{sender.name}: {message}";
@@ -187,20 +207,19 @@ public class ServerTCP : MonoBehaviour
         Debug.Log("Broadcasted message to all users.");
     }
 
-    // Esta sirve para ENVIAR el mensaje que el servidor escriba
+    // This function is used to SEND messages that the server writes
     public void SendMessageToClient()
     {
         if (inputField.text != "")
         {
             string message = inputField.text;
 
-            //The message to send to 
+            // The message to send to 
             string messageToSend = $"{UserData.username}: {message}";
             byte[] data = Encoding.ASCII.GetBytes(messageToSend);
 
             serverText += "\nYou: " + message;
             
-
             foreach (User user in connectedUsers)
             {
                 user.socket.Send(data);

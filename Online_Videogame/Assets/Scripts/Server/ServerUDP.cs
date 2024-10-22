@@ -20,9 +20,6 @@ public class ServerUDP : MonoBehaviour
     private bool isServerRunning = false;
     private List<Client> clients = new List<Client>();
 
-    // Time for inactivity before removing the client
-    private const int ClientTimeout = 240; // 10 seconds
-
     public struct Client
     {
         public string name;
@@ -35,7 +32,7 @@ public class ServerUDP : MonoBehaviour
         UItext = UItextObj.GetComponent<TextMeshProUGUI>();
     }
 
-    public void startServer()
+    public void StartServer()
     {
         if (isServerRunning)
         {
@@ -49,6 +46,9 @@ public class ServerUDP : MonoBehaviour
         IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 9050);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.Bind(ipep);
+
+        // Allow reuse of the address to avoid socket exceptions
+        socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
         receiveThread = new Thread(Receive);
         receiveThread.Start();
@@ -72,9 +72,6 @@ public class ServerUDP : MonoBehaviour
     void Update()
     {
         UItext.text = serverText;
-
-        // Check for clients that are inactive and remove them
-        CheckForInactiveClients();
     }
 
     void Receive()
@@ -130,21 +127,6 @@ public class ServerUDP : MonoBehaviour
         }
     }
 
-
-    void CheckForInactiveClients()
-    {
-        DateTime now = DateTime.Now;
-        for (int i = clients.Count - 1; i >= 0; i--)
-        {
-            if ((now - clients[i].lastPing).TotalSeconds > ClientTimeout)
-            {
-                // Client inactive, remove them
-                serverText += $"\nClient {clients[i].name} timed out.";
-                clients.RemoveAt(i);
-            }
-        }
-    }
-
     void RemoveClient(EndPoint clientEndPoint, string clientName)
     {
         Client clientToRemove = clients.Find(c => c.endPoint.Equals(clientEndPoint));
@@ -159,22 +141,55 @@ public class ServerUDP : MonoBehaviour
     {
         if (!isServerRunning) return;
 
-        BroadcastMessage("SERVER_CLOSING: The server is shutting down.", null);
+        Debug.Log("SERVER_CLOSING: The server is shutting down.", null);
+
+        isServerRunning = false;
 
         if (receiveThread != null && receiveThread.IsAlive)
         {
-            isServerRunning = false;
-            receiveThread.Join();
+            receiveThread.Interrupt(); // Interrupt the thread to stop blocking calls
+            receiveThread.Join(1000); // Wait for the thread to finish (max 1 second)
         }
 
         if (socket != null)
         {
-            socket.Close();
+            try
+            {
+                socket.Shutdown(SocketShutdown.Both); // Gracefully shut down the socket
+            }
+            catch (SocketException e)
+            {
+                Debug.LogWarning($"Error during socket shutdown: {e.Message}");
+            }
+
+            socket.Close(); // Finally close the socket
             socket = null;
         }
 
-        isServerRunning = false;
-        serverText += "\nServer stopped.";
+        Debug.Log("\nUDP Server stopped.");
+    }
+
+    // This method sends a message from the server to a specific client or to all clients
+    public void SendMessageToClient()
+    {
+        if (inputField.text != "")
+        {
+            if (!isServerRunning)
+            {
+                serverText += "\nServer is not running.";
+                return;
+            }
+
+            string message = $"{UserData.username}: {inputField.text}";
+
+            // Broadcast to all clients
+            BroadcastMessage(message, null);
+            Debug.Log($"\nMessage broadcasted to all clients: {inputField.text}");
+
+            serverText += $"\n{message}";
+
+            inputField.text = ""; // Clear the input field after sending
+        }
     }
 
     void BroadcastMessage(string message, EndPoint senderClient)
@@ -183,7 +198,7 @@ public class ServerUDP : MonoBehaviour
 
         foreach (Client client in clients)
         {
-            if (!client.endPoint.Equals(senderClient))
+            if (senderClient == null || !client.endPoint.Equals(senderClient))
             {
                 socket.SendTo(data, data.Length, SocketFlags.None, client.endPoint);
             }
@@ -198,6 +213,6 @@ public class ServerUDP : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        //StopServer();
+        StopServer();
     }
 }

@@ -80,8 +80,12 @@ public class ServerTCP : MonoBehaviour
     }
     public void StopServer()
     {
-        if (socket != null && socket.Connected)
+        Debug.Log("SERVER_CLOSING: The server is shutting down.");
+
+        if (socket != null)
         {
+            Debug.Log("Closing sockets...");
+
             foreach (User user in connectedUsers)
             {
                 try
@@ -91,43 +95,62 @@ public class ServerTCP : MonoBehaviour
                 }
                 catch (SocketException ex)
                 {
-                    serverText += "\nError closing client socket: " + ex.Message;
+                    Debug.Log("\nError closing client socket: " + ex.Message);
                 }
             }
 
             connectedUsers.Clear();
             socket.Close();
             socket = null;
-            serverText += "\nServer stopped.";
+            Debug.Log("\nTCP Server stopped.");
             serverRunning = false;
+        }
+        else
+        {
+            Debug.Log("Socket is already null, nothing to close.");
         }
     }
     void CheckNewConnections()
     {
-        while (true)
+        while (serverRunning)
         {
-            User newUser = new User();
-            newUser.socket = socket.Accept();
+            try
+            {
+                User newUser = new User();
+                newUser.socket = socket.Accept();
 
-            //Check the username
-            byte[] nameData = new byte[1024];
-            int nameLength = newUser.socket.Receive(nameData);
-            newUser.name = Encoding.ASCII.GetString(nameData, 0, nameLength);
+                // Verifica el nombre de usuario
+                byte[] nameData = new byte[1024];
+                int nameLength = newUser.socket.Receive(nameData);
+                newUser.name = Encoding.ASCII.GetString(nameData, 0, nameLength);
 
-            IPEndPoint clientEndPoint = (IPEndPoint)newUser.socket.RemoteEndPoint;
-            serverText += $"\nUser connected: {newUser.name} ({clientEndPoint.Address} at port {clientEndPoint.Port})";
+                IPEndPoint clientEndPoint = (IPEndPoint)newUser.socket.RemoteEndPoint;
+                serverText += $"\nUser connected: {newUser.name} ({clientEndPoint.Address} at port {clientEndPoint.Port})";
 
-            connectedUsers.Add(newUser); // Add the user to the list of connected users
+                connectedUsers.Add(newUser); // Agrega el usuario a la lista de usuarios conectados
 
-            // Send server name to the connected user
-            byte[] serverNameData = Encoding.ASCII.GetBytes(UserData.username);
-            newUser.socket.Send(serverNameData);
+                // Envía el nombre del servidor al usuario conectado
+                byte[] serverNameData = Encoding.ASCII.GetBytes(UserData.username);
+                newUser.socket.Send(serverNameData);
 
-
-            Thread newConnection = new Thread(() => Receive(newUser));
-            newConnection.Start();
+                Thread newConnection = new Thread(() => Receive(newUser));
+                newConnection.Start();
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode == SocketError.Interrupted)
+                {
+                    Debug.Log("Socket operation was interrupted, exiting the loop.");
+                    break; // Sal del bucle si se interrumpe la operación del socket
+                }
+                else
+                {
+                    Debug.Log($"Socket error: {ex.Message}");
+                }
+            }
         }
     }
+
 
     void Receive(User user)
     {
@@ -200,7 +223,6 @@ public class ServerTCP : MonoBehaviour
 
             serverText += "\nYou: " + message;
             
-
             foreach (User user in connectedUsers)
             {
                 user.socket.Send(data);

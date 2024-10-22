@@ -55,18 +55,49 @@ public class ClientUDP : MonoBehaviour
             serverEndPoint = new IPEndPoint(IPAddress.Parse(ipInputField.text), 9050);
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-            SendInitialMessage();
+            try
+            {
+                // Enviar mensaje inicial para verificar si el servidor está activo
+                SendInitialMessage();
 
-            isConnected = true;
+                byte[] data = new byte[1024];
+                EndPoint remoteServer = new IPEndPoint(IPAddress.Any, 0);
 
-            Thread receiveThread = new Thread(ReceiveMessages);
-            receiveThread.Start();
+                // Esperar mensaje de respuesta del servidor
+                int recv = socket.ReceiveFrom(data, ref remoteServer);
+                string initialMessage = Encoding.ASCII.GetString(data, 0, recv);
+
+                if (initialMessage.StartsWith("SERVER_NAME:"))
+                {
+                    serverName = initialMessage.Substring("SERVER_NAME:".Length);
+                    clientText += $"{serverName}";
+
+                    // Si la conexión es exitosa, marcar como conectado
+                    isConnected = true;
+
+                    // Iniciar el hilo para recibir mensajes
+                    Thread receiveThread = new Thread(ReceiveMessages);
+                    receiveThread.Start();
+                }
+            }
+            catch (SocketException)
+            {
+                clientText += "\nServer not found";
+
+                // Asegurarse de cerrar el socket si hay un error
+                if (socket != null)
+                {
+                    socket.Close();
+                    socket = null;
+                }
+            }
         }
         else
         {
-            errorMessageText.text = "Please, enter the server IP.";
+            clientText += "Please, enter the server IP.";
         }
     }
+
 
     void SendInitialMessage()
     {
@@ -79,6 +110,8 @@ public class ClientUDP : MonoBehaviour
 
     void ReceiveMessages()
     {
+        if (!isConnected) return;
+
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
         EndPoint remoteServer = (EndPoint)sender;
         byte[] data = new byte[1024];

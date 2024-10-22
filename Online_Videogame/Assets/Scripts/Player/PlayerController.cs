@@ -8,8 +8,10 @@ public class PlayerController : MonoBehaviour
     public int movSpeed = 100;
     public GameObject udpConsole;
     public GameObject tcpConsole;
+    public GameObject pauseCanvas;
 
     public TMP_InputField tcpField;
+    public TMP_InputField udpField;
 
     Animator animator;
 
@@ -62,7 +64,7 @@ public class PlayerController : MonoBehaviour
             }
             else { animator.SetBool("isWalking", false); }
         }
-        if (newarCPU && Input.GetKeyDown(KeyCode.U))
+        if (newarCPU && Input.GetKeyDown(KeyCode.U) && !tcpField.isFocused)
         {
             udpConsole.SetActive(!udpConsole.activeSelf);
 
@@ -71,6 +73,10 @@ public class PlayerController : MonoBehaviour
         {
             tcpConsole.SetActive(!tcpConsole.activeSelf);
 
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            pauseCanvas.SetActive(!pauseCanvas.activeSelf);
         }
     }
 

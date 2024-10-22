@@ -8,6 +8,7 @@ public class PlayerControllerClient : MonoBehaviour
     public int movSpeed = 100;
     public GameObject consoleUDP;
     public GameObject consoleTCP;
+    public GameObject pauseCanvas;
 
     public TMP_InputField udpField;
     public TMP_InputField tcpField;
@@ -72,6 +73,10 @@ public class PlayerControllerClient : MonoBehaviour
         {
             consoleTCP.SetActive(!consoleTCP.activeSelf);
 
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            pauseCanvas.SetActive(!pauseCanvas.activeSelf);
         }
     }
 

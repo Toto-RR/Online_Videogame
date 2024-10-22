@@ -9,7 +9,7 @@ public class SceneChanger : MonoBehaviour
 
     void Start()
     {
-        errorMessageText.text = "";
+        if(errorMessageText != null) errorMessageText.text = "";
     }
 
     public void ChangeScene(string sceneName)
@@ -31,5 +31,10 @@ public class SceneChanger : MonoBehaviour
         {
             errorMessageText.text = "";
         }
+    }
+
+    public void ReturnToMainMenu()
+    {
+        SceneManager.LoadScene("Start");
     }
 }

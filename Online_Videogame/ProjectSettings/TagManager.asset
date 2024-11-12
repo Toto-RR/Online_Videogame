@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ignore_Enemies
+  - Computer1
+  - ComputerUDP
+  - ComputerTCP
+  - Ground
   layers:
   - Default
   - TransparentFX

@@ -5,7 +5,6 @@ using System.Threading;
 using TMPro;
 using System.Text;
 using System.Collections.Generic;
-using UnityEditor.VersionControl;
 using System;
 
 public class ServerTCP : MonoBehaviour
@@ -119,7 +118,7 @@ public class ServerTCP : MonoBehaviour
                 User newUser = new User();
                 newUser.socket = socket.Accept();
 
-                // Verifica el nombre de usuario
+                // Ckeck the username
                 byte[] nameData = new byte[1024];
                 int nameLength = newUser.socket.Receive(nameData);
                 newUser.name = Encoding.ASCII.GetString(nameData, 0, nameLength);
@@ -127,9 +126,9 @@ public class ServerTCP : MonoBehaviour
                 IPEndPoint clientEndPoint = (IPEndPoint)newUser.socket.RemoteEndPoint;
                 serverText += $"\nUser connected: {newUser.name} ({clientEndPoint.Address} at port {clientEndPoint.Port})";
 
-                connectedUsers.Add(newUser); // Agrega el usuario a la lista de usuarios conectados
+                connectedUsers.Add(newUser); // Add user to users list
 
-                // Envía el nombre del servidor al usuario conectado
+                // Send the server name to the new connected user
                 byte[] serverNameData = Encoding.ASCII.GetBytes(UserData.username);
                 newUser.socket.Send(serverNameData);
 
@@ -141,7 +140,7 @@ public class ServerTCP : MonoBehaviour
                 if (ex.SocketErrorCode == SocketError.Interrupted)
                 {
                     Debug.Log("Socket operation was interrupted, exiting the loop.");
-                    break; // Sal del bucle si se interrumpe la operación del socket
+                    break; // Exit loop if socket operation is interrupted
                 }
                 else
                 {
@@ -150,7 +149,6 @@ public class ServerTCP : MonoBehaviour
             }
         }
     }
-
 
     void Receive(User user)
     {
@@ -164,26 +162,26 @@ public class ServerTCP : MonoBehaviour
                 recv = user.socket.Receive(data);
                 if (recv == 0)
                 {
-                    // Cliente desconectado
+                    // Disconnected client
                     serverText += $"\n{user.name} disconnected.";
                     connectedUsers.Remove(user);
                     user.socket.Shutdown(SocketShutdown.Both);
                     user.socket.Close();
-                    break;  // Salir del bucle
+                    break;  // Exit loop
                 }
                 else
                 {
                     string receivedMessage = Encoding.ASCII.GetString(data, 0, recv);
                     serverText += $"\n{user.name}: {receivedMessage}";
 
-                    // Broadcast de mensaje
+                    // Message broadcast
                     Thread answer = new Thread(() => Send(user, receivedMessage));
                     answer.Start();
                 }
             }
             catch (SocketException ex)
             {
-                // Manejar la desconexión
+                // Handling disconnection
                 serverText += $"\nError: {ex.Message}. {user.name} has disconnected.";
                 connectedUsers.Remove(user);
                 user.socket.Close();
@@ -192,8 +190,7 @@ public class ServerTCP : MonoBehaviour
         }
     }
 
-
-    // Esta funcion sirve para REENVIAR los mensajes de otros a todos los clientes
+    // This function is used to FORWARD messages from others to all clients.
     void Send(User sender, string message)
     {
         string finalMessage = $"{sender.name}: {message}";
@@ -210,14 +207,14 @@ public class ServerTCP : MonoBehaviour
         Debug.Log("Broadcasted message to all users.");
     }
 
-    // Esta sirve para ENVIAR el mensaje que el servidor escriba
+    // This function is used to SEND messages that the server writes
     public void SendMessageToClient()
     {
         if (inputField.text != "")
         {
             string message = inputField.text;
 
-            //The message to send to 
+            // The message to send to 
             string messageToSend = $"{UserData.username}: {message}";
             byte[] data = Encoding.ASCII.GetBytes(messageToSend);
 

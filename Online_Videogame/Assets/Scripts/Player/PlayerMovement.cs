@@ -11,59 +11,62 @@ public class FPSController : MonoBehaviour
     public float jumpPower = 7f;
     public float gravity = 10f;
 
-
     public float lookSpeed = 2f;
     public float lookXLimit = 45f;
-
 
     Vector3 moveDirection = Vector3.zero;
     float rotationX = 0;
 
     public bool canMove = true;
 
-
     CharacterController characterController;
+
+    private UDP_Client udpClient;
+    private Vector3 lastPosition;
+
+    private bool jumpSent = false;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        udpClient = FindObjectOfType<UDP_Client>();
     }
 
     void Update()
     {
-
-        #region Handles Movment
+        // Movimiento del jugador
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
 
-        // Press Left Shift to run
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
-        float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
+        float speed = isRunning ? runSpeed : walkSpeed;
+        Vector3 movement = (forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal")) * speed;
+
         float movementDirectionY = moveDirection.y;
-        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+        moveDirection = movement;
 
-        #endregion
-
-        #region Handles Jumping
-        if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
+        // Manejo de salto
+        if (Input.GetButton("Jump") && canMove && characterController.isGrounded && !jumpSent)
         {
             moveDirection.y = jumpPower;
+            udpClient?.SendMessage("JUMP");
+            jumpSent = true; // Marcar que el salto ha sido enviado
         }
-        else
+        else if (characterController.isGrounded)
         {
-            moveDirection.y = movementDirectionY;
+            jumpSent = false; // Restablecer cuando el jugador esté en el suelo
         }
 
+        // Aplicar gravedad si no está en el suelo
         if (!characterController.isGrounded)
         {
             moveDirection.y -= gravity * Time.deltaTime;
         }
 
-        #endregion
-
-        #region Handles Rotation
+        // Movimiento y rotación
         characterController.Move(moveDirection * Time.deltaTime);
 
         if (canMove)
@@ -74,6 +77,11 @@ public class FPSController : MonoBehaviour
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
 
-        #endregion
+        // Solo enviar la posición si ha cambiado de forma significativa
+        if (Vector3.Distance(transform.position, lastPosition) > 0.1f)
+        {
+            udpClient?.SendMovement(transform.position);
+            lastPosition = transform.position; // Actualizar la última posición enviada
+        }
     }
 }

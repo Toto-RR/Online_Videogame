@@ -26,8 +26,6 @@ public class ClientTCP : MonoBehaviour
     void Start()
     {
         UItext = UItextObj.GetComponent<TextMeshProUGUI>();
-        //clientText = "Connecting...";
-        //UItext.text = clientText;
     }
 
     void Update()

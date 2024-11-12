@@ -41,7 +41,7 @@ public class ClientUDP : MonoBehaviour
 
         if (socket != null)
         {
-            socket.Close(); // Asegurarse de que el socket anterior esté cerrado
+            socket.Close(); // Make sure that the previous socket is closed
         }
 
         Thread connectThread = new Thread(Connect);
@@ -57,13 +57,13 @@ public class ClientUDP : MonoBehaviour
 
             try
             {
-                // Enviar mensaje inicial para verificar si el servidor está activo
+                // Send initial message to check if server is active
                 SendInitialMessage();
 
                 byte[] data = new byte[1024];
                 EndPoint remoteServer = new IPEndPoint(IPAddress.Any, 0);
 
-                // Esperar mensaje de respuesta del servidor
+                // If the connection is successful, mark as connected
                 int recv = socket.ReceiveFrom(data, ref remoteServer);
                 string initialMessage = Encoding.ASCII.GetString(data, 0, recv);
 
@@ -72,10 +72,10 @@ public class ClientUDP : MonoBehaviour
                     serverName = initialMessage.Substring("SERVER_NAME:".Length);
                     clientText += $"{serverName}";
 
-                    // Si la conexión es exitosa, marcar como conectado
+                    // If the connection is successful, mark as connected
                     isConnected = true;
 
-                    // Iniciar el hilo para recibir mensajes
+                    // Start the thread to receive messages
                     Thread receiveThread = new Thread(ReceiveMessages);
                     receiveThread.Start();
                 }
@@ -84,7 +84,7 @@ public class ClientUDP : MonoBehaviour
             {
                 clientText += "\nServer not found";
 
-                // Asegurarse de cerrar el socket si hay un error
+                // Make sure to close the socket if there is an error
                 if (socket != null)
                 {
                     socket.Close();
@@ -105,7 +105,6 @@ public class ClientUDP : MonoBehaviour
         byte[] data = Encoding.ASCII.GetBytes(message);
 
         socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
-        //clientText += "Username sent: " + message;
     }
 
     void ReceiveMessages()
@@ -116,7 +115,7 @@ public class ClientUDP : MonoBehaviour
         EndPoint remoteServer = (EndPoint)sender;
         byte[] data = new byte[1024];
 
-        // Recibir el primer mensaje (mensaje de bienvenida)
+        // Receiving the first message (welcome message)
         int recv = socket.ReceiveFrom(data, ref remoteServer);
         string initialMessage = Encoding.ASCII.GetString(data, 0, recv);
 
@@ -126,7 +125,7 @@ public class ClientUDP : MonoBehaviour
             clientText += $"Connected to server: {serverName}";
         }
 
-        // Bucle para recibir mensajes continuos
+        // Loop to receive continuous messages
         while (true)
         {
             try
@@ -136,7 +135,7 @@ public class ClientUDP : MonoBehaviour
                 {
                     string receivedMessage = Encoding.ASCII.GetString(data, 0, recv);
 
-                    // No añadir el serverName en cada mensaje recibido
+                    // Do not add the serverName to each message received
                     clientText += $"\n{receivedMessage}";
                 }
             }
@@ -170,7 +169,7 @@ public class ClientUDP : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        DisconnectFromServer(); // Llamamos a la función de desconexión al cerrar la aplicación
+        DisconnectFromServer(); // We call the shutdown function when closing the application.
     }
 
     public void DisconnectFromServer()
@@ -181,7 +180,7 @@ public class ClientUDP : MonoBehaviour
             {
                 try
                 {
-                    // Enviar mensaje de desconexión al servidor
+                    // Send disconnection message to server
                     string disconnectMessage = $"LEAVE:{UserData.username}";
                     byte[] data = Encoding.ASCII.GetBytes(disconnectMessage);
                     socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
@@ -192,12 +191,12 @@ public class ClientUDP : MonoBehaviour
                 }
                 finally
                 {
-                    socket.Close();  // Cerrar el socket
+                    socket.Close();  // Close the socket
                     socket = null;
                 }
             }
 
-            isConnected = false; // Marcar como desconectado
+            isConnected = false; // Mark as offline
             clientText += "\nDisconnected from server.";
         }
     }

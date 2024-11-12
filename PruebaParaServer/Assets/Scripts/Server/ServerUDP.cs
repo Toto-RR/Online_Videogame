@@ -20,9 +20,6 @@ public class ServerUDP : MonoBehaviour
     private bool isServerRunning = false;
     private List<Client> clients = new List<Client>();
 
-    // Time for inactivity before removing the client
-    private const int ClientTimeout = 240; // 10 seconds
-
     public struct Client
     {
         public string name;

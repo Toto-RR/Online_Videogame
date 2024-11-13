@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public class PlayerData
@@ -25,7 +26,8 @@ public class UDP_Server : MonoBehaviour
     public GameObject clientPlayerPrefab;  // Prefab que representa al cliente en la escena
     private GameObject clientPlayerObject; // GameObject del cliente instanciado
 
-    private Vector3 hostPosition;
+    private Vector3 lastPos;
+    private Quaternion lastRot;
 
     void Start()
     {
@@ -37,7 +39,25 @@ public class UDP_Server : MonoBehaviour
             Debug.LogError("El prefab del cliente no está asignado en el inspector.");
         }
 
+        lastPos = hostPlayerObject.transform.position;
+        lastRot = hostPlayerObject.transform.rotation;
+
         StartServer();
+    }
+
+    private void Update()
+    {
+        if (isServerRunning && clientEndPoint != null)
+        {
+            if(lastRot != hostPlayerObject.transform.rotation || lastPos != hostPlayerObject.transform.position)
+            {
+                lastRot = hostPlayerObject.transform.rotation;
+                lastPos = hostPlayerObject.transform.position;
+                Debug.Log($"Position: {lastPos}");
+                Debug.Log($"Rotation: {lastRot}");
+                BroadcastGameState();
+            }
+        }
     }
 
     public void StartServer()
@@ -83,16 +103,7 @@ public class UDP_Server : MonoBehaviour
             }
 
             // Responder con la posición inicial del host
-            PlayerData hostData = new PlayerData
-            {
-                playerName = hostName,
-                position = hostPlayerObject.transform.position,
-                rotation = hostPlayerObject.transform.rotation,
-                command = "UPDATE"
-            };
-            string json = JsonUtility.ToJson(hostData);
-            byte[] data = Encoding.ASCII.GetBytes(json);
-            socket.SendTo(data, data.Length, SocketFlags.None, clientEndPoint);
+            BroadcastGameState();
         }
         else if (playerData.command == "MOVE")
         {
@@ -107,7 +118,7 @@ public class UDP_Server : MonoBehaviour
         }
 
         // Enviar el estado actualizado del host al cliente
-        BroadcastGameState();
+        //BroadcastGameState();
     }
 
     private void UpdateClientPosition(PlayerData playerData)
@@ -120,16 +131,30 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
-    private void BroadcastGameState()
+    public void BroadcastGameState()
     {
-        // Enviar la posición del host (este jugador) al cliente
-        PlayerData hostData = new PlayerData
+        if (clientEndPoint != null && isServerRunning && clientEndPoint.ToString() != "0.0.0.0:0")
         {
-            playerName = hostName,
-            position = hostPlayerObject.transform.position,
-            command = "UPDATE"
-        };
+            // Enviar la posición del host (este jugador) al cliente
+            PlayerData hostData = new PlayerData
+            {
+                playerName = hostName,
+                position = hostPlayerObject.transform.position,
+                rotation = hostPlayerObject.transform.rotation,
+                command = "UPDATE"
+            };
 
+            SendData(hostData);
+        }
+        else
+        {
+            Debug.LogWarning("No hay clientes conectados o el clientEndPoint no está asignado.");
+        }
+    }
+
+
+    private void SendData(PlayerData hostData)
+    {
         string json = JsonUtility.ToJson(hostData);
         byte[] data = Encoding.ASCII.GetBytes(json);
         socket.SendTo(data, data.Length, SocketFlags.None, clientEndPoint);
@@ -140,12 +165,6 @@ public class UDP_Server : MonoBehaviour
         string json = JsonUtility.ToJson(shooterData);
         byte[] data = Encoding.ASCII.GetBytes(json);
         socket.SendTo(data, data.Length, SocketFlags.None, clientEndPoint);
-    }
-
-    public void SendHostMovement(Vector3 position)
-    {
-        hostPosition = position;
-        BroadcastGameState();
     }
 
     public void HostShoot()

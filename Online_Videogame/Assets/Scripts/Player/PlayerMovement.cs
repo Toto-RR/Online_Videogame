@@ -20,7 +20,7 @@ public class FPSController : MonoBehaviour
 
     public UDP_Server udpServer;
     private Vector3 lastServerPosition;
-    private Vector3 lastServerRotation;
+    private Quaternion lastServerRotation;
 
     Vector3 moveDirection = Vector3.zero;
     float rotationX = 0;
@@ -39,7 +39,7 @@ public class FPSController : MonoBehaviour
         lastClientRotation = transform.rotation;
 
         lastServerPosition = transform.position;
-        lastServerRotation = transform.rotation.eulerAngles;
+        lastServerRotation = transform.rotation;
     }
 
     void Update()
@@ -70,14 +70,14 @@ public class FPSController : MonoBehaviour
 
         //Host
         if (udpServer.enabled == true && //Si el servidor está activado y su rotacion o posición cambian, entonces actualiza
-            ((transform.position != lastServerPosition)))
+            ((transform.position != lastServerPosition) || (transform.rotation != lastServerRotation)))
         {
             //Actualiza la última posicion y rotación del player
             lastServerPosition = transform.position;
-            lastServerRotation = transform.rotation.eulerAngles;
-
+            lastServerRotation = transform.rotation;
+            
             //Manda la posición y rotación al Server (para que la mande a los clientes)
-            //udpServer.SendHostMovement(lastServerPosition);
+            //udpServer.BroadcastGameState();
         }
         #endregion
 

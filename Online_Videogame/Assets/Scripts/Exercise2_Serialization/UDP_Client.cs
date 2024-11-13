@@ -67,24 +67,25 @@ public class UDP_Client : MonoBehaviour
                 hostPlayerObject.name = hostData.playerName;
             }
 
-
             // Actualizar la posición del host
             if (hostPlayerObject != null)
             {
                 hostPlayerObject.transform.position = hostData.position;
+                hostPlayerObject.transform.rotation = hostData.rotation;
             }
             Debug.Log($"Actualización de la posición del host: {hostData.position}");
         }
     }
 
-    public void SendMovement(Vector3 position)
+    public void SendMovementAndRotation(Vector3 pos, Quaternion rot)
     {
         if (isConnected)
         {
             PlayerData playerData = new PlayerData
             {
                 playerName = playerName,
-                position = position,
+                position = pos,
+                rotation = rot,
                 command = "MOVE"
             };
             SendData(JsonUtility.ToJson(playerData));

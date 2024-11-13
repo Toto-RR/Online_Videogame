@@ -155,6 +155,8 @@ MonoBehaviour:
   gravity: 40
   lookSpeed: 2
   lookXLimit: 45
+  udpClient: {fileID: 0}
+  udpServer: {fileID: 0}
   canMove: 1
 --- !u!1 &6577908071497789492
 GameObject:

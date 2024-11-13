@@ -16,7 +16,7 @@ public class FPSController : MonoBehaviour
 
     public UDP_Client udpClient;
     private Vector3 lastClientPosition;
-    private Vector3 lastClientRotation;
+    private Quaternion lastClientRotation;
 
     public UDP_Server udpServer;
     private Vector3 lastServerPosition;
@@ -36,7 +36,7 @@ public class FPSController : MonoBehaviour
         Cursor.visible = false;
 
         lastClientPosition = transform.position;
-        lastClientRotation = transform.rotation.eulerAngles;
+        lastClientRotation = transform.rotation;
 
         lastServerPosition = transform.position;
         lastServerRotation = transform.rotation.eulerAngles;
@@ -57,15 +57,15 @@ public class FPSController : MonoBehaviour
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
         //Client
-        if (udpClient.enabled == true && //Si el cliente está activado y su rotacion o posición cambian, entonces actualiza
-            ((transform.position != lastClientPosition)))
+        if (udpClient.enabled == true && //Si el cliente está activado y su posición o rotación cambian, entonces actualiza
+            ((transform.position != lastClientPosition) || (transform.rotation != lastClientRotation)))
         {
             //Actualiza la última posicion y rotación del player
             lastClientPosition = transform.position;
-            lastClientRotation = transform.rotation.eulerAngles;
+            lastClientRotation = transform.rotation;
 
             //Manda la posición y rotación al Cliente
-            udpClient.SendMovement(lastClientPosition);
+            udpClient.SendMovementAndRotation(lastClientPosition, lastClientRotation);
         }
 
         //Host

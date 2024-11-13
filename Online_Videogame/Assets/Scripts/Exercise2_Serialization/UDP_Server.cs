@@ -9,6 +9,7 @@ public class PlayerData
 {
     public string playerName;
     public Vector3 position;
+    public Quaternion rotation;
     public string command; // "MOVE", "SHOOT", "JOIN"
 }
 
@@ -86,6 +87,7 @@ public class UDP_Server : MonoBehaviour
             {
                 playerName = hostName,
                 position = hostPlayerObject.transform.position,
+                rotation = hostPlayerObject.transform.rotation,
                 command = "UPDATE"
             };
             string json = JsonUtility.ToJson(hostData);
@@ -114,6 +116,7 @@ public class UDP_Server : MonoBehaviour
         if (clientPlayerObject != null)
         {
             clientPlayerObject.transform.position = playerData.position;
+            clientPlayerObject.transform.rotation = playerData.rotation;
         }
     }
 

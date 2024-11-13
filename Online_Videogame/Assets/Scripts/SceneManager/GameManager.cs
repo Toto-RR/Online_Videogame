@@ -4,19 +4,10 @@ using UnityEngine.UI;  // Para los botones UI
 
 public class GameManager : MonoBehaviour
 {
-    public Button hostButton;
-    public Button joinButton;
-
     private string selectedRole;
 
-    void Start()
-    {
-        hostButton.onClick.AddListener(StartHost);
-        joinButton.onClick.AddListener(JoinServer);
-    }
-
     // Al hacer clic en "Host Game"
-    void StartHost()
+    public void StartHost()
     {
         selectedRole = "Host";  // El rol del jugador será "Host"
         PlayerPrefs.SetString("PlayerRole", selectedRole);  // Guardamos el rol en PlayerPrefs
@@ -24,7 +15,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Al hacer clic en "Join Game"
-    void JoinServer()
+    public void JoinServer()
     {
         selectedRole = "Client";  // El rol del jugador será "Client"
         PlayerPrefs.SetString("PlayerRole", selectedRole);  // Guardamos el rol en PlayerPrefs

@@ -7,16 +7,18 @@ public class UDP_Client : MonoBehaviour
 {
     private Socket socket;
     private EndPoint serverEndPoint;
-    public string playerName = "Player1";
-    public GameObject playerObject;
-    public GameObject npcObject;
-    public GameObject otherPlayerObject; // Objeto para mostrar el otro jugador
+    public string playerName = "ClientPlayer";
+    public GameObject playerObject;  // El GameObject del cliente
+    public GameObject hostPlayerPrefab;  // Prefab que representa al host en la escena
+    private GameObject hostPlayerObject; // GameObject del host instanciado
 
     private bool isConnected = false;
 
     void Start()
     {
-        ConnectToServer("127.0.0.1", 9050); // Dirección del servidor y puerto
+        Application.runInBackground = true;
+
+        ConnectToServer("127.0.0.1", 9050); // Dirección del servidor
     }
 
     public void ConnectToServer(string serverIP, int port)
@@ -24,9 +26,14 @@ public class UDP_Client : MonoBehaviour
         serverEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), port);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-        // Enviar nombre del jugador
+        // Enviar nombre del cliente al host
         PlayerData initialData = new PlayerData { playerName = playerName, position = Vector3.zero, command = "JOIN" };
-        SendData(JsonUtility.ToJson(initialData));
+        string json = JsonUtility.ToJson(initialData);
+        Debug.Log($"Enviando mensaje JOIN: {json}");
+        SendData(json);
+
+
+        Debug.Log("Cliente conectado al servidor");
 
         isConnected = true;
         BeginReceive();
@@ -42,25 +49,31 @@ public class UDP_Client : MonoBehaviour
             int recv = socket.EndReceiveFrom(ar, ref remoteEndPoint);
             string receivedMessage = Encoding.ASCII.GetString(buffer, 0, recv);
 
-            // Procesar mensaje recibido
             HandleMessage(receivedMessage);
-
-            // Continuar recibiendo
             BeginReceive();
         }, null);
     }
 
     private void HandleMessage(string message)
     {
-        if (message.Contains("HostPlayer"))
+        PlayerData hostData = JsonUtility.FromJson<PlayerData>(message);
+
+        if (hostData.command == "UPDATE")
         {
-            NPCData npcData = JsonUtility.FromJson<NPCData>(message);
-            UpdateNPCPosition(npcData);
-        }
-        else
-        {
-            PlayerData playerData = JsonUtility.FromJson<PlayerData>(message);
-            UpdatePlayerPosition(playerData);
+            // Instanciar al host en la escena del cliente si no se ha hecho ya
+            if (hostPlayerObject == null && hostPlayerPrefab != null)
+            {
+                hostPlayerObject = Instantiate(hostPlayerPrefab, Vector3.zero, Quaternion.identity);
+                hostPlayerObject.name = hostData.playerName;
+            }
+
+
+            // Actualizar la posición del host
+            if (hostPlayerObject != null)
+            {
+                hostPlayerObject.transform.position = hostData.position;
+            }
+            Debug.Log($"Actualización de la posición del host: {hostData.position}");
         }
     }
 
@@ -78,42 +91,10 @@ public class UDP_Client : MonoBehaviour
         }
     }
 
-    public void SendMessage(string command)
-    {
-        if (isConnected)
-        {
-            PlayerData playerData = new PlayerData
-            {
-                playerName = playerName,
-                position = playerObject.transform.position,
-                command = command
-            };
-            SendData(JsonUtility.ToJson(playerData));
-        }
-    }
-
     private void SendData(string data)
     {
         byte[] buffer = Encoding.ASCII.GetBytes(data);
         socket.SendTo(buffer, buffer.Length, SocketFlags.None, serverEndPoint);
-    }
-
-    private void UpdatePlayerPosition(PlayerData playerData)
-    {
-        // Lógica para mover al jugador en el cliente con la posición recibida
-        if (otherPlayerObject != null)
-        {
-            otherPlayerObject.transform.position = playerData.position;
-        }
-    }
-
-    private void UpdateNPCPosition(NPCData npcData)
-    {
-        // Lógica para mover al NPC en el cliente con la posición recibida
-        if (npcObject != null)
-        {
-            npcObject.transform.position = npcData.position;
-        }
     }
 
     void OnApplicationQuit()

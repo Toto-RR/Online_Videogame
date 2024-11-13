@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -10,31 +9,33 @@ public class PlayerData
 {
     public string playerName;
     public Vector3 position;
-    public string command;
-}
-
-[Serializable]
-public class NPCData
-{
-    public string npcName;
-    public Vector3 position;
+    public string command; // "MOVE", "SHOOT", "JOIN"
 }
 
 public class UDP_Server : MonoBehaviour
 {
     private Socket socket;
-    private List<Client> clients = new List<Client>();
+    private EndPoint clientEndPoint;
     private bool isServerRunning = false;
 
-    public struct Client
-    {
-        public string name;
-        public Vector3 position;
-        public EndPoint endPoint;
-    }
+    // Datos del propio host
+    public string hostName = "HostPlayer";
+    public GameObject hostPlayerObject;
+    public GameObject clientPlayerPrefab;  // Prefab que representa al cliente en la escena
+    private GameObject clientPlayerObject; // GameObject del cliente instanciado
+
+    private Vector3 hostPosition;
 
     void Start()
     {
+        //GameObject obj = Instantiate(clientPlayerPrefab, new Vector3(0, 3, 0), Quaternion.identity);
+        //Debug.Log("Instanciado manualmente en escena");
+        Application.runInBackground = true;
+        if (clientPlayerPrefab == null)
+        {
+            Debug.LogError("El prefab del cliente no está asignado en el inspector.");
+        }
+
         StartServer();
     }
 
@@ -44,7 +45,7 @@ public class UDP_Server : MonoBehaviour
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.Bind(ipep);
 
-        Debug.Log("Server started...");
+        Debug.Log("Servidor (Host) iniciado...");
         isServerRunning = true;
         BeginReceive();
     }
@@ -52,80 +53,122 @@ public class UDP_Server : MonoBehaviour
     private void BeginReceive()
     {
         byte[] buffer = new byte[1024];
-        EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+        clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
-        socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
+        socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref clientEndPoint, (ar) =>
         {
-            int recv = socket.EndReceiveFrom(ar, ref remoteEndPoint);
+            int recv = socket.EndReceiveFrom(ar, ref clientEndPoint);
             string receivedMessage = Encoding.ASCII.GetString(buffer, 0, recv);
 
-            // Procesar mensaje
-            HandleMessage(receivedMessage, remoteEndPoint);
-
-            // Continuar recibiendo
+            HandleMessage(receivedMessage);
             BeginReceive();
         }, null);
     }
 
-    private void HandleMessage(string message, EndPoint clientEndPoint)
+    private void HandleMessage(string message)
     {
         PlayerData playerData = JsonUtility.FromJson<PlayerData>(message);
+        Debug.Log($"Mensaje recibido: {message}");
 
-        // Verificar si el cliente ya existe
-        Client client = clients.Find(c => c.name == playerData.playerName);
-        if (client.name == null)
+        if (playerData.command == "JOIN")
         {
-            // Nuevo cliente
-            Client newClient = new Client { name = playerData.playerName, position = playerData.position, endPoint = clientEndPoint };
-            clients.Add(newClient);
-            Debug.Log($"New client connected: {newClient.name}");
+            // Confirmación de que el cliente se unió
+            Debug.Log($"{playerData.playerName} se ha unido al servidor.");
+
+            // Instanciar el GameObject del cliente en la escena del host
+            if (clientPlayerPrefab != null)
+            {
+                InstantiateEnemy(playerData);
+            }
+
+            // Responder con la posición inicial del host
+            PlayerData hostData = new PlayerData
+            {
+                playerName = hostName,
+                position = hostPlayerObject.transform.position,
+                command = "UPDATE"
+            };
+            string json = JsonUtility.ToJson(hostData);
+            byte[] data = Encoding.ASCII.GetBytes(json);
+            socket.SendTo(data, data.Length, SocketFlags.None, clientEndPoint);
         }
-        else
+        else if (playerData.command == "MOVE")
         {
-            // Actualizar posición y comandos del cliente
-            if (playerData.command == "MOVE")
-            {
-                client.position = playerData.position;
-            }
-            else if (playerData.command == "JUMP")
-            {
-                // Manejo de salto (se podría añadir lógica específica para la física del salto si es necesario)
-                Debug.Log($"{client.name} has jumped.");
-            }
+            // Actualizar posición del cliente
+            UpdateClientPosition(playerData);
+        }
+        else if (playerData.command == "SHOOT")
+        {
+            // Ejecutar acción de disparo
+            Debug.Log($"{playerData.playerName} ha disparado.");
+            BroadcastShootAction(playerData);
         }
 
-        // Enviar estado del juego
+        // Enviar el estado actualizado del host al cliente
         BroadcastGameState();
+    }
+
+    private void UpdateClientPosition(PlayerData playerData)
+    {
+        Debug.Log($"El cliente {playerData.playerName} se movió a la posición {playerData.position}");
+        if (clientPlayerObject != null)
+        {
+            clientPlayerObject.transform.position = playerData.position;
+        }
     }
 
     private void BroadcastGameState()
     {
-        foreach (Client client in clients)
+        // Enviar la posición del host (este jugador) al cliente
+        PlayerData hostData = new PlayerData
         {
-            // Enviar posiciones de todos los jugadores a cada cliente
-            foreach (Client otherClient in clients)
-            {
-                PlayerData playerData = new PlayerData
-                {
-                    playerName = otherClient.name,
-                    position = otherClient.position,
-                    command = "UPDATE"
-                };
-                string json = JsonUtility.ToJson(playerData);
-                byte[] data = Encoding.ASCII.GetBytes(json);
-                socket.SendTo(data, data.Length, SocketFlags.None, client.endPoint);
-            }
+            playerName = hostName,
+            position = hostPlayerObject.transform.position,
+            command = "UPDATE"
+        };
 
-            // Enviar posición del NPC (ejemplo básico)
-            NPCData npcData = new NPCData
-            {
-                npcName = "NPC_1",
-                position = new Vector3(5, 0, 5) // Ejemplo de posición fija para el NPC
-            };
-            string npcJson = JsonUtility.ToJson(npcData);
-            byte[] npcDataBytes = Encoding.ASCII.GetBytes(npcJson);
-            socket.SendTo(npcDataBytes, npcDataBytes.Length, SocketFlags.None, client.endPoint);
-        }
+        string json = JsonUtility.ToJson(hostData);
+        byte[] data = Encoding.ASCII.GetBytes(json);
+        socket.SendTo(data, data.Length, SocketFlags.None, clientEndPoint);
+    }
+
+    private void BroadcastShootAction(PlayerData shooterData)
+    {
+        string json = JsonUtility.ToJson(shooterData);
+        byte[] data = Encoding.ASCII.GetBytes(json);
+        socket.SendTo(data, data.Length, SocketFlags.None, clientEndPoint);
+    }
+
+    public void SendHostMovement(Vector3 position)
+    {
+        hostPosition = position;
+        BroadcastGameState();
+    }
+
+    public void HostShoot()
+    {
+        PlayerData hostShootData = new PlayerData
+        {
+            playerName = hostName,
+            position = hostPlayerObject.transform.position,
+            command = "SHOOT"
+        };
+        BroadcastShootAction(hostShootData);
+    }
+
+    public void InstantiateEnemy(PlayerData playerData)
+    {
+        Debug.Log("Instanciando jugador...");
+        clientPlayerObject = Instantiate(clientPlayerPrefab, new Vector3(-1, 1, 0), Quaternion.identity);
+        
+        Debug.Log($"Jugador instanciado: {clientPlayerObject.name}");
+        //Instantiate(clientPlayerPrefab, new Vector3(-1, 1, 0), Quaternion.identity, null);
+        clientPlayerObject.name = playerData.playerName;
+
+        Debug.Log($"Activo en escena: {clientPlayerObject.activeInHierarchy}");
+        clientPlayerObject.SetActive(true);
+
+        Debug.Log("Jugador instanciado por completo");
     }
 
     void OnApplicationQuit()

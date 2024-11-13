@@ -14,59 +14,91 @@ public class FPSController : MonoBehaviour
     public float lookSpeed = 2f;
     public float lookXLimit = 45f;
 
+    public UDP_Client udpClient;
+    private Vector3 lastClientPosition;
+    private Vector3 lastClientRotation;
+
+    public UDP_Server udpServer;
+    private Vector3 lastServerPosition;
+    private Vector3 lastServerRotation;
+
     Vector3 moveDirection = Vector3.zero;
     float rotationX = 0;
 
     public bool canMove = true;
 
+
     CharacterController characterController;
-
-    private UDP_Client udpClient;
-    private Vector3 lastPosition;
-
-    private bool jumpSent = false;
-
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        udpClient = FindObjectOfType<UDP_Client>();
+        lastClientPosition = transform.position;
+        lastClientRotation = transform.rotation.eulerAngles;
+
+        lastServerPosition = transform.position;
+        lastServerRotation = transform.rotation.eulerAngles;
     }
 
     void Update()
     {
-        // Movimiento del jugador
+
+        #region Handles Movment
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
 
+        // Press Left Shift to run
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float speed = isRunning ? runSpeed : walkSpeed;
-        Vector3 movement = (forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal")) * speed;
-
+        float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
+        float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
         float movementDirectionY = moveDirection.y;
-        moveDirection = movement;
+        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
-        // Manejo de salto
-        if (Input.GetButton("Jump") && canMove && characterController.isGrounded && !jumpSent)
+        //Client
+        if (udpClient.enabled == true && //Si el cliente está activado y su rotacion o posición cambian, entonces actualiza
+            ((transform.position != lastClientPosition)))
+        {
+            //Actualiza la última posicion y rotación del player
+            lastClientPosition = transform.position;
+            lastClientRotation = transform.rotation.eulerAngles;
+
+            //Manda la posición y rotación al Cliente
+            udpClient.SendMovement(lastClientPosition);
+        }
+
+        //Host
+        if (udpServer.enabled == true && //Si el servidor está activado y su rotacion o posición cambian, entonces actualiza
+            ((transform.position != lastServerPosition)))
+        {
+            //Actualiza la última posicion y rotación del player
+            lastServerPosition = transform.position;
+            lastServerRotation = transform.rotation.eulerAngles;
+
+            //Manda la posición y rotación al Server (para que la mande a los clientes)
+            //udpServer.SendHostMovement(lastServerPosition);
+        }
+        #endregion
+
+        #region Handles Jumping
+        if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
         {
             moveDirection.y = jumpPower;
-            udpClient?.SendMessage("JUMP");
-            jumpSent = true; // Marcar que el salto ha sido enviado
         }
-        else if (characterController.isGrounded)
+        else
         {
-            jumpSent = false; // Restablecer cuando el jugador esté en el suelo
+            moveDirection.y = movementDirectionY;
         }
 
-        // Aplicar gravedad si no está en el suelo
         if (!characterController.isGrounded)
         {
             moveDirection.y -= gravity * Time.deltaTime;
         }
 
-        // Movimiento y rotación
+        #endregion
+
+        #region Handles Rotation
         characterController.Move(moveDirection * Time.deltaTime);
 
         if (canMove)
@@ -77,11 +109,6 @@ public class FPSController : MonoBehaviour
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
 
-        // Solo enviar la posición si ha cambiado de forma significativa
-        if (Vector3.Distance(transform.position, lastPosition) > 0.1f)
-        {
-            udpClient?.SendMovement(transform.position);
-            lastPosition = transform.position; // Actualizar la última posición enviada
-        }
+        #endregion
     }
 }

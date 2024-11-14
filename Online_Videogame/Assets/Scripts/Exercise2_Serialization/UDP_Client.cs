@@ -14,11 +14,15 @@ public class UDP_Client : MonoBehaviour
 
     private bool isConnected = false;
 
+    private ConsoleUI consoleUI;
+
     void Start()
     {
         Application.runInBackground = true;
 
         ConnectToServer("127.0.0.1", 9050); // Dirección del servidor
+
+        consoleUI = FindObjectOfType<ConsoleUI>();
     }
 
     public void ConnectToServer(string serverIP, int port)
@@ -31,7 +35,6 @@ public class UDP_Client : MonoBehaviour
         string json = JsonUtility.ToJson(initialData);
         Debug.Log($"Enviando mensaje JOIN: {json}");
         SendData(json);
-
 
         Debug.Log("Cliente conectado al servidor");
 
@@ -46,17 +49,26 @@ public class UDP_Client : MonoBehaviour
 
         socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
         {
-            int recv = socket.EndReceiveFrom(ar, ref remoteEndPoint);
-            string receivedMessage = Encoding.ASCII.GetString(buffer, 0, recv);
+            try
+            {
+                consoleUI.LogToConsole("Recibiendo mensajes");
+                int recv = socket.EndReceiveFrom(ar, ref remoteEndPoint);
+                string receivedMessage = Encoding.ASCII.GetString(buffer, 0, recv);
 
-            HandleMessage(receivedMessage);
-            BeginReceive();
+                HandleMessage(receivedMessage);
+                BeginReceive();
+            }
+            catch (SocketException e)
+            {
+                consoleUI.LogToConsole($"Error {e.Message}");
+            }
         }, null);
     }
 
     private void HandleMessage(string message)
     {
         PlayerData hostData = JsonUtility.FromJson<PlayerData>(message);
+        //consoleUI.LogToConsole($"Mensaje recibido: {message}");
 
         if (hostData.command == "UPDATE")
         {

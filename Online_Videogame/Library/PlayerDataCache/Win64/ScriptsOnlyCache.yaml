@@ -10,9 +10,6 @@ ScriptsOnlyBuild:
     - UDP_Server
     Unity.AdaptivePerformance.Editor.dll:
     - UnityEditor.AdaptivePerformance.Editor.AdaptivePerformanceGeneralSettingsPerBuildTarget
-    - UnityEditor.AdaptivePerformance.Editor.AdaptivePerformanceManagerSettingsEditor
-    Unity.AdaptivePerformance.Simulator.Editor.dll:
-    - UnityEditor.AdaptivePerformance.Simulator.Editor.SimulatorProviderSettings
     Unity.AdaptivePerformance.dll:
     - UnityEngine.AdaptivePerformance.AdaptivePerformanceGeneralSettings
     - UnityEngine.AdaptivePerformance.AdaptivePerformanceManagerSettings
@@ -113,31 +110,31 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1564}
+      Script: {instanceID: 1568}
     - Class: 114
-      Script: {instanceID: 1606}
+      Script: {instanceID: 1616}
     - Class: 114
-      Script: {instanceID: 1928}
+      Script: {instanceID: 2668}
     - Class: 114
-      Script: {instanceID: 2618}
+      Script: {instanceID: 2884}
     - Class: 114
-      Script: {instanceID: 2824}
+      Script: {instanceID: 3628}
     - Class: 114
-      Script: {instanceID: 3350}
+      Script: {instanceID: 5238}
     - Class: 114
-      Script: {instanceID: 3526}
+      Script: {instanceID: 5976}
     - Class: 114
-      Script: {instanceID: 5068}
+      Script: {instanceID: 6312}
     - Class: 114
-      Script: {instanceID: 5776}
+      Script: {instanceID: 8250}
     - Class: 114
-      Script: {instanceID: 6092}
+      Script: {instanceID: 8254}
     - Class: 114
-      Script: {instanceID: 6306}
+      Script: {instanceID: 8262}
     - Class: 114
-      Script: {instanceID: 53268}
+      Script: {instanceID: 8266}
     - Class: 114
-      Script: {instanceID: 60274}
+      Script: {instanceID: 8274}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -180,31 +177,31 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1564}
+      Script: {instanceID: 1568}
     - Class: 114
-      Script: {instanceID: 1606}
+      Script: {instanceID: 1616}
     - Class: 114
-      Script: {instanceID: 2194}
+      Script: {instanceID: 2224}
     - Class: 114
-      Script: {instanceID: 2618}
+      Script: {instanceID: 2668}
     - Class: 114
-      Script: {instanceID: 2824}
+      Script: {instanceID: 2884}
     - Class: 114
-      Script: {instanceID: 3116}
+      Script: {instanceID: 3200}
     - Class: 114
-      Script: {instanceID: 4000}
+      Script: {instanceID: 4118}
     - Class: 114
-      Script: {instanceID: 4106}
+      Script: {instanceID: 4228}
     - Class: 114
-      Script: {instanceID: 4358}
+      Script: {instanceID: 4490}
     - Class: 114
-      Script: {instanceID: 5068}
+      Script: {instanceID: 5238}
     - Class: 114
-      Script: {instanceID: 5202}
+      Script: {instanceID: 5976}
     - Class: 114
-      Script: {instanceID: 5776}
+      Script: {instanceID: 6312}
     - Class: 114
-      Script: {instanceID: 6092}
+      Script: {instanceID: 8246}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -236,6 +233,12 @@ ScriptsOnlyBuild:
     className: CanvasScaler
   - hash:
       serializedVersion: 2
+      Hash: f235b66bbaad891803c9d777dfd67956
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveLut
+  - hash:
+      serializedVersion: 2
       Hash: 55060a7bf226ac385ce19ebd450f199f
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UIElements
@@ -246,6 +249,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: Image
+  - hash:
+      serializedVersion: 2
+      Hash: 28be742dfed98d22c3acbf7df788a6b1
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveDecals
   - hash:
       serializedVersion: 2
       Hash: 7c6b91d859cdd32bf89af4c6ecb3619e
@@ -296,6 +305,12 @@ ScriptsOnlyBuild:
     className: UnityOnCollisionStayMessageListener
   - hash:
       serializedVersion: 2
+      Hash: 89e2f93ac259634cf81b44c25bc0fc9a
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveShadowmapResolution
+  - hash:
+      serializedVersion: 2
       Hash: f854af586011dd194574f89546642e29
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -306,12 +321,6 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp
     namespaceName: TMPro.Examples
     className: SimpleScript
-  - hash:
-      serializedVersion: 2
-      Hash: 48b0df259dd71db685471c283d6a1bd6
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: GameSceneManager
   - hash:
       serializedVersion: 2
       Hash: b12640dfdb5966813e9dd838893e6c4a
@@ -422,6 +431,12 @@ ScriptsOnlyBuild:
     className: TMP_TextSelector_A
   - hash:
       serializedVersion: 2
+      Hash: 755ec4bae2b3b16276059d8895b977ea
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveSorting
+  - hash:
+      serializedVersion: 2
       Hash: fce9b835d1e8b08e7ecea8da19f21986
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -446,6 +461,12 @@ ScriptsOnlyBuild:
     className: TMP_SelectionCaret
   - hash:
       serializedVersion: 2
+      Hash: b2afee545f7607bd2d2b5a2ae227d428
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveShadowDistance
+  - hash:
+      serializedVersion: 2
       Hash: 28fd3d045acc780719a17f02073eb448
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
@@ -456,6 +477,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
     className: TMP_SpriteAnimator
+  - hash:
+      serializedVersion: 2
+      Hash: 07f6b7f433c8738108c47c5dd5c7c7cd
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptivePhysics
   - hash:
       serializedVersion: 2
       Hash: e9c263f3de58eab3d5fb7f042a2b8bfb
@@ -482,6 +509,12 @@ ScriptsOnlyBuild:
     className: TestResultRendererCallback
   - hash:
       serializedVersion: 2
+      Hash: c77e7f80798b9c346f7ef512d203b0e5
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveBatching
+  - hash:
+      serializedVersion: 2
       Hash: b98001682cba83786775c9e415b89a61
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -498,6 +531,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: ToggleGroup
+  - hash:
+      serializedVersion: 2
+      Hash: aa6623e19c6d8364fa7ccbec13f130b4
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveFramerate
   - hash:
       serializedVersion: 2
       Hash: 915204dac8acad99f076d6e72ada0a0f
@@ -548,16 +587,16 @@ ScriptsOnlyBuild:
     className: UnityOnTransformParentChangedMessageListener
   - hash:
       serializedVersion: 2
+      Hash: 1534ee51e05e98ee8623a7ff6cd75ae9
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveShadowQuality
+  - hash:
+      serializedVersion: 2
       Hash: c6369b4cc3be620d6c9300e920bc3d52
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: VariablesAsset
-  - hash:
-      serializedVersion: 2
-      Hash: df48c9eb0764f83adcd29256f70760cd
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: UDP_Server
   - hash:
       serializedVersion: 2
       Hash: 7bdff9e91edfd9600f92a185def7e34a
@@ -638,10 +677,10 @@ ScriptsOnlyBuild:
     className: ServerTCP
   - hash:
       serializedVersion: 2
-      Hash: 4c225ee7c31c014a8dcc27283e158137
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: ClientUDP
+      Hash: d5125db89c6b164bbac723664bbc5ee6
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptivePerformanceManager
   - hash:
       serializedVersion: 2
       Hash: 0a3f328f3ea906bbbcf794f4c27ee59d
@@ -672,6 +711,12 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: EnvMapAnimator
+  - hash:
+      serializedVersion: 2
+      Hash: b0c8a1b11b1433071a20fd6e4c73a5f3
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveViewDistance
   - hash:
       serializedVersion: 2
       Hash: 665da785348a8806bf1524fe10742a60
@@ -774,6 +819,12 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp
     namespaceName: TMPro.Examples
     className: TMPro_InstructionOverlay
+  - hash:
+      serializedVersion: 2
+      Hash: 9126d0be22d964159df51d6d53b879a9
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveTransparency
   - hash:
       serializedVersion: 2
       Hash: a75a568ce902366f4e82fc98ca6108f5
@@ -932,16 +983,28 @@ ScriptsOnlyBuild:
     className: TMP_FontAsset
   - hash:
       serializedVersion: 2
+      Hash: 58785bcba46466317503951ef6e42079
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptivePerformanceGeneralSettings
+  - hash:
+      serializedVersion: 2
+      Hash: be643a0a4d647cb5696c4feebba95a24
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptivePerformanceManagerSpawner
+  - hash:
+      serializedVersion: 2
       Hash: 0dd14e314956b0d0d83ffcffe60aa46f
     assemblyName: Assembly-CSharp
     namespaceName: TMPro
     className: TMP_DigitValidator
   - hash:
       serializedVersion: 2
-      Hash: e47d77dff9f7fd0f54480d10a98b411f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: GameManager
+      Hash: 25f9856e61afbe27958849616102671e
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveShadowCascade
   - hash:
       serializedVersion: 2
       Hash: d82086405f46de14829f6b4bcbdd8fc9
@@ -1016,16 +1079,16 @@ ScriptsOnlyBuild:
     className: AspectRatioFitter
   - hash:
       serializedVersion: 2
-      Hash: 8b329ff78d10dc022eb8d09702b50051
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: ClientTCP
-  - hash:
-      serializedVersion: 2
       Hash: 9637dcdf3068a91dfe653e61bb82f13d
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
     className: TextMeshProUGUI
+  - hash:
+      serializedVersion: 2
+      Hash: 8994247ddacb8f8856e38bfaae72d2fe
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveResolution
   - hash:
       serializedVersion: 2
       Hash: da5a949a0bbd2ff91bc51c5805c2c41f
@@ -1080,12 +1143,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
     className: TextContainer
-  - hash:
-      serializedVersion: 2
-      Hash: f80274ad8ad3e32c0bdeace1e899a654
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: UDP_Client
   - hash:
       serializedVersion: 2
       Hash: 7fdd3ee28e9042c3ec83463d0bb3b230
@@ -1214,6 +1271,12 @@ ScriptsOnlyBuild:
     className: UnityOnSubmitMessageListener
   - hash:
       serializedVersion: 2
+      Hash: 1a46629d5ec5009883efbe630a6b52e3
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveLayerCulling
+  - hash:
+      serializedVersion: 2
       Hash: 5ebc58ec194dd44630b25fcc270ad4af
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
@@ -1254,6 +1317,30 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: ScrollRect
+  - hash:
+      serializedVersion: 2
+      Hash: 710ae1c9b325f59a36007abceb039638
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveLOD
+  - hash:
+      serializedVersion: 2
+      Hash: eb0596742065f51f7812a64eb77d16c3
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: IAdaptivePerformanceSettings
+  - hash:
+      serializedVersion: 2
+      Hash: 32907f2a37539cbf6b4bf636831ef264
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptiveMSAA
+  - hash:
+      serializedVersion: 2
+      Hash: 67188d34689c9475455862bb822a1cc6
+    assemblyName: Unity.AdaptivePerformance
+    namespaceName: UnityEngine.AdaptivePerformance
+    className: AdaptivePerformanceManagerSettings
   - hash:
       serializedVersion: 2
       Hash: 9a174471d4db2c0c6d3ac47d2f818db1
@@ -1370,130 +1457,22 @@ ScriptsOnlyBuild:
     className: UnityOnSliderValueChangedMessageListener
   - hash:
       serializedVersion: 2
-      Hash: b0c8a1b11b1433071a20fd6e4c73a5f3
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveViewDistance
+      Hash: 8b329ff78d10dc022eb8d09702b50051
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: ClientTCP
   - hash:
       serializedVersion: 2
-      Hash: 07f6b7f433c8738108c47c5dd5c7c7cd
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptivePhysics
+      Hash: e47d77dff9f7fd0f54480d10a98b411f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GameManager
   - hash:
       serializedVersion: 2
-      Hash: b2afee545f7607bd2d2b5a2ae227d428
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveShadowDistance
-  - hash:
-      serializedVersion: 2
-      Hash: 89e2f93ac259634cf81b44c25bc0fc9a
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveShadowmapResolution
-  - hash:
-      serializedVersion: 2
-      Hash: aa6623e19c6d8364fa7ccbec13f130b4
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveFramerate
-  - hash:
-      serializedVersion: 2
-      Hash: 8994247ddacb8f8856e38bfaae72d2fe
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveResolution
-  - hash:
-      serializedVersion: 2
-      Hash: f235b66bbaad891803c9d777dfd67956
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveLut
-  - hash:
-      serializedVersion: 2
-      Hash: 67188d34689c9475455862bb822a1cc6
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptivePerformanceManagerSettings
-  - hash:
-      serializedVersion: 2
-      Hash: 25f9856e61afbe27958849616102671e
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveShadowCascade
-  - hash:
-      serializedVersion: 2
-      Hash: c77e7f80798b9c346f7ef512d203b0e5
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveBatching
-  - hash:
-      serializedVersion: 2
-      Hash: 9126d0be22d964159df51d6d53b879a9
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveTransparency
-  - hash:
-      serializedVersion: 2
-      Hash: 1534ee51e05e98ee8623a7ff6cd75ae9
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveShadowQuality
-  - hash:
-      serializedVersion: 2
-      Hash: 58785bcba46466317503951ef6e42079
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptivePerformanceGeneralSettings
-  - hash:
-      serializedVersion: 2
-      Hash: 32907f2a37539cbf6b4bf636831ef264
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveMSAA
-  - hash:
-      serializedVersion: 2
-      Hash: 28be742dfed98d22c3acbf7df788a6b1
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveDecals
-  - hash:
-      serializedVersion: 2
-      Hash: d5125db89c6b164bbac723664bbc5ee6
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptivePerformanceManager
-  - hash:
-      serializedVersion: 2
-      Hash: be643a0a4d647cb5696c4feebba95a24
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptivePerformanceManagerSpawner
-  - hash:
-      serializedVersion: 2
-      Hash: 755ec4bae2b3b16276059d8895b977ea
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveSorting
-  - hash:
-      serializedVersion: 2
-      Hash: 1a46629d5ec5009883efbe630a6b52e3
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveLayerCulling
-  - hash:
-      serializedVersion: 2
-      Hash: eb0596742065f51f7812a64eb77d16c3
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: IAdaptivePerformanceSettings
-  - hash:
-      serializedVersion: 2
-      Hash: 710ae1c9b325f59a36007abceb039638
-    assemblyName: Unity.AdaptivePerformance
-    namespaceName: UnityEngine.AdaptivePerformance
-    className: AdaptiveLOD
+      Hash: 137768cb2ff93fdd7115855ac3ec0ad9
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: RandomMovement
   - hash:
       serializedVersion: 2
       Hash: 7b4171a62c1b4d6205d51389fa7853c1
@@ -1508,10 +1487,28 @@ ScriptsOnlyBuild:
     className: Logger
   - hash:
       serializedVersion: 2
-      Hash: 137768cb2ff93fdd7115855ac3ec0ad9
+      Hash: df48c9eb0764f83adcd29256f70760cd
     assemblyName: Assembly-CSharp
     namespaceName: 
-    className: RandomMovement
+    className: UDP_Server
+  - hash:
+      serializedVersion: 2
+      Hash: f80274ad8ad3e32c0bdeace1e899a654
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: UDP_Client
+  - hash:
+      serializedVersion: 2
+      Hash: 4c225ee7c31c014a8dcc27283e158137
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: ClientUDP
+  - hash:
+      serializedVersion: 2
+      Hash: 48b0df259dd71db685471c283d6a1bd6
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GameSceneManager
   platform: 19
   scenePathNames:
   - Assets/Scenes/Start.unity

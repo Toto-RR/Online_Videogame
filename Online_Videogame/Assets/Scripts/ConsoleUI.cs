@@ -14,21 +14,37 @@ public class ConsoleUI : MonoBehaviour
 
     void OnDisable()
     {
-        //Application.logMessageReceived -= HandleLog;
+        Application.logMessageReceived -= HandleLog;
     }
 
     private void HandleLog(string logString, string stackTrace, LogType type)
     {
-        // Debug para verificar si se captura el evento
-        Debug.Log($"HandleLog capturado: {logString}");
+        // Agregar el mensaje al texto de la consola
+        AppendToConsole(logString);
+    }
 
-        logOutput += $"{logString}\n";
+    private void AppendToConsole(string message)
+    {
+        logOutput += $"{message}\n";
+
+        // Limitar el número de líneas
         var lines = logOutput.Split('\n');
         if (lines.Length > maxLogLines)
         {
             logOutput = string.Join("\n", lines, lines.Length - maxLogLines, maxLogLines);
         }
-        consoleText.text = logOutput;
+
+        // Actualizar el texto en la UI
+        if (consoleText != null)
+        {
+            consoleText.text = logOutput;
+        }
+    }
+
+    // Método público para registrar mensajes adicionales
+    public void LogToConsole(string message)
+    {
+        AppendToConsole(message); // Añadir mensaje a la consola
     }
 
     // Limpiar la consola si es necesario
@@ -43,15 +59,14 @@ public class ConsoleUI : MonoBehaviour
 
     void Update()
     {
-
-        // Detecta si la tecla 'C' ha sido presionada para limpiar la consola
+        // Detectar si se presionan teclas específicas
         if (Input.GetKeyDown(KeyCode.C))
         {
             ClearConsole(); // Limpia la consola
         }
         if (Input.GetKeyUp(KeyCode.M))
         {
-            Debug.Log("Mensaje de prueba");
+            LogToConsole("Mensaje de prueba desde el código.");
         }
     }
 }

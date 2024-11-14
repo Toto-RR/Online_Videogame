@@ -6,6 +6,7 @@ ScriptsOnlyBuild:
     - GameManager
     - GameSceneManager
     - RandomMovement
+    - SceneChanger
     - UDP_Client
     - UDP_Server
     Unity.AdaptivePerformance.Editor.dll:
@@ -23,6 +24,7 @@ ScriptsOnlyBuild:
     - TMPro.TMP_StyleSheet
     Unity.TextMeshPro.dll:
     - TMPro.TMP_FontAsset
+    - TMPro.TMP_InputField
     - TMPro.TMP_Settings
     - TMPro.TMP_SpriteAsset
     - TMPro.TMP_StyleSheet
@@ -38,6 +40,8 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.CanvasScaler
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
+    - UnityEngine.UI.LayoutElement
+    - UnityEngine.UI.RectMask2D
   serializedClasses:
     Unity.TextMeshPro:
     - TMPro.FaceInfo_Legacy
@@ -49,6 +53,11 @@ ScriptsOnlyBuild:
     - TMPro.TMP_GlyphAdjustmentRecord
     - TMPro.TMP_GlyphPairAdjustmentRecord
     - TMPro.TMP_GlyphValueRecord
+    - TMPro.TMP_InputField/OnChangeEvent
+    - TMPro.TMP_InputField/SelectionEvent
+    - TMPro.TMP_InputField/SubmitEvent
+    - TMPro.TMP_InputField/TextSelectionEvent
+    - TMPro.TMP_InputField/TouchScreenKeyboardEvent
     - TMPro.TMP_Sprite
     - TMPro.TMP_SpriteCharacter
     - TMPro.TMP_SpriteGlyph
@@ -73,10 +82,22 @@ ScriptsOnlyBuild:
   methodsToPreserve:
   - assembly: Assembly-CSharp
     fullTypeName: GameManager
-    methodName: StartHost
+    methodName: JoinServer
   - assembly: Assembly-CSharp
     fullTypeName: GameManager
-    methodName: JoinServer
+    methodName: StartHost
+  - assembly: UnityEngine.CoreModule
+    fullTypeName: UnityEngine.GameObject
+    methodName: SetActive
+  - assembly: UnityEngine.CoreModule
+    fullTypeName: UnityEngine.GameObject
+    methodName: SetActive
+  - assembly: UnityEngine.CoreModule
+    fullTypeName: UnityEngine.GameObject
+    methodName: SetActive
+  - assembly: UnityEngine.CoreModule
+    fullTypeName: UnityEngine.GameObject
+    methodName: SetActive
   sceneClasses:
     Assets/Scenes/GameScene.unity:
     - Class: 1
@@ -181,6 +202,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1616}
     - Class: 114
+      Script: {instanceID: 1744}
+    - Class: 114
       Script: {instanceID: 2224}
     - Class: 114
       Script: {instanceID: 2668}
@@ -189,11 +212,17 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3200}
     - Class: 114
+      Script: {instanceID: 3480}
+    - Class: 114
       Script: {instanceID: 4118}
+    - Class: 114
+      Script: {instanceID: 4214}
     - Class: 114
       Script: {instanceID: 4228}
     - Class: 114
       Script: {instanceID: 4490}
+    - Class: 114
+      Script: {instanceID: 5048}
     - Class: 114
       Script: {instanceID: 5238}
     - Class: 114

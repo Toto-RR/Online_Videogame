@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638670400574666939
-    m_Hash: 3523616450
+      ticks: 638672792510922268
+    m_Hash: 254771683
   m_LockFileStatus:
     m_FilePath: D:/GRADO/GRADO/4toCARRERA/Xarxes i Videojocs Online/Repositorio/Online_Videogame/Online_Videogame/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638670400575449198
-    m_Hash: 773024684
+      ticks: 638672792510922268
+    m_Hash: 4009140636
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:

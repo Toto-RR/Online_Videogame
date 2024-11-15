@@ -1,67 +1,24 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 
-[Serializable]
-public class PlayerData
-{
-    public string playerName;
-    public Vector3 position;
-    public Quaternion rotation;
-    public string command; // "MOVE", "SHOOT", "JOIN"
-}
-
 public class UDP_Server : MonoBehaviour
 {
     private Socket socket;
-    private EndPoint clientEndPoint = null;
-    private EndPoint remoteEndPoint;
-    private bool isServerRunning = false;
-
-    // Datos del propio host
-    public string hostName = "HostPlayer";
-    public GameObject hostPlayerObject;
-    public GameObject clientPlayerPrefab;  // Prefab que representa al cliente en la escena
-    private GameObject clientPlayerObject; // GameObject del cliente instanciado
-
-    private ConsoleUI consoleUI;
-
-    private Vector3 lastPos;
-    private Quaternion lastRot;
-
-    // Buffer persistente para la recepción de datos
+    private Dictionary<string, EndPoint> connectedClients = new Dictionary<string, EndPoint>();
+    private Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>(); // Diccionario para los jugadores instanciados
+    private GameState gameState = new GameState();
     private byte[] buffer = new byte[1024];
+
+    public GameObject playerPrefab; // Referencia al prefab del jugador
 
     void Start()
     {
         Application.runInBackground = true;
-
-        if (clientPlayerPrefab == null)
-        {
-            Debug.LogError("El prefab del cliente no está asignado en el inspector.");
-        }
-
-        consoleUI = FindObjectOfType<ConsoleUI>();
-
-        lastPos = hostPlayerObject.transform.position;
-        lastRot = hostPlayerObject.transform.rotation;
-
         StartServer();
-    }
-
-    private void Update()
-    {
-        if (isServerRunning && clientEndPoint != null)
-        {
-            if (lastRot != hostPlayerObject.transform.rotation || lastPos != hostPlayerObject.transform.position)
-            {
-                lastRot = hostPlayerObject.transform.rotation;
-                lastPos = hostPlayerObject.transform.position;
-                BroadcastGameState();
-            }
-        }
     }
 
     public void StartServer()
@@ -70,134 +27,101 @@ public class UDP_Server : MonoBehaviour
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.Bind(ipep);
 
-        // Configurar opciones de socket
-        socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 0);
-        socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-
-        Debug.Log($"Servidor (Host) iniciado en {((IPEndPoint)socket.LocalEndPoint).Address}:{((IPEndPoint)socket.LocalEndPoint).Port}");
-        isServerRunning = true;
+        Debug.Log($"Servidor iniciado en {ipep.Address}:{ipep.Port}");
         BeginReceive();
     }
 
     private void BeginReceive()
     {
-        remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-
-        Debug.Log("Comenzando a recibir mensajes");
+        EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
         socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
         {
             try
             {
-                int recv = socket.EndReceiveFrom(ar, ref remoteEndPoint);
-                string receivedMessage = Encoding.ASCII.GetString(buffer, 0, recv);
+                int receivedBytes = socket.EndReceiveFrom(ar, ref remoteEndPoint);
+                string jsonData = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
 
-                //Registra la dirección del Cliente
-                clientEndPoint = remoteEndPoint;
-
-                HandleMessage(receivedMessage);
+                HandleMessage(jsonData, remoteEndPoint);
+                BeginReceive();
             }
-            catch (SocketException ex)
+            catch (Exception ex)
             {
                 Debug.LogError($"Error en la recepción: {ex.Message}");
-            }
-            finally
-            {
-                // Continuar escuchando mensajes
-                BeginReceive();
             }
         }, null);
     }
 
-    private void HandleMessage(string message)
+    private void HandleMessage(string jsonData, EndPoint remoteEndPoint)
     {
-        PlayerData playerData = JsonUtility.FromJson<PlayerData>(message);
-        //consoleUI.LogToConsole($"Mensaje recibido: {message}");
-
-        if (playerData.command == "JOIN")
+        try
         {
-            consoleUI.LogToConsole($"{playerData.playerName} se ha unido al servidor.");
-            if (clientPlayerPrefab != null)
+            PlayerData receivedData = JsonUtility.FromJson<PlayerData>(jsonData);
+
+            switch (receivedData.Command)
             {
-                InstantiateEnemy(playerData);
+                case "JOIN":
+                    AddPlayer(receivedData, remoteEndPoint);
+                    break;
+                case "MOVE":
+                    UpdatePlayerPosition(receivedData);
+                    break;
+                default:
+                    Debug.LogWarning($"Comando no reconocido: {receivedData.Command}");
+                    break;
             }
+
             BroadcastGameState();
         }
-        else if (playerData.command == "MOVE")
+        catch (Exception ex)
         {
-            UpdateClientPosition(playerData);
-        }
-        else if (playerData.command == "SHOOT")
-        {
-            consoleUI.LogToConsole($"{playerData.playerName} ha disparado.");
-            BroadcastShootAction(playerData);
-        }
-
-        // Esta linea aqui hace que la posicion del host se actualice siempre que el cliente
-        // también se esté moviendo = no me vale
-        //BroadcastGameState();
-    }
-
-    private void UpdateClientPosition(PlayerData playerData)
-    {
-        Debug.Log($"El cliente {playerData.playerName} se movió a la posición {playerData.position}");
-        if (clientPlayerObject != null)
-        {
-            clientPlayerObject.transform.position = playerData.position;
-            clientPlayerObject.transform.rotation = playerData.rotation;
+            Debug.LogError($"Error al procesar mensaje: {ex.Message}");
         }
     }
 
-    public void BroadcastGameState()
+    private void AddPlayer(PlayerData playerData, EndPoint remoteEndPoint)
     {
-        if (clientEndPoint != null && isServerRunning)
+        if (!connectedClients.ContainsKey(playerData.PlayerId))
         {
-            PlayerData hostData = new PlayerData
+            connectedClients[playerData.PlayerId] = remoteEndPoint;
+
+            // Instanciar el prefab del jugador y agregarlo al diccionario de jugadores
+            GameObject playerObject = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+            playerObject.name = playerData.PlayerName;
+            playerObjects[playerData.PlayerId] = playerObject;
+
+            // Añadir el jugador al estado del juego
+            gameState.Players.Add(playerData);
+            Debug.Log($"Jugador {playerData.PlayerName} añadido.");
+        }
+    }
+
+    private void UpdatePlayerPosition(PlayerData playerData)
+    {
+        PlayerData player = gameState.Players.Find(p => p.PlayerId == playerData.PlayerId);
+        if (player != null)
+        {
+            player.Position = playerData.Position;
+            player.Rotation = playerData.Rotation;
+
+            // Actualizar el objeto del jugador en la escena
+            if (playerObjects.ContainsKey(playerData.PlayerId))
             {
-                playerName = hostName,
-                position = hostPlayerObject.transform.position,
-                rotation = hostPlayerObject.transform.rotation,
-                command = "UPDATE"
-            };
-
-            consoleUI.LogToConsole(clientEndPoint.ToString());
-            SendData(hostData);
+                GameObject playerObject = playerObjects[playerData.PlayerId];
+                playerObject.transform.position = playerData.Position;
+                playerObject.transform.rotation = playerData.Rotation;
+            }
         }
     }
 
-    private void SendData(PlayerData hostData)
+    private void BroadcastGameState()
     {
-        consoleUI.LogToConsole("Sending data");
-        string json = JsonUtility.ToJson(hostData);
-        byte[] data = Encoding.ASCII.GetBytes(json);
-        socket.SendTo(data, data.Length, SocketFlags.None, clientEndPoint);
-        consoleUI.LogToConsole("Data send successfull");
-    }
+        string jsonState = JsonUtility.ToJson(gameState);
+        byte[] data = Encoding.UTF8.GetBytes(jsonState);
 
-    private void BroadcastShootAction(PlayerData shooterData)
-    {
-        string json = JsonUtility.ToJson(shooterData);
-        byte[] data = Encoding.ASCII.GetBytes(json);
-        socket.SendTo(data, data.Length, SocketFlags.None, clientEndPoint);
-    }
-
-    public void HostShoot()
-    {
-        PlayerData hostShootData = new PlayerData
+        foreach (var client in connectedClients.Values)
         {
-            playerName = hostName,
-            position = hostPlayerObject.transform.position,
-            command = "SHOOT"
-        };
-        BroadcastShootAction(hostShootData);
-    }
-
-    public void InstantiateEnemy(PlayerData playerData)
-    {
-        consoleUI.LogToConsole("Instanciando jugador...");
-        clientPlayerObject = Instantiate(clientPlayerPrefab, new Vector3(-1, 1, 0), Quaternion.identity);
-        clientPlayerObject.name = playerData.playerName;
-        clientPlayerObject.SetActive(true);
-        Debug.Log("Jugador instanciado por completo");
+            socket.SendTo(data, data.Length, SocketFlags.None, client);
+        }
     }
 
     void OnApplicationQuit()

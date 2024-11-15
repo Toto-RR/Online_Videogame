@@ -1,40 +1,49 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameSceneManager : MonoBehaviour
 {
-    public UDP_Server hostServerScript;
-    public UDP_Client clientScript;
-    public GameObject hostPlayer;
-    public GameObject clientPlayer;
+    public UDP_Server hostServerScript;      // Script para el host
+    public UDP_Client clientScript;          // Script para el cliente
+    public GameObject hostPlayer;            // Prefab del jugador del Host
+    public GameObject clientPlayer;          // Prefab del jugador del Cliente
+    public GameConfigSO gameConfig;          // Referencia al GameConfigSO
 
     void Start()
     {
-        bool isHost = DetermineIfHost(); // Función para determinar el rol (puedes usar un botón o una variable)
+        // Asegurarse de que el GameConfigSO esté asignado
+        if (gameConfig == null)
+        {
+            Debug.LogError("GameConfigSO no está asignado en el GameSceneManager.");
+            return;
+        }
+
+        bool isHost = DetermineIfHost(); // Función para determinar el rol (Host o Cliente)
 
         if (isHost)
         {
-            // Activar el servidor (host) y su jugador
-            hostServerScript.enabled = true;
-            clientScript.enabled = false;
-            hostPlayer.SetActive(true);
-            clientPlayer.SetActive(false);
+            // Si es Host
+            hostServerScript.enabled = true;   // Activar el servidor (host)
+            clientScript.enabled = false;      // Desactivar el script del cliente
+            hostPlayer.SetActive(true);        // Activar el jugador del host
+            clientPlayer.SetActive(false);     // Desactivar el jugador del cliente
         }
         else
         {
-            // Activar el cliente y su jugador
-            clientScript.enabled = true;
-            hostServerScript.enabled = false;
-            clientPlayer.SetActive(true);
-            hostPlayer.SetActive(false);
+            // Si es Cliente
+            clientScript.enabled = true;      // Activar el script del cliente
+            hostServerScript.enabled = false; // Desactivar el script del host
+            clientPlayer.SetActive(true);     // Activar el jugador del cliente
+            hostPlayer.SetActive(false);      // Desactivar el jugador del host
         }
     }
 
     bool DetermineIfHost()
     {
-        string playerRole = PlayerPrefs.GetString("PlayerRole");
-
-        if (playerRole == "Host") return true;
-        return false;
+        // Asegurarse de que el rol esté correctamente asignado en el GameConfigSO
+        if (gameConfig.PlayerRole == "Host")
+        {
+            return true; // Es el Host
+        }
+        return false; // Es el Cliente
     }
 }

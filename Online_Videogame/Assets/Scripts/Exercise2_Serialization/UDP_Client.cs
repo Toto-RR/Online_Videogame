@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -7,22 +9,19 @@ public class UDP_Client : MonoBehaviour
 {
     private Socket socket;
     private EndPoint serverEndPoint;
-    public string playerName = "ClientPlayer";
-    public GameObject playerObject;  // El GameObject del cliente
-    public GameObject hostPlayerPrefab;  // Prefab que representa al host en la escena
-    private GameObject hostPlayerObject; // GameObject del host instanciado
+    public string PlayerId = Guid.NewGuid().ToString(); // ID único del jugador
+    public string PlayerName = "Player";
+    public GameObject PlayerObject; // Prefab de jugador
 
-    private bool isConnected = false;
+    public GameObject playerPrefab; // Referencia al prefab de jugador
+    private Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>(); // Para instanciar jugadores en el cliente
 
-    private ConsoleUI consoleUI;
+    public GameConfigSO gameConfig;
 
     void Start()
     {
         Application.runInBackground = true;
-
-        ConnectToServer("127.0.0.1", 9050); // Dirección del servidor
-
-        consoleUI = FindObjectOfType<ConsoleUI>();
+        ConnectToServer(gameConfig.PlayerIP, 9050); // Cambia por la IP del servidor
     }
 
     public void ConnectToServer(string serverIP, int port)
@@ -30,84 +29,67 @@ public class UDP_Client : MonoBehaviour
         serverEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), port);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-        // Enviar nombre del cliente al host
-        PlayerData initialData = new PlayerData { playerName = playerName, position = Vector3.zero, command = "JOIN" };
-        string json = JsonUtility.ToJson(initialData);
-        Debug.Log($"Enviando mensaje JOIN: {json}");
-        SendData(json);
-
-        Debug.Log("Cliente conectado al servidor");
-
-        isConnected = true;
+        SendJoinRequest();
         BeginReceive();
+    }
+
+    private void SendJoinRequest()
+    {
+        PlayerData joinData = new PlayerData
+        {
+            PlayerId = PlayerId,
+            PlayerName = PlayerName,
+            Command = "JOIN",
+            Position = Vector3.zero,
+            Rotation = Quaternion.identity
+        };
+
+        string json = JsonUtility.ToJson(joinData);
+        byte[] data = Encoding.UTF8.GetBytes(json);
+        socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
     }
 
     private void BeginReceive()
     {
         byte[] buffer = new byte[1024];
-        EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-
-        socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
+        socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref serverEndPoint, (ar) =>
         {
             try
             {
-                consoleUI.LogToConsole("Recibiendo mensajes");
-                int recv = socket.EndReceiveFrom(ar, ref remoteEndPoint);
-                string receivedMessage = Encoding.ASCII.GetString(buffer, 0, recv);
+                int recv = socket.EndReceiveFrom(ar, ref serverEndPoint);
+                string jsonState = Encoding.UTF8.GetString(buffer, 0, recv);
 
-                HandleMessage(receivedMessage);
+                GameState gameState = JsonUtility.FromJson<GameState>(jsonState);
+                UpdateGameState(gameState);
+
                 BeginReceive();
             }
-            catch (SocketException e)
+            catch (Exception ex)
             {
-                consoleUI.LogToConsole($"Error {e.Message}");
+                Debug.LogError($"Error en recepción: {ex.Message}");
             }
         }, null);
     }
 
-    private void HandleMessage(string message)
+    private void UpdateGameState(GameState gameState)
     {
-        PlayerData hostData = JsonUtility.FromJson<PlayerData>(message);
-        //consoleUI.LogToConsole($"Mensaje recibido: {message}");
-
-        if (hostData.command == "UPDATE")
+        foreach (var player in gameState.Players)
         {
-            // Instanciar al host en la escena del cliente si no se ha hecho ya
-            if (hostPlayerObject == null && hostPlayerPrefab != null)
+            if (!playerObjects.ContainsKey(player.PlayerId))
             {
-                hostPlayerObject = Instantiate(hostPlayerPrefab, Vector3.zero, Quaternion.identity);
-                hostPlayerObject.name = hostData.playerName;
+                // Instanciar el prefab del jugador
+                GameObject newPlayer = Instantiate(playerPrefab, player.Position, player.Rotation);
+                playerObjects[player.PlayerId] = newPlayer;
+                newPlayer.name = player.PlayerName;
             }
-
-            // Actualizar la posición del host
-            if (hostPlayerObject != null)
+            else
             {
-                hostPlayerObject.transform.position = hostData.position;
-                hostPlayerObject.transform.rotation = hostData.rotation;
+                // Actualizar la posición y rotación de los jugadores ya existentes
+                GameObject playerObject = playerObjects[player.PlayerId];
+                playerObject.transform.position = player.Position;
+                playerObject.transform.rotation = player.Rotation;
             }
-            Debug.Log($"Actualización de la posición del host: {hostData.position}");
         }
-    }
-
-    public void SendMovementAndRotation(Vector3 pos, Quaternion rot)
-    {
-        if (isConnected)
-        {
-            PlayerData playerData = new PlayerData
-            {
-                playerName = playerName,
-                position = pos,
-                rotation = rot,
-                command = "MOVE"
-            };
-            SendData(JsonUtility.ToJson(playerData));
-        }
-    }
-
-    private void SendData(string data)
-    {
-        byte[] buffer = Encoding.ASCII.GetBytes(data);
-        socket.SendTo(buffer, buffer.Length, SocketFlags.None, serverEndPoint);
     }
 
     void OnApplicationQuit()

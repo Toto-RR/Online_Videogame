@@ -65,7 +65,7 @@ public class FPSController : MonoBehaviour
             lastClientRotation = transform.rotation;
 
             //Manda la posición y rotación al Cliente
-            udpClient.SendMovementAndRotation(lastClientPosition, lastClientRotation);
+            //udpClient.SendMovementAndRotation(lastClientPosition, lastClientRotation);
         }
 
         //Host

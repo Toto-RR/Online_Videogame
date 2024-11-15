@@ -285,9 +285,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1df13cbc51d6cd74ebace5c4908a94d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerName: Player1
-  playerObject: {fileID: 1043454163}
-  hostPlayerPrefab: {fileID: 5083942969399028199, guid: 034fee5b0bf3ddd43be017947fb0653d, type: 3}
+  PlayerId: f41af3d8-cfce-4d69-8d90-c8357c9f2acc
+  PlayerName: Player
+  PlayerObject: {fileID: 1043454163}
+  playerPrefab: {fileID: 5083942969399028199, guid: 034fee5b0bf3ddd43be017947fb0653d, type: 3}
+  gameConfig: {fileID: 11400000, guid: 49682b01b762dcc448c2a74c79295206, type: 2}
 --- !u!4 &251468868
 Transform:
   m_ObjectHideFlags: 0
@@ -636,6 +638,7 @@ MonoBehaviour:
   clientScript: {fileID: 251468867}
   hostPlayer: {fileID: 766553716}
   clientPlayer: {fileID: 1043454163}
+  gameConfig: {fileID: 11400000, guid: 49682b01b762dcc448c2a74c79295206, type: 2}
 --- !u!4 &1042785958
 Transform:
   m_ObjectHideFlags: 0
@@ -1103,9 +1106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea38c709ccc82954aa66a68038b9aaf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hostName: HostPlayer
-  hostPlayerObject: {fileID: 766553716}
-  clientPlayerPrefab: {fileID: 5083942969399028199, guid: 034fee5b0bf3ddd43be017947fb0653d, type: 3}
+  playerPrefab: {fileID: 5083942969399028199, guid: 034fee5b0bf3ddd43be017947fb0653d, type: 3}
 --- !u!4 &1385231240
 Transform:
   m_ObjectHideFlags: 0

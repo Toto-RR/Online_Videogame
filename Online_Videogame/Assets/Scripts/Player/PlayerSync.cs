@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerSync : MonoBehaviour
 {
     public static PlayerSync Instance { get; private set; }
-    public string PlayerId { get; private set; } 
+    public string PlayerId { get; private set; }
     public string PlayerName { get; private set; }
 
     public GameConfigSO gameConfig;
@@ -13,16 +13,37 @@ public class PlayerSync : MonoBehaviour
     private Vector3 lastPosition;
     private Quaternion lastRotation;
 
+    private IPlayerCommunicator playerCommunicator;
+
+    private bool isHost = false;
+
     private void Awake()
     {
         Instance = this;
+        CheckIfHost();
+
+        // Definir qué tipo de comunicador se va a usar, si es servidor o cliente.
+        if (isHost)
+        {
+            playerCommunicator = new ServerCommunicator();  // Usa la clase del servidor
+        }
+        else
+        {
+            playerCommunicator = new ClientCommunicator();  // Usa la clase del cliente
+        }
+    }
+
+    private void CheckIfHost()
+    {
+        if (gameConfig.PlayerRole == "Host") isHost = true;
+        else isHost = false;
     }
 
     private IEnumerator WaitForClientInitialization()
     {
-        while (UDP_Client.Instance.isConnected == false)
+        while (!playerCommunicator.IsConnected)
         {
-            Debug.LogWarning("Esperando a que UDP_Client se inicialice...");
+            Debug.LogWarning("Esperando a que se inicialice la comunicación...");
             yield return null;
         }
 
@@ -33,6 +54,7 @@ public class PlayerSync : MonoBehaviour
         lastPosition = transform.position;
         lastRotation = transform.rotation;
 
+        // Enviar solicitud de "JOIN" o cualquier otro comando inicial
         SendJoinRequest();
     }
 
@@ -57,7 +79,7 @@ public class PlayerSync : MonoBehaviour
             Rotation = transform.rotation
         };
 
-        UDP_Client.Instance.SendMessage(joinData);
+        playerCommunicator.SendMessage(joinData);
     }
 
     private void SendPositionUpdate()
@@ -75,7 +97,7 @@ public class PlayerSync : MonoBehaviour
                 Rotation = transform.rotation
             };
 
-            UDP_Client.Instance.SendMessage(moveData);
+            playerCommunicator.SendMessage(moveData);
         }
     }
 }

@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
 
         // Establecer nombre en GameConfigSO
         gameConfig.SetPlayerName(hostNameInputField.text);
-        gameConfig.SetRole("Host", true);
+        gameConfig.SetRole("Host");
 
         Debug.Log("Starting as Host");
         GoToGameScene();
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
 
         // Establecer IP en GameConfigSO
         gameConfig.SetPlayerIP(ipInputField.text);
-        gameConfig.SetRole("Client", false);
+        gameConfig.SetRole("Client");
 
         Debug.Log("Starting as Client");
         GoToGameScene();

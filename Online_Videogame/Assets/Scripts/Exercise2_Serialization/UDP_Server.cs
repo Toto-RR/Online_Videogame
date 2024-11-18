@@ -12,24 +12,28 @@ public class UDP_Server : MonoBehaviour
     private Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>();
     private GameState gameState = new GameState();
     private byte[] buffer = new byte[1024];
+    public static UDP_Server Instance;
 
     public GameObject playerPrefab;
+    public ConsoleUI consoleUI;
 
-    public GameObject serverPlayerObject; // Referencia al objeto del servidor
-    private string serverPlayerId;
-    private Vector3 lastPosition;
-    private Quaternion lastRotation;
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
+        consoleUI = FindAnyObjectByType<ConsoleUI>();
+
         Application.runInBackground = true;
         StartServer();
-        AddServerAsPlayer();
+        //AddServerAsPlayer();
     }
 
     private void Update()
     {
-        CheckAndSendServerPosition();
+        //CheckAndSendServerPosition();
     }
 
     public void StartServer()
@@ -42,51 +46,12 @@ public class UDP_Server : MonoBehaviour
         BeginReceive();
     }
 
-    private void AddServerAsPlayer()
+    public void ServerUpdate(PlayerData playerData)
     {
-        serverPlayerId = Guid.NewGuid().ToString();
-        lastPosition = serverPlayerObject.transform.position;
-        lastRotation = serverPlayerObject.transform.rotation;
-
-        PlayerData serverPlayer = new PlayerData
-        {
-            PlayerId = serverPlayerId,
-            PlayerName = "Server",
-            Position = lastPosition,
-            Rotation = lastRotation,
-            Command = "JOIN"
-        };
-
-        gameState.Players.Add(serverPlayer);
-        playerObjects[serverPlayerId] = serverPlayerObject;
-        serverPlayerObject.name = "Server";
-
-        Debug.Log("El jugador del servidor ha sido registrado.");
-    }
-
-    private void CheckAndSendServerPosition()
-    {
-        Vector3 currentPosition = serverPlayerObject.transform.position;
-        Quaternion currentRotation = serverPlayerObject.transform.rotation;
-
-        if (currentPosition != lastPosition || currentRotation != lastRotation)
-        {
-            lastPosition = currentPosition;
-            lastRotation = currentRotation;
-
-            UpdateServerPlayerData();
-            BroadcastServerPosition();
-        }
-    }
-
-    private void UpdateServerPlayerData()
-    {
-        PlayerData serverPlayer = gameState.Players.Find(p => p.PlayerId == serverPlayerId);
-        if (serverPlayer != null)
-        {
-            serverPlayer.Position = lastPosition;
-            serverPlayer.Rotation = lastRotation;
-        }
+        //Lo añado a la lista
+        if(playerData.Command == "JOIN") AddPlayerToList(playerData);
+        if(playerData.Command == "MOVE") UpdatePlayerPosition(playerData);
+        BroadcastServerPosition();
     }
 
     private void BroadcastServerPosition()
@@ -138,7 +103,6 @@ public class UDP_Server : MonoBehaviour
                     Debug.LogWarning($"Comando no reconocido: {receivedData.Command}");
                     break;
             }
-
             BroadcastServerPosition();
         }
         catch (Exception ex)
@@ -157,9 +121,10 @@ public class UDP_Server : MonoBehaviour
             playerObject.name = playerData.PlayerName;
             playerObjects[playerData.PlayerId] = playerObject;
 
-            gameState.Players.Add(playerData);
+            //gameState.Players.Add(playerData);
+            AddPlayerToList(playerData);
 
-            Debug.Log($"Jugador {playerData.PlayerName} añadido.");
+            consoleUI.LogToConsole($"Jugador {playerData.PlayerName} añadido.");
         }
     }
 
@@ -178,6 +143,13 @@ public class UDP_Server : MonoBehaviour
                 playerObject.transform.rotation = playerData.Rotation;
             }
         }
+    }
+
+    void AddPlayerToList(PlayerData playerData)
+    {
+        gameState.Players.Add(playerData);
+        consoleUI.LogToConsole("Player added: " + playerData.PlayerName);
+        consoleUI.LogToConsole("Total Players: " + gameState.Players.Count);
     }
 
     void OnApplicationQuit()

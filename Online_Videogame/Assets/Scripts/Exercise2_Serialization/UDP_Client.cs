@@ -20,6 +20,8 @@ public class UDP_Client : MonoBehaviour
     public static UDP_Client Instance;
     public ConsoleUI consoleUI;
 
+    private int lastPlayerCount = 0;
+
 
     private void Awake()
     {
@@ -66,8 +68,6 @@ public class UDP_Client : MonoBehaviour
                 int recv = socket.EndReceiveFrom(ar, ref serverEndPoint);
                 string jsonState = Encoding.UTF8.GetString(buffer, 0, recv);
 
-                consoleUI.LogToConsole($"Cliente recibió: {jsonState}"); // Log para verificar recepción
-
                 GameState gameState = JsonUtility.FromJson<GameState>(jsonState);
                 UpdateGameState(gameState);
 
@@ -82,34 +82,30 @@ public class UDP_Client : MonoBehaviour
 
     private void UpdateGameState(GameState gameState)
     {
-        consoleUI.LogToConsole("Updating game state...");
         foreach (var player in gameState.Players)
         { 
-            consoleUI.LogToConsole("Client: " + player.PlayerName);
-            consoleUI.LogToConsole("Moved to: " + player.Position);
-
             if (player.PlayerId == PlayerSync.Instance.PlayerId)
             {
-                // Ignorar las actualizaciones para el propio cliente
+                // No actualizar el movimiento propio
                 continue;
             }
             if (!playerObjects.ContainsKey(player.PlayerId))
             {
                 // Instanciar el prefab del jugador
-                consoleUI.LogToConsole("New player instantiated, ID: " + player.PlayerId);
                 GameObject newPlayer = Instantiate(playerPrefab, player.Position, player.Rotation);
                 playerObjects[player.PlayerId] = newPlayer;
                 newPlayer.name = player.PlayerName;
             }
             else
             {
-                consoleUI.LogToConsole("Transform of player " + player.PlayerId + " updated");
                 // Actualizar la posición y rotación de los jugadores ya existentes
                 GameObject playerObject = playerObjects[player.PlayerId];
                 playerObject.transform.position = player.Position;
                 playerObject.transform.rotation = player.Rotation;
             }
         }
+
+        consoleUI.LogToConsole("Jugadores conectados: " + gameState.Players.Count);
     }
 
     void OnApplicationQuit()

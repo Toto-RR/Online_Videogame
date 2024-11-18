@@ -582,7 +582,7 @@ ScriptsOnlyBuild:
     className: VertexShakeA
   - hash:
       serializedVersion: 2
-      Hash: 9a0bd0ff5764b30b0e6781fdba577305
+      Hash: d3284f179276e2ac4a9f85768a6f44ff
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GameConfigSO
@@ -666,7 +666,7 @@ ScriptsOnlyBuild:
     className: VariablesAsset
   - hash:
       serializedVersion: 2
-      Hash: 374e01ef84b1534b5b609d56ff355e76
+      Hash: 65c8651d3dd48c36a79aa7e4b34c13da
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: UDP_Server

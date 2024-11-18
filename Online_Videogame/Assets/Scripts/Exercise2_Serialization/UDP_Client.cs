@@ -9,42 +9,45 @@ public class UDP_Client : MonoBehaviour
 {
     private Socket socket;
     private EndPoint serverEndPoint;
-    public string PlayerId = Guid.NewGuid().ToString(); // ID único del jugador
-    public string PlayerName = "Player";
-    public GameObject PlayerObject; // Prefab de jugador
+    internal bool isConnected = false;
 
-    public GameObject playerPrefab; // Referencia al prefab de jugador
+    public GameObject playerPrefab; //Enemy
+
     private Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>(); // Para instanciar jugadores en el cliente
 
     public GameConfigSO gameConfig;
 
+    public static UDP_Client Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
         Application.runInBackground = true;
-        ConnectToServer(gameConfig.PlayerIP, 9050); // Cambia por la IP del servidor
+        ConnectToServer(gameConfig.PlayerIP, 9050);
     }
 
     public void ConnectToServer(string serverIP, int port)
     {
         serverEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), port);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        isConnected = true;
 
-        SendJoinRequest();
         BeginReceive();
     }
 
-    private void SendJoinRequest()
+    public void SendMessage(PlayerData message)
     {
-        PlayerData joinData = new PlayerData
+        if (serverEndPoint == null)
         {
-            PlayerId = PlayerId,
-            PlayerName = PlayerName,
-            Command = "JOIN",
-            Position = PlayerObject.transform.position,
-            Rotation = PlayerObject.transform.rotation
-        };
+            Debug.LogError("Server EndPoint is null.");
+            return;
+        }
 
-        string json = JsonUtility.ToJson(joinData);
+        string json = JsonUtility.ToJson(message);
         byte[] data = Encoding.UTF8.GetBytes(json);
         socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
     }
@@ -59,8 +62,8 @@ public class UDP_Client : MonoBehaviour
                 int recv = socket.EndReceiveFrom(ar, ref serverEndPoint);
                 string jsonState = Encoding.UTF8.GetString(buffer, 0, recv);
 
-                GameState gameState = JsonUtility.FromJson<GameState>(jsonState);
-                UpdateGameState(gameState);
+                //GameState gameState = JsonUtility.FromJson<GameState>(jsonState);
+                //UpdateGameState(gameState);
 
                 BeginReceive();
             }

@@ -14,6 +14,7 @@ public class UDP_Server : MonoBehaviour
     private byte[] buffer = new byte[1024];
 
     public GameObject playerPrefab; // Referencia al prefab del jugador
+    public ConsoleUI consoleUI;
 
     void Start()
     {
@@ -27,12 +28,15 @@ public class UDP_Server : MonoBehaviour
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.Bind(ipep);
 
+        consoleUI = FindAnyObjectByType<ConsoleUI>();
+
         Debug.Log($"Servidor iniciado en {ipep.Address}:{ipep.Port}");
         BeginReceive();
     }
 
     private void BeginReceive()
     {
+        Debug.Log("Esperando mensaje...");
         EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
         socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
         {
@@ -60,6 +64,8 @@ public class UDP_Server : MonoBehaviour
             switch (receivedData.Command)
             {
                 case "JOIN":
+                    Debug.Log("Añadiendo jugador...");
+                    consoleUI.LogToConsole("Añadiendo jugador...");
                     AddPlayer(receivedData, remoteEndPoint);
                     break;
                 case "MOVE":
@@ -88,10 +94,12 @@ public class UDP_Server : MonoBehaviour
             GameObject playerObject = Instantiate(playerPrefab, playerData.Position, playerData.Rotation);
             playerObject.name = playerData.PlayerName;
             playerObjects[playerData.PlayerId] = playerObject;
+            consoleUI.LogToConsole($"Position received: {playerData.Position} añadido.");
 
             // Añadir el jugador al estado del juego
             gameState.Players.Add(playerData);
             Debug.Log($"Jugador {playerData.PlayerName} añadido.");
+            consoleUI.LogToConsole($"Jugador {playerData.PlayerName} añadido.");
         }
     }
 

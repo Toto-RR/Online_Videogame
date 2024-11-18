@@ -145,35 +145,35 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1568}
+      Script: {instanceID: 1570}
     - Class: 114
-      Script: {instanceID: 1616}
+      Script: {instanceID: 1618}
     - Class: 114
-      Script: {instanceID: 1948}
+      Script: {instanceID: 1950}
     - Class: 114
-      Script: {instanceID: 2670}
+      Script: {instanceID: 2672}
     - Class: 114
-      Script: {instanceID: 2886}
+      Script: {instanceID: 2888}
     - Class: 114
-      Script: {instanceID: 3156}
+      Script: {instanceID: 3158}
     - Class: 114
-      Script: {instanceID: 3234}
+      Script: {instanceID: 3236}
     - Class: 114
-      Script: {instanceID: 3452}
+      Script: {instanceID: 3454}
     - Class: 114
-      Script: {instanceID: 3636}
+      Script: {instanceID: 3638}
     - Class: 114
-      Script: {instanceID: 5250}
+      Script: {instanceID: 5252}
     - Class: 114
-      Script: {instanceID: 5996}
+      Script: {instanceID: 5998}
     - Class: 114
-      Script: {instanceID: 6056}
+      Script: {instanceID: 6058}
     - Class: 114
-      Script: {instanceID: 6334}
+      Script: {instanceID: 6336}
     - Class: 114
-      Script: {instanceID: 6558}
+      Script: {instanceID: 6560}
     - Class: 114
-      Script: {instanceID: 24160}
+      Script: {instanceID: 7870}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -216,41 +216,41 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1568}
+      Script: {instanceID: 1570}
     - Class: 114
-      Script: {instanceID: 1616}
+      Script: {instanceID: 1618}
     - Class: 114
-      Script: {instanceID: 1744}
+      Script: {instanceID: 1746}
     - Class: 114
-      Script: {instanceID: 2226}
+      Script: {instanceID: 2228}
     - Class: 114
-      Script: {instanceID: 2670}
+      Script: {instanceID: 2672}
     - Class: 114
-      Script: {instanceID: 2886}
+      Script: {instanceID: 2888}
     - Class: 114
-      Script: {instanceID: 3156}
+      Script: {instanceID: 3158}
     - Class: 114
-      Script: {instanceID: 3204}
+      Script: {instanceID: 3206}
     - Class: 114
-      Script: {instanceID: 3488}
+      Script: {instanceID: 3490}
     - Class: 114
-      Script: {instanceID: 4130}
+      Script: {instanceID: 4132}
     - Class: 114
-      Script: {instanceID: 4226}
+      Script: {instanceID: 4228}
     - Class: 114
-      Script: {instanceID: 4240}
+      Script: {instanceID: 4242}
     - Class: 114
-      Script: {instanceID: 4502}
+      Script: {instanceID: 4504}
     - Class: 114
-      Script: {instanceID: 5060}
+      Script: {instanceID: 5062}
     - Class: 114
-      Script: {instanceID: 5250}
+      Script: {instanceID: 5252}
     - Class: 114
-      Script: {instanceID: 5396}
+      Script: {instanceID: 5398}
     - Class: 114
-      Script: {instanceID: 5996}
+      Script: {instanceID: 5998}
     - Class: 114
-      Script: {instanceID: 6334}
+      Script: {instanceID: 6336}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -666,7 +666,7 @@ ScriptsOnlyBuild:
     className: VariablesAsset
   - hash:
       serializedVersion: 2
-      Hash: 588f73ab79416b5636eb9e7af9a5077b
+      Hash: 65c8651d3dd48c36a79aa7e4b34c13da
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: UDP_Server
@@ -1248,7 +1248,7 @@ ScriptsOnlyBuild:
     className: TextContainer
   - hash:
       serializedVersion: 2
-      Hash: 99f37bf1934d5d42a6fc8c7656787724
+      Hash: 85aa581154388f77529e3704a3c02d17
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: UDP_Client
@@ -1512,6 +1512,12 @@ ScriptsOnlyBuild:
     className: TeleType
   - hash:
       serializedVersion: 2
+      Hash: 2a02b469583a0c0e7dec263430b5964a
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PlayerSync
+  - hash:
+      serializedVersion: 2
       Hash: 9fb1c3ab48b256d508ecddd967f98652
     assemblyName: Assembly-CSharp
     namespaceName: TMPro.Examples
@@ -1564,12 +1570,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSliderValueChangedMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: 8ccb96931ade2d82b68be4e2f12c8417
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PlayerSync
   platform: 19
   scenePathNames:
   - Assets/Scenes/Start.unity

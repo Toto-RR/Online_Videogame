@@ -285,9 +285,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1df13cbc51d6cd74ebace5c4908a94d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerId: a09b1699-d3bf-4502-a002-775e83aa1c49
-  PlayerName: Player
-  PlayerObject: {fileID: 251468866}
   playerPrefab: {fileID: 5083942969399028199, guid: 034fee5b0bf3ddd43be017947fb0653d, type: 3}
   gameConfig: {fileID: 11400000, guid: 49682b01b762dcc448c2a74c79295206, type: 2}
 --- !u!4 &251468868
@@ -464,6 +461,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4178662654074549357, guid: 64c47f3434945af4680dbdfe18a448b2, type: 3}
   m_PrefabInstance: {fileID: 2415369842952167928}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &766553718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 766553716}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5072c823ee8c49d498ab1cef426aae53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameConfig: {fileID: 11400000, guid: 49682b01b762dcc448c2a74c79295206, type: 2}
 --- !u!1 &774129592 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6977644399616238725, guid: fb54fc13bda062f479c1ee93ef731d30, type: 3}
@@ -801,6 +811,10 @@ PrefabInstance:
       propertyPath: udpServer
       value: 
       objectReference: {fileID: 1385231239}
+    - target: {fileID: 6577908071497789492, guid: 64c47f3434945af4680dbdfe18a448b2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8429996998122714133, guid: 64c47f3434945af4680dbdfe18a448b2, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -835,8 +849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5072c823ee8c49d498ab1cef426aae53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerId: 1
-  PlayerName: Client
+  gameConfig: {fileID: 11400000, guid: 49682b01b762dcc448c2a74c79295206, type: 2}
 --- !u!1 &1099015298
 GameObject:
   m_ObjectHideFlags: 0
@@ -1200,6 +1213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 5083942969399028199, guid: 034fee5b0bf3ddd43be017947fb0653d, type: 3}
+  consoleUI: {fileID: 0}
 --- !u!4 &1385231240
 Transform:
   m_ObjectHideFlags: 0
@@ -1443,7 +1457,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4343605660399792654, guid: 64c47f3434945af4680dbdfe18a448b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 766553718}
   m_SourcePrefab: {fileID: 100100000, guid: 64c47f3434945af4680dbdfe18a448b2, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

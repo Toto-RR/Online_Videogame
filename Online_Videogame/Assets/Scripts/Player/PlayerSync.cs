@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class PlayerSync : MonoBehaviour
 {
-    private string PlayerId;
-    private string PlayerName;
+    public static PlayerSync Instance { get; private set; }
+    public string PlayerId { get; private set; } 
+    public string PlayerName { get; private set; }
 
     public GameConfigSO gameConfig;
 
     private Vector3 lastPosition;
     private Quaternion lastRotation;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private IEnumerator WaitForClientInitialization()
     {

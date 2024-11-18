@@ -287,6 +287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 5083942969399028199, guid: 034fee5b0bf3ddd43be017947fb0653d, type: 3}
   gameConfig: {fileID: 11400000, guid: 49682b01b762dcc448c2a74c79295206, type: 2}
+  consoleUI: {fileID: 0}
 --- !u!4 &251468868
 Transform:
   m_ObjectHideFlags: 0
@@ -813,7 +814,7 @@ PrefabInstance:
       objectReference: {fileID: 1385231239}
     - target: {fileID: 6577908071497789492, guid: 64c47f3434945af4680dbdfe18a448b2, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8429996998122714133, guid: 64c47f3434945af4680dbdfe18a448b2, type: 3}
       propertyPath: m_Enabled
@@ -1213,6 +1214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 5083942969399028199, guid: 034fee5b0bf3ddd43be017947fb0653d, type: 3}
+  serverPlayerObject: {fileID: 766553716}
   consoleUI: {fileID: 0}
 --- !u!4 &1385231240
 Transform:

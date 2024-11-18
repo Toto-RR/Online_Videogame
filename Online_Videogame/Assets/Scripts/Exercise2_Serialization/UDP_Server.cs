@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Sockets;
+using System.Net;
 using System.Text;
+using System;
 using UnityEngine;
 
 public class UDP_Server : MonoBehaviour
@@ -14,16 +14,22 @@ public class UDP_Server : MonoBehaviour
     private byte[] buffer = new byte[1024];
 
     public GameObject playerPrefab;
-    public GameObject serverPlayerObject;
-    public ConsoleUI consoleUI;
 
-    private string serverPlayerId; // ID único del servidor
+    public GameObject serverPlayerObject; // Referencia al objeto del servidor
+    private string serverPlayerId;
+    private Vector3 lastPosition;
+    private Quaternion lastRotation;
 
     void Start()
     {
         Application.runInBackground = true;
         StartServer();
-        AddServerAsPlayer(); // Añadir el servidor como jugador
+        AddServerAsPlayer();
+    }
+
+    private void Update()
+    {
+        CheckAndSendServerPosition();
     }
 
     public void StartServer()
@@ -32,40 +38,70 @@ public class UDP_Server : MonoBehaviour
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.Bind(ipep);
 
-        consoleUI = FindAnyObjectByType<ConsoleUI>();
-
         Debug.Log($"Servidor iniciado en {ipep.Address}:{ipep.Port}");
         BeginReceive();
     }
 
     private void AddServerAsPlayer()
     {
-        serverPlayerId = Guid.NewGuid().ToString(); // Crear un ID único para el servidor
+        serverPlayerId = Guid.NewGuid().ToString();
+        lastPosition = serverPlayerObject.transform.position;
+        lastRotation = serverPlayerObject.transform.rotation;
 
-        // Crear datos del servidor como jugador
         PlayerData serverPlayer = new PlayerData
         {
             PlayerId = serverPlayerId,
             PlayerName = "Server",
-            Position = serverPlayerObject.transform.position, // Usar la posición actual
-            Rotation = serverPlayerObject.transform.rotation,
+            Position = lastPosition,
+            Rotation = lastRotation,
             Command = "JOIN"
         };
 
-        // Añadir el servidor a la lista de jugadores
         gameState.Players.Add(serverPlayer);
-
-        // Asociar el objeto existente al servidor
         playerObjects[serverPlayerId] = serverPlayerObject;
         serverPlayerObject.name = "Server";
 
         Debug.Log("El jugador del servidor ha sido registrado.");
     }
 
+    private void CheckAndSendServerPosition()
+    {
+        Vector3 currentPosition = serverPlayerObject.transform.position;
+        Quaternion currentRotation = serverPlayerObject.transform.rotation;
+
+        if (currentPosition != lastPosition || currentRotation != lastRotation)
+        {
+            lastPosition = currentPosition;
+            lastRotation = currentRotation;
+
+            UpdateServerPlayerData();
+            BroadcastServerPosition();
+        }
+    }
+
+    private void UpdateServerPlayerData()
+    {
+        PlayerData serverPlayer = gameState.Players.Find(p => p.PlayerId == serverPlayerId);
+        if (serverPlayer != null)
+        {
+            serverPlayer.Position = lastPosition;
+            serverPlayer.Rotation = lastRotation;
+        }
+    }
+
+    private void BroadcastServerPosition()
+    {
+        string jsonState = JsonUtility.ToJson(gameState);
+        byte[] data = Encoding.UTF8.GetBytes(jsonState);
+
+        foreach (var client in connectedClients.Values)
+        {
+            socket.SendTo(data, data.Length, SocketFlags.None, client);
+        }
+    }
 
     private void BeginReceive()
     {
-        Debug.Log("Esperando mensaje...");
         EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
         socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
         {
@@ -89,12 +125,6 @@ public class UDP_Server : MonoBehaviour
         try
         {
             PlayerData receivedData = JsonUtility.FromJson<PlayerData>(jsonData);
-
-            // Ignorar mensajes del servidor
-            if (receivedData.PlayerId == serverPlayerId)
-            {
-                return;
-            }
 
             switch (receivedData.Command)
             {
@@ -128,6 +158,7 @@ public class UDP_Server : MonoBehaviour
             playerObjects[playerData.PlayerId] = playerObject;
 
             gameState.Players.Add(playerData);
+
             Debug.Log($"Jugador {playerData.PlayerName} añadido.");
         }
     }
@@ -146,17 +177,6 @@ public class UDP_Server : MonoBehaviour
                 playerObject.transform.position = playerData.Position;
                 playerObject.transform.rotation = playerData.Rotation;
             }
-        }
-    }
-
-    private void BroadcastServerPosition()
-    {
-        string jsonState = JsonUtility.ToJson(gameState);
-        byte[] data = Encoding.UTF8.GetBytes(jsonState);
-
-        foreach (var client in connectedClients.Values)
-        {
-            socket.SendTo(data, data.Length, SocketFlags.None, client);
         }
     }
 

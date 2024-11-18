@@ -57,8 +57,6 @@ public class PlayerSync : MonoBehaviour
             Rotation = transform.rotation
         };
 
-        Debug.Log("Join request sent!");
-        Debug.Log("Position sent: " + transform.position);
         UDP_Client.Instance.SendMessage(joinData);
     }
 

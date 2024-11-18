@@ -375,6 +375,7 @@
 "Assets/Scripts/Exercise2_Serialization/UDP_Client.cs"
 "Assets/Scripts/Exercise2_Serialization/UDP_Server.cs"
 "Assets/Scripts/Game/GameState.cs"
+"Assets/Scripts/MessageManager.cs"
 "Assets/Scripts/Player/CameraController.cs"
 "Assets/Scripts/Player/PlayerController.cs"
 "Assets/Scripts/Player/PlayerControllerClient.cs"

@@ -666,7 +666,7 @@ ScriptsOnlyBuild:
     className: VariablesAsset
   - hash:
       serializedVersion: 2
-      Hash: 5f5d0690c3538c9dcc765c29ca0261a8
+      Hash: 374e01ef84b1534b5b609d56ff355e76
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: UDP_Server
@@ -1570,6 +1570,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSliderValueChangedMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: 22e67cf22d0e6619bf461a1269e8b294
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MessageManager
   platform: 19
   scenePathNames:
   - Assets/Scenes/Start.unity

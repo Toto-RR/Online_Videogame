@@ -40,8 +40,8 @@ public class UDP_Client : MonoBehaviour
             PlayerId = PlayerId,
             PlayerName = PlayerName,
             Command = "JOIN",
-            Position = Vector3.zero,
-            Rotation = Quaternion.identity
+            Position = PlayerObject.transform.position,
+            Rotation = PlayerObject.transform.rotation
         };
 
         string json = JsonUtility.ToJson(joinData);

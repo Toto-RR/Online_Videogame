@@ -85,7 +85,7 @@ public class UDP_Server : MonoBehaviour
             connectedClients[playerData.PlayerId] = remoteEndPoint;
 
             // Instanciar el prefab del jugador y agregarlo al diccionario de jugadores
-            GameObject playerObject = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+            GameObject playerObject = Instantiate(playerPrefab, playerData.Position, playerData.Rotation);
             playerObject.name = playerData.PlayerName;
             playerObjects[playerData.PlayerId] = playerObject;
 

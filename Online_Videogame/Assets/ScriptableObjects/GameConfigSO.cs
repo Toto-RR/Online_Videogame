@@ -12,16 +12,16 @@ public class GameConfigSO : ScriptableObject
     public string PlayerIP { get { return playerIP; } }
     public string PlayerRole { get { return playerRole; } }
 
-    public void SetPlayerName(string name)
+    public void Initialize(bool isHost, string name, string ip, string role)
     {
-        playerName = name;
+        this.isHost = isHost;
+        this.playerName = name;
+        this.playerIP = ip;
+        this.playerRole = role;
     }
 
-    public void SetPlayerIP(string ip)
-    {
-        playerIP = ip;
-    }
-
+    public void SetPlayerName(string name) => playerName = name;
+    public void SetPlayerIP(string ip) => playerIP = ip;
     public void SetRole(string role, bool isHost)
     {
         playerRole = role;

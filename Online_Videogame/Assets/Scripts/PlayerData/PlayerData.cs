@@ -2,6 +2,12 @@ using System;
 using UnityEngine;
 
 [Serializable]
+public class BaseMessage
+{
+    public string MessageType;
+}
+
+[Serializable]
 public class PlayerData
 {
     public string PlayerId;        // ID del player

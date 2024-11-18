@@ -329,6 +329,7 @@
 "Assets/Scripts/Player/PlayerController.cs"
 "Assets/Scripts/Player/PlayerControllerClient.cs"
 "Assets/Scripts/Player/PlayerMovement.cs"
+"Assets/Scripts/Player/PlayerSync.cs"
 "Assets/Scripts/Player/readFile.cs"
 "Assets/Scripts/Player/Serializer.cs"
 "Assets/Scripts/Player/UserData.cs"

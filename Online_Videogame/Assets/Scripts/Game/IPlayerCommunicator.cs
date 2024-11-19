@@ -10,7 +10,6 @@ public class ServerCommunicator : IPlayerCommunicator
 
     public void SendMessage(PlayerData message)
     {
-        // Lógica para el servidor para enviar los datos a todos los clientes
         UDP_Server.Instance.ServerUpdate(message);
     }
 }

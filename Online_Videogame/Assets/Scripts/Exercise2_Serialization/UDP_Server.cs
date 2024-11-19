@@ -28,12 +28,6 @@ public class UDP_Server : MonoBehaviour
 
         Application.runInBackground = true;
         StartServer();
-        //AddServerAsPlayer();
-    }
-
-    private void Update()
-    {
-        //CheckAndSendServerPosition();
     }
 
     public void StartServer()
@@ -42,19 +36,19 @@ public class UDP_Server : MonoBehaviour
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.Bind(ipep);
 
-        Debug.Log($"Servidor iniciado en {ipep.Address}:{ipep.Port}");
+        Debug.Log($"Server started at: {ipep.Address}:{ipep.Port}");
         BeginReceive();
     }
 
+    // Add and update the server player game object
     public void ServerUpdate(PlayerData playerData)
     {
-        //Lo añado a la lista
-        if(playerData.Command == "JOIN") AddPlayerToList(playerData);
-        if(playerData.Command == "MOVE") UpdatePlayerPosition(playerData);
-        BroadcastServerPosition();
+        ProcessMessage(playerData);
+        BroadcastGameState();
     }
 
-    private void BroadcastServerPosition()
+    // Broadcast the game state (all players data) to all players
+    private void BroadcastGameState()
     {
         string jsonState = JsonUtility.ToJson(gameState);
         byte[] data = Encoding.UTF8.GetBytes(jsonState);
@@ -65,6 +59,7 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
+    // Start to receive messages, recursive
     private void BeginReceive()
     {
         EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -80,39 +75,54 @@ public class UDP_Server : MonoBehaviour
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error en la recepción: {ex.Message}");
+                Debug.LogError($"Error: {ex.Message}");
             }
         }, null);
     }
 
+    // Process the message and broadcast to all clients
     private void HandleMessage(string jsonData, EndPoint remoteEndPoint)
     {
         try
         {
             PlayerData receivedData = JsonUtility.FromJson<PlayerData>(jsonData);
 
-            switch (receivedData.Command)
-            {
-                case "JOIN":
-                    AddPlayer(receivedData, remoteEndPoint);
-                    break;
-                case "MOVE":
-                    UpdatePlayerPosition(receivedData);
-                    break;
-                default:
-                    Debug.LogWarning($"Comando no reconocido: {receivedData.Command}");
-                    break;
-            }
-            BroadcastServerPosition();
+            ProcessMessage(receivedData, remoteEndPoint);
+            BroadcastGameState();
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Error al procesar mensaje: {ex.Message}");
+            Debug.LogError($"Error processing message: {ex.Message}");
         }
     }
 
-    private void AddPlayer(PlayerData playerData, EndPoint remoteEndPoint)
+    // Process the received message
+    private void ProcessMessage(PlayerData receivedData, EndPoint remoteEndPoint = null)
     {
+        switch (receivedData.Command)
+        {
+            case "JOIN":
+                AddPlayer(receivedData, remoteEndPoint);
+                break;
+            case "MOVE":
+                UpdatePlayerPosition(receivedData);
+                break;
+            default:
+                Debug.LogWarning($"Unknown command: {receivedData.Command}");
+                break;
+        }
+    }
+
+    // Add the player to the scene if his not the server player (he is already on the scene)
+    private void AddPlayer(PlayerData playerData, EndPoint remoteEndPoint = null)
+    {
+        //If is the player that we control we dont need to instanciate a prefab because we already have the player on the scene
+        //TODO: Instanciate the player that we control right here so it can be deleted from the scene (better(?))
+        if (playerData.PlayerId == PlayerSync.Instance.PlayerId)
+        {
+            AddPlayerToList(playerData);
+        }
+
         if (!connectedClients.ContainsKey(playerData.PlayerId))
         {
             connectedClients[playerData.PlayerId] = remoteEndPoint;
@@ -121,13 +131,11 @@ public class UDP_Server : MonoBehaviour
             playerObject.name = playerData.PlayerName;
             playerObjects[playerData.PlayerId] = playerObject;
 
-            //gameState.Players.Add(playerData);
             AddPlayerToList(playerData);
-
-            consoleUI.LogToConsole($"Jugador {playerData.PlayerName} añadido.");
         }
     }
 
+    // Update all the position/rotation players data (LOCALLY)
     private void UpdatePlayerPosition(PlayerData playerData)
     {
         PlayerData player = gameState.Players.Find(p => p.PlayerId == playerData.PlayerId);
@@ -145,6 +153,7 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
+    // Add the player to the gamestate list
     void AddPlayerToList(PlayerData playerData)
     {
         gameState.Players.Add(playerData);

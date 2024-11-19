@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class UDP_Client : MonoBehaviour
 {
@@ -21,7 +22,6 @@ public class UDP_Client : MonoBehaviour
     public ConsoleUI consoleUI;
 
     private int lastPlayerCount = 0;
-
 
     private void Awake()
     {
@@ -45,7 +45,8 @@ public class UDP_Client : MonoBehaviour
         BeginReceive();
     }
 
-    public void SendMessage(PlayerData message)
+    // Send message to the server
+    public void SendMessage(BaseMessage message)
     {
         if (serverEndPoint == null)
         {
@@ -68,6 +69,7 @@ public class UDP_Client : MonoBehaviour
                 int recv = socket.EndReceiveFrom(ar, ref serverEndPoint);
                 string jsonState = Encoding.UTF8.GetString(buffer, 0, recv);
 
+                // The client always receive a game state, so it only has to update the list of player data
                 GameState gameState = JsonUtility.FromJson<GameState>(jsonState);
                 UpdateGameState(gameState);
 
@@ -80,25 +82,26 @@ public class UDP_Client : MonoBehaviour
         }, null);
     }
 
+    // Update the game state updating the player data of each player on the list
     private void UpdateGameState(GameState gameState)
     {
         foreach (var player in gameState.Players)
         { 
             if (player.PlayerId == PlayerSync.Instance.PlayerId)
             {
-                // No actualizar el movimiento propio
+                //It does not update its own status because it has already been updated manually (player we control)
                 continue;
             }
             if (!playerObjects.ContainsKey(player.PlayerId))
             {
-                // Instanciar el prefab del jugador
+                // If is a new player instantiate the player
                 GameObject newPlayer = Instantiate(playerPrefab, player.Position, player.Rotation);
                 playerObjects[player.PlayerId] = newPlayer;
                 newPlayer.name = player.PlayerName;
             }
             else
             {
-                // Actualizar la posición y rotación de los jugadores ya existentes
+                // Update the position and rotation
                 GameObject playerObject = playerObjects[player.PlayerId];
                 playerObject.transform.position = player.Position;
                 playerObject.transform.rotation = player.Rotation;

@@ -22,14 +22,14 @@ public class PlayerSync : MonoBehaviour
         Instance = this;
         CheckIfHost();
 
-        // Definir qué tipo de comunicador se va a usar, si es servidor o cliente.
+        // Define if the player is gonna use the server or the client communicator (is host or is client)
         if (isHost)
         {
-            playerCommunicator = new ServerCommunicator();  // Usa la clase del servidor
+            playerCommunicator = new ServerCommunicator();
         }
         else
         {
-            playerCommunicator = new ClientCommunicator();  // Usa la clase del cliente
+            playerCommunicator = new ClientCommunicator();
         }
     }
 
@@ -47,14 +47,17 @@ public class PlayerSync : MonoBehaviour
             yield return null;
         }
 
+        //Unique ID
         PlayerId = Guid.NewGuid().ToString();
-        PlayerName = string.IsNullOrEmpty(gameConfig.PlayerName) ? "Player1" : gameConfig.PlayerName;
-        Debug.Log("Player name: " + PlayerName);
 
+        //Player name
+        PlayerName = string.IsNullOrEmpty(gameConfig.PlayerName) ? "Player1" : gameConfig.PlayerName;
+
+        //Save the last position to check if the player moves to new one (that is the trigger to send data info)
         lastPosition = transform.position;
         lastRotation = transform.rotation;
 
-        // Enviar solicitud de "JOIN" o cualquier otro comando inicial
+        // Send the Join Request at start
         SendJoinRequest();
     }
 

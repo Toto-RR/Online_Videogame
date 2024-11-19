@@ -8,11 +8,15 @@ public class BaseMessage
 }
 
 [Serializable]
-public class PlayerData
+public class PlayerData : BaseMessage
 {
-    public string PlayerId;        // ID del player
-    public string PlayerName;      // Nombre del player
-    public Vector3 Position;       // Posición
-    public Quaternion Rotation;    // Rotación
-    public string Command;         // Comandos (JOIN, MOVE, SHOOT, etc.)
+    public string PlayerId;        // Player ID
+    public string PlayerName;      // Player Name
+    public Vector3 Position;       // Position
+    public Quaternion Rotation;    // Rotation
+    public int Health;             // Health points 
+    public int Energy;             // Energy
+    public int AmmoCount;          // Ammo
+
+    public string Command;         // Commands (JOIN, MOVE, SHOOT, etc.)
 }

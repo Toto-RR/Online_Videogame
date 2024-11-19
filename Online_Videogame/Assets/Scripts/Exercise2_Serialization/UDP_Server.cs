@@ -114,8 +114,7 @@ public class UDP_Server : MonoBehaviour
             {
                 int receivedBytes = socket.EndReceiveFrom(ar, ref remoteEndPoint);
                 string jsonData = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
-
-
+                
                 HandleMessage(jsonData, remoteEndPoint);
                 BeginReceive();
             }
@@ -131,6 +130,13 @@ public class UDP_Server : MonoBehaviour
     {
         try
         {
+            // To answer client when ask if server is started
+            if (jsonData == "ping")
+            {
+                HandlePing(remoteEndPoint);
+                return;
+            }
+
             //consoleUI.LogToConsole("Received: " + jsonData);
             PlayerData receivedData = JsonUtility.FromJson<PlayerData>(jsonData);
 
@@ -268,6 +274,23 @@ public class UDP_Server : MonoBehaviour
     {
         PlayerData data = gameState.Players.Find(p => p.PlayerId == playerData.PlayerId);
         return data.PlayerName;
+    }
+
+    private void HandlePing(EndPoint clientEndPoint)
+    {
+        try
+        {
+            string pongMessage = "pong";
+            byte[] pongData = Encoding.UTF8.GetBytes(pongMessage);
+
+            // Enviar respuesta "pong" al cliente
+            socket.SendTo(pongData, clientEndPoint);
+            Debug.Log($"Responded to ping from {clientEndPoint}");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error responding to ping: {ex.Message}");
+        }
     }
 
     void OnApplicationQuit()

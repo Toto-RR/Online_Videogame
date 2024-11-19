@@ -1,6 +1,7 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
+    - ActivateAnimation
     - ConsoleUI
     - FPSController
     - GameConfigSO
@@ -12,7 +13,6 @@ ScriptsOnlyBuild:
     - PlayerIdentity
     - PlayerShoot
     - PlayerSync
-    - SceneChanger
     - UDP_Client
     - UDP_Server
     Unity.AdaptivePerformance.Editor.dll:
@@ -35,6 +35,14 @@ ScriptsOnlyBuild:
     - TMPro.TMP_SpriteAsset
     - TMPro.TMP_StyleSheet
     - TMPro.TextMeshProUGUI
+    UnityEditor.Graphs.dll:
+    - UnityEditor.Graphs.AnimationBlendTree.Graph
+    - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
+    - UnityEditor.Graphs.AnimationStateMachine.Graph
+    - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.StateNode
+    - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
     - UnityEditor.TestTools.TestRunner.TestListCacheData
@@ -88,36 +96,60 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Slider/SliderEvent
     - UnityEngine.UI.SpriteState
   methodsToPreserve:
-  - assembly: Assembly-CSharp
-    fullTypeName: GameManager
-    methodName: JoinServer
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
   - assembly: UnityEngine.CoreModule
-    fullTypeName: UnityEngine.GameObject
-    methodName: SetActive
+    fullTypeName: UnityEngine.Behaviour
+    methodName: set_enabled
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
   - assembly: UnityEngine.CoreModule
-    fullTypeName: UnityEngine.GameObject
-    methodName: SetActive
+    fullTypeName: UnityEngine.Behaviour
+    methodName: set_enabled
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
   - assembly: UnityEngine.CoreModule
-    fullTypeName: UnityEngine.GameObject
-    methodName: SetActive
+    fullTypeName: UnityEngine.Behaviour
+    methodName: set_enabled
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
+  - assembly: UnityEngine.AnimationModule
+    fullTypeName: UnityEngine.Animator
+    methodName: SetTrigger
   - assembly: UnityEngine.CoreModule
-    fullTypeName: UnityEngine.GameObject
-    methodName: SetActive
-  - assembly: UnityEngine.CoreModule
-    fullTypeName: UnityEngine.GameObject
-    methodName: SetActive
-  - assembly: UnityEngine.CoreModule
-    fullTypeName: UnityEngine.GameObject
-    methodName: SetActive
-  - assembly: UnityEngine.CoreModule
-    fullTypeName: UnityEngine.GameObject
-    methodName: SetActive
-  - assembly: UnityEngine.CoreModule
-    fullTypeName: UnityEngine.GameObject
-    methodName: SetActive
+    fullTypeName: UnityEngine.Behaviour
+    methodName: set_enabled
   - assembly: Assembly-CSharp
     fullTypeName: GameManager
     methodName: StartHost
+  - assembly: Assembly-CSharp
+    fullTypeName: GameManager
+    methodName: JoinServer
   sceneClasses:
     Assets/Scenes/GameScene.unity:
     - Class: 1
@@ -223,9 +255,15 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 49
       Script: {instanceID: 0}
+    - Class: 74
+      Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
     - Class: 89
+      Script: {instanceID: 0}
+    - Class: 91
+      Script: {instanceID: 0}
+    - Class: 95
       Script: {instanceID: 0}
     - Class: 104
       Script: {instanceID: 0}
@@ -268,7 +306,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 8526}
     - Class: 114
-      Script: {instanceID: 8538}
+      Script: {instanceID: 44542}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -284,6 +322,8 @@ ScriptsOnlyBuild:
     - Class: 223
       Script: {instanceID: 0}
     - Class: 224
+      Script: {instanceID: 0}
+    - Class: 225
       Script: {instanceID: 0}
   scriptHashData:
   - hash:
@@ -1524,7 +1564,7 @@ ScriptsOnlyBuild:
     className: GameConfigSO
   - hash:
       serializedVersion: 2
-      Hash: cb0a4359bda4bb52a8caaa79a628f538
+      Hash: cc0c339522a5c53fd5d98188a9b53db5
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GameManager
@@ -1654,6 +1694,18 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: ControlAnimateLights
+  - hash:
+      serializedVersion: 2
+      Hash: 2c5fd256a3a0f41ea5f16f2504357a9d
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: ActivateAnimation
+  - hash:
+      serializedVersion: 2
+      Hash: be98fd26b2a952df523d620e859de080
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: CanvasManager
   platform: 19
   scenePathNames:
   - Assets/Scenes/Start.unity

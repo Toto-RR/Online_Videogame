@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class UDP_Client : MonoBehaviour
 {
@@ -46,7 +45,7 @@ public class UDP_Client : MonoBehaviour
     }
 
     // Send message to the server
-    public void SendMessage(BaseMessage message)
+    public void SendMessage(PlayerData message)
     {
         if (serverEndPoint == null)
         {

@@ -318,6 +318,8 @@
 "Assets/ScriptableObjects/GameConfigSO.cs"
 "Assets/Scripts/Audio/Volume.cs"
 "Assets/Scripts/ConsoleUI.cs"
+"Assets/Scripts/Enemy/FaceToCam.cs"
+"Assets/Scripts/Enemy/Nametag.cs"
 "Assets/Scripts/Exercise1/Client/ClientTCP.cs"
 "Assets/Scripts/Exercise1/Client/ClientUDP.cs"
 "Assets/Scripts/Exercise1/Server/Exercise1_Sockets/ServerTCP.cs"

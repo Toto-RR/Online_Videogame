@@ -121,6 +121,7 @@ public class UDP_Server : MonoBehaviour
         if (playerData.PlayerId == PlayerSync.Instance.PlayerId)
         {
             AddPlayerToList(playerData);
+            return;
         }
 
         if (!connectedClients.ContainsKey(playerData.PlayerId))
@@ -157,8 +158,8 @@ public class UDP_Server : MonoBehaviour
     void AddPlayerToList(PlayerData playerData)
     {
         gameState.Players.Add(playerData);
-        consoleUI.LogToConsole("Player added: " + playerData.PlayerName);
-        consoleUI.LogToConsole("Total Players: " + gameState.Players.Count);
+        Debug.Log("Name: " + playerData.PlayerName);
+        Debug.Log("Players: " + gameState.Players.Count);
     }
 
     void OnApplicationQuit()

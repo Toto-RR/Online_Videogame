@@ -8,7 +8,7 @@ public class BaseMessage
 }
 
 [Serializable]
-public class PlayerData : BaseMessage
+public class PlayerData
 {
     public string PlayerId;        // Player ID
     public string PlayerName;      // Player Name

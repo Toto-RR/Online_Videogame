@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -42,8 +43,9 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Establecer nombre en GameConfigSO
+        // Establecer parámetros en GameConfigSO
         gameConfig.SetPlayerName(hostNameInputField.text);
+        gameConfig.SetID(Guid.NewGuid().ToString());
         gameConfig.SetRole("Host");
 
         Debug.Log("Starting as Host");
@@ -65,8 +67,9 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Establecer nombre en GameConfigSO
+        // Establecer parámetros en GameConfigSO
         gameConfig.SetPlayerName(clientNameInputField.text);
+        gameConfig.SetID(Guid.NewGuid().ToString());
 
         // Validar IP solo si es Cliente
         if (string.IsNullOrWhiteSpace(ipInputField.text))
@@ -105,6 +108,8 @@ public class GameManager : MonoBehaviour
     // Cargar la escena del juego
     private void GoToGameScene()
     {
+        Debug.Log("ID: " + gameConfig.PlayerID);
+        Debug.Log("Name: " + gameConfig.PlayerName);
         Debug.Log("Starting...!");
         SceneManager.LoadScene("GameScene");
     }

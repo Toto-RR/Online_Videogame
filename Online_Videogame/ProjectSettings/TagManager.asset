@@ -9,6 +9,7 @@ TagManager:
   - ComputerUDP
   - ComputerTCP
   - Ground
+  - Enemy
   layers:
   - Default
   - TransparentFX

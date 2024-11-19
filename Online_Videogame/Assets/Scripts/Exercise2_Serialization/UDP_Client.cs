@@ -13,14 +13,12 @@ public class UDP_Client : MonoBehaviour
 
     public GameObject playerPrefab; //Enemy
 
-    private Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>(); // Para instanciar jugadores en el cliente
+    internal Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>(); // Para instanciar jugadores en el cliente
 
     public GameConfigSO gameConfig;
 
     public static UDP_Client Instance;
     public ConsoleUI consoleUI;
-
-    private int lastPlayerCount = 0;
 
     private void Awake()
     {
@@ -32,7 +30,6 @@ public class UDP_Client : MonoBehaviour
         Application.runInBackground = true;
         ConnectToServer(gameConfig.PlayerIP, 9050);
         consoleUI = FindAnyObjectByType<ConsoleUI>();
-
     }
 
     public void ConnectToServer(string serverIP, int port)
@@ -56,6 +53,7 @@ public class UDP_Client : MonoBehaviour
         string json = JsonUtility.ToJson(message);
         byte[] data = Encoding.UTF8.GetBytes(json);
         socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
+        //Debug.Log($"{json}");
     }
 
     private void BeginReceive()
@@ -70,6 +68,7 @@ public class UDP_Client : MonoBehaviour
 
                 // The client always receive a game state, so it only has to update the list of player data
                 GameState gameState = JsonUtility.FromJson<GameState>(jsonState);
+                
                 UpdateGameState(gameState);
 
                 BeginReceive();
@@ -85,29 +84,47 @@ public class UDP_Client : MonoBehaviour
     private void UpdateGameState(GameState gameState)
     {
         foreach (var player in gameState.Players)
-        { 
-            if (player.PlayerId == PlayerSync.Instance.PlayerId)
+        {
+            if (player.PlayerId == Player.Instance.playerId)
             {
-                //It does not update its own status because it has already been updated manually (player we control)
+                /// By setting this we cannot know the health of the enemies 
+                /// as we never process it, only their position. 
+                /// To know if they are dead, we wait for the DIE message.
+
+                // If this player has been hitted
+                if (player.Health != Player.Instance.health.GetCurrentHealth())
+                {
+                    // Update its health
+                    Player.Instance.health.SetHealth(player.Health);
+                    Player.Instance.TakeDamage(player.Damage);
+                }
                 continue;
             }
+
             if (!playerObjects.ContainsKey(player.PlayerId))
             {
-                // If is a new player instantiate the player
+                // Player is not registered, instance and register
                 GameObject newPlayer = Instantiate(playerPrefab, player.Position, player.Rotation);
+
+                // Asign its name and ID
+                PlayerIdentity playerIdentity = newPlayer.GetComponent<PlayerIdentity>();
+                if (playerIdentity != null)
+                {
+                    playerIdentity.Initialize(player.PlayerId, player.PlayerName);
+                }
+
+                // Add it to playerObjects
                 playerObjects[player.PlayerId] = newPlayer;
                 newPlayer.name = player.PlayerName;
             }
             else
             {
-                // Update the position and rotation
+                // If player was registered and instanciated, then update the position
                 GameObject playerObject = playerObjects[player.PlayerId];
                 playerObject.transform.position = player.Position;
                 playerObject.transform.rotation = player.Rotation;
             }
         }
-
-        consoleUI.LogToConsole("Jugadores conectados: " + gameState.Players.Count);
     }
 
     void OnApplicationQuit()

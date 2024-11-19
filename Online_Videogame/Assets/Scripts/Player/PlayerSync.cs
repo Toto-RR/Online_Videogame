@@ -7,7 +7,8 @@ public class PlayerSync : MonoBehaviour
     public static PlayerSync Instance { get; private set; }
     public string PlayerId { get; private set; }
     public string PlayerName { get; private set; }
-
+    
+    private Player player;
     public GameConfigSO gameConfig;
 
     private Vector3 lastPosition;
@@ -22,7 +23,7 @@ public class PlayerSync : MonoBehaviour
         Instance = this;
         CheckIfHost();
 
-        // Define if the player is gonna use the server or the client communicator (is host or is client)
+        // Define si es host o cliente
         if (isHost)
         {
             playerCommunicator = new ServerCommunicator();
@@ -35,8 +36,7 @@ public class PlayerSync : MonoBehaviour
 
     private void CheckIfHost()
     {
-        if (gameConfig.PlayerRole == "Host") isHost = true;
-        else isHost = false;
+        isHost = gameConfig.PlayerRole == "Host";
     }
 
     private IEnumerator WaitForClientInitialization()
@@ -47,17 +47,15 @@ public class PlayerSync : MonoBehaviour
             yield return null;
         }
 
-        //Unique ID
-        PlayerId = Guid.NewGuid().ToString();
+        player = Player.Instance;
+        
+        PlayerId = Player.Instance.playerId;
+        PlayerName = Player.Instance.playerName;
 
-        //Player name
-        PlayerName = string.IsNullOrEmpty(gameConfig.PlayerName) ? "Player1" : gameConfig.PlayerName;
-
-        //Save the last position to check if the player moves to new one (that is the trigger to send data info)
         lastPosition = transform.position;
         lastRotation = transform.rotation;
 
-        // Send the Join Request at start
+        // Envía un JOIN al servidor
         SendJoinRequest();
     }
 
@@ -66,12 +64,7 @@ public class PlayerSync : MonoBehaviour
         StartCoroutine(WaitForClientInitialization());
     }
 
-    private void Update()
-    {
-        SendPositionUpdate();
-    }
-
-    private void SendJoinRequest()
+    public void SendJoinRequest()
     {
         PlayerData joinData = new PlayerData
         {
@@ -79,13 +72,16 @@ public class PlayerSync : MonoBehaviour
             PlayerId = PlayerId,
             PlayerName = PlayerName,
             Position = transform.position,
-            Rotation = transform.rotation
+            Rotation = transform.rotation,
+            Health = player.health.GetCurrentHealth(),
+            Energy = player.GetEnergy(),
+            AmmoCount = player.GetAmmoCount(),
         };
 
         playerCommunicator.SendMessage(joinData);
     }
 
-    private void SendPositionUpdate()
+    public void SendPositionUpdate(Transform transform)
     {
         if (lastPosition != transform.position || lastRotation != transform.rotation)
         {
@@ -97,10 +93,34 @@ public class PlayerSync : MonoBehaviour
                 Command = "MOVE",
                 PlayerId = PlayerId,
                 Position = transform.position,
-                Rotation = transform.rotation
+                Rotation = transform.rotation,
             };
 
             playerCommunicator.SendMessage(moveData);
         }
+    }
+
+    public void HandleShooting(float damage, string targetPlayerId)
+    {
+        PlayerData shootData = new PlayerData
+        {
+            Command = "SHOOT",
+            PlayerId = PlayerId,
+            TargetPlayerId = targetPlayerId,
+            Damage = damage
+        };
+
+        playerCommunicator.SendMessage(shootData);
+    }
+
+    public void HandleDie()
+    {
+        PlayerData dieData = new PlayerData
+        {
+            Command = "DIE",
+            PlayerId = PlayerId,
+        };
+
+        playerCommunicator.SendMessage(dieData);
     }
 }

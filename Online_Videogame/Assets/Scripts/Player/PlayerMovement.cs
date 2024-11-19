@@ -14,19 +14,10 @@ public class FPSController : MonoBehaviour
     public float lookSpeed = 2f;
     public float lookXLimit = 45f;
 
-    public UDP_Client udpClient;
-    private Vector3 lastClientPosition;
-    private Quaternion lastClientRotation;
-
-    public UDP_Server udpServer;
-    private Vector3 lastServerPosition;
-    private Quaternion lastServerRotation;
-
     Vector3 moveDirection = Vector3.zero;
     float rotationX = 0;
 
     public bool canMove = true;
-
 
     CharacterController characterController;
     void Start()
@@ -34,15 +25,9 @@ public class FPSController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        lastClientPosition = transform.position;
-        lastClientRotation = transform.rotation;
-
-        lastServerPosition = transform.position;
-        lastServerRotation = transform.rotation;
     }
 
-    void Update()
+    public void HandleMovement()
     {
 
         #region Handles Movment
@@ -56,29 +41,6 @@ public class FPSController : MonoBehaviour
         float movementDirectionY = moveDirection.y;
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
-        //Client
-        if (udpClient.enabled == true && //Si el cliente está activado y su posición o rotación cambian, entonces actualiza
-            ((transform.position != lastClientPosition) || (transform.rotation != lastClientRotation)))
-        {
-            //Actualiza la última posicion y rotación del player
-            lastClientPosition = transform.position;
-            lastClientRotation = transform.rotation;
-
-            //Manda la posición y rotación al Cliente
-            //udpClient.SendMovementAndRotation(lastClientPosition, lastClientRotation);
-        }
-
-        //Host
-        if (udpServer.enabled == true && //Si el servidor está activado y su rotacion o posición cambian, entonces actualiza
-            ((transform.position != lastServerPosition) || (transform.rotation != lastServerRotation)))
-        {
-            //Actualiza la última posicion y rotación del player
-            lastServerPosition = transform.position;
-            lastServerRotation = transform.rotation;
-            
-            //Manda la posición y rotación al Server (para que la mande a los clientes)
-            //udpServer.BroadcastGameState();
-        }
         #endregion
 
         #region Handles Jumping
@@ -110,5 +72,12 @@ public class FPSController : MonoBehaviour
         }
 
         #endregion
+
+        SendMovement();
+    }
+
+    public void SendMovement()
+    {
+        PlayerSync.Instance.SendPositionUpdate(transform);
     }
 }

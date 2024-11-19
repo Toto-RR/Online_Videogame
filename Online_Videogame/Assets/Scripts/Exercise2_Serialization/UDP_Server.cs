@@ -9,7 +9,7 @@ public class UDP_Server : MonoBehaviour
 {
     private Socket socket;
     private Dictionary<string, EndPoint> connectedClients = new Dictionary<string, EndPoint>();
-    private Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>();
+    public Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>();
     private GameState gameState = new GameState();
     private byte[] buffer = new byte[1024];
     public static UDP_Server Instance;
@@ -38,6 +38,51 @@ public class UDP_Server : MonoBehaviour
 
         Debug.Log($"Server started at: {ipep.Address}:{ipep.Port}");
         BeginReceive();
+    }
+
+    public void StopServer()
+    {
+        try
+        {
+            socket.Close();
+            socket = null;
+
+            Debug.Log("Servidor detenido.");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error al detener el servidor: {ex.Message}");
+        }
+    }
+
+    public void StartManually()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Debug.Log("Iniciando Server manualmente");
+
+            // Verificar si el socket ya está abierto
+            if (socket != null)
+            {
+                try
+                {
+                    Debug.Log("Cerrando socket existente...");
+                    StopServer();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error al cerrar el socket: {ex.Message}");
+                }
+            }
+
+            // Reiniciar el servidor
+            StartServer();
+        }
+    }
+
+    public void Update()
+    {
+        StartManually();
     }
 
     // Add and update the server player game object
@@ -70,6 +115,7 @@ public class UDP_Server : MonoBehaviour
                 int receivedBytes = socket.EndReceiveFrom(ar, ref remoteEndPoint);
                 string jsonData = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
 
+
                 HandleMessage(jsonData, remoteEndPoint);
                 BeginReceive();
             }
@@ -85,6 +131,7 @@ public class UDP_Server : MonoBehaviour
     {
         try
         {
+            //consoleUI.LogToConsole("Received: " + jsonData);
             PlayerData receivedData = JsonUtility.FromJson<PlayerData>(jsonData);
 
             ProcessMessage(receivedData, remoteEndPoint);
@@ -102,10 +149,17 @@ public class UDP_Server : MonoBehaviour
         switch (receivedData.Command)
         {
             case "JOIN":
+                consoleUI.LogToConsole("Player joined " + receivedData.PlayerName);
                 AddPlayer(receivedData, remoteEndPoint);
                 break;
             case "MOVE":
                 UpdatePlayerPosition(receivedData);
+                break;
+            case "SHOOT":
+                ProcessShoot(receivedData);
+                break;
+            case "DIE":
+                consoleUI.LogToConsole($"{receivedData.PlayerId} HA MUERTO");
                 break;
             default:
                 Debug.LogWarning($"Unknown command: {receivedData.Command}");
@@ -129,6 +183,14 @@ public class UDP_Server : MonoBehaviour
             connectedClients[playerData.PlayerId] = remoteEndPoint;
 
             GameObject playerObject = Instantiate(playerPrefab, playerData.Position, playerData.Rotation);
+
+            PlayerIdentity playerIdentity = playerObject.GetComponent<PlayerIdentity>();
+            if (playerIdentity != null)
+            {
+                playerIdentity.Initialize(playerData.PlayerId, playerData.PlayerName);
+            }
+            //else Debug.Log("Prefab doesn't have PlayerIdentity");
+
             playerObject.name = playerData.PlayerName;
             playerObjects[playerData.PlayerId] = playerObject;
 
@@ -154,6 +216,46 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
+    private void ProcessShoot(PlayerData shooterData)
+    {
+        // Encuentra los datos del jugador objetivo en el estado del juego
+        PlayerData targetPlayerData = gameState.Players.Find(p => p.PlayerId == shooterData.TargetPlayerId);
+        string shooterName = GetPlayerName(shooterData);
+        string targetName = GetPlayerName(targetPlayerData);
+
+        if (targetPlayerData != null)
+        {
+            //consoleUI.LogToConsole($"{shooterName} shoot to {targetName}");
+
+            targetPlayerData.Health -= shooterData.Damage;
+            //consoleUI.LogToConsole($"{targetName} has {targetPlayerData.Health}");
+
+            // Target is the player that we controll
+            if (targetPlayerData.PlayerId == Player.Instance.playerId)
+            {
+                //Debug.Log($"{targetName} (local player) was hit. Applying damage locally.");
+
+                Player localPlayer = FindObjectOfType<Player>();
+                if (localPlayer != null)
+                {
+                    localPlayer.TakeDamage(shooterData.Damage);
+                }
+                else
+                {
+                    Debug.LogWarning("Local Player script not found!");
+                }
+            }
+
+            // Actualiza el estado y retransmite a todos los jugadores
+            BroadcastGameState();
+        }
+        else
+        {
+            Debug.LogWarning($"Jugador objetivo {shooterData.TargetPlayerId} no encontrado en el estado del juego.");
+        }
+    }
+
+
     // Add the player to the gamestate list
     void AddPlayerToList(PlayerData playerData)
     {
@@ -162,8 +264,14 @@ public class UDP_Server : MonoBehaviour
         Debug.Log("Players: " + gameState.Players.Count);
     }
 
+    private string GetPlayerName(PlayerData playerData)
+    {
+        PlayerData data = gameState.Players.Find(p => p.PlayerId == playerData.PlayerId);
+        return data.PlayerName;
+    }
+
     void OnApplicationQuit()
     {
-        if (socket != null) socket.Close();
+        StopServer();
     }
 }

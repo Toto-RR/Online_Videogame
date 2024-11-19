@@ -1821,3 +1821,108 @@ AssetImportParameters requested are different than current active one (requested
   custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 643.459147 seconds.
+  path: Assets/Escenario/Assets escenario/Fence
+  artifactKey: Guid(64e7167dd3cf9c04fb77269cad5a61b1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Escenario/Assets escenario/Fence using Guid(64e7167dd3cf9c04fb77269cad5a61b1) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: 'e7e1ecd6dd1d33536b8000a1df896d81') in 0.002979 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 0
+========================================================================
+Received Import Request.
+  Time since last request: 49.576074 seconds.
+  path: Assets/Escenario/Assets escenario/Fence/Fence_LP.fbx
+  artifactKey: Guid(546c5f7cbffe95f4888dc6ab80375135) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Escenario/Assets escenario/Fence/Fence_LP.fbx using Guid(546c5f7cbffe95f4888dc6ab80375135) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '422834d60808c0a00189b0c5c347b881') in 0.134597 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 17
+========================================================================
+Received Import Request.
+  Time since last request: 3.917046 seconds.
+  path: Assets/Escenario/Assets escenario/Fence/Fence_LP.fbx
+  artifactKey: Guid(546c5f7cbffe95f4888dc6ab80375135) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Escenario/Assets escenario/Fence/Fence_LP.fbx using Guid(546c5f7cbffe95f4888dc6ab80375135) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '77c434977737c8426e18b1029ab456dd') in 0.050503 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 17
+========================================================================
+Received Import Request.
+  Time since last request: 1.076079 seconds.
+  path: Assets/Escenario/Assets escenario/Fence/Materials
+  artifactKey: Guid(c6912cce6032aa944b63b46d30b9f32d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Escenario/Assets escenario/Fence/Materials using Guid(c6912cce6032aa944b63b46d30b9f32d) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '4f224350bf0e5b5a7a08ece2508d4a7a') in 0.000693 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 0
+========================================================================
+Received Import Request.
+  Time since last request: 83.147293 seconds.
+  path: Assets/Escenario/Assets escenario/Fence/Fence_LP_fill_BaseColor.png
+  artifactKey: Guid(79bab0c578343e74bba14d678bd37a10) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Escenario/Assets escenario/Fence/Fence_LP_fill_BaseColor.png using Guid(79bab0c578343e74bba14d678bd37a10) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '0e42404f7128c5f4431cbccf60b0d7a1') in 0.025786 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 41.938242 seconds.
+  path: Assets/Escenario/Assets escenario/Fence/Fill_translucency.png
+  artifactKey: Guid(a7f5f0d767ef8f649925e2f9315ada55) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Escenario/Assets escenario/Fence/Fill_translucency.png using Guid(a7f5f0d767ef8f649925e2f9315ada55) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '50769cdadd6c78dc6fde8aaf77fb846b') in 0.016958 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 106.908120 seconds.
+  path: Assets/Escenario/Assets escenario/Valla.prefab
+  artifactKey: Guid(4c8b42359faf1bd44ae189187265c29a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Escenario/Assets escenario/Valla.prefab using Guid(4c8b42359faf1bd44ae189187265c29a) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '5211b44172f91d7d1d50a69d251642d3') in 0.021388 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 29
+========================================================================
+Received Import Request.
+  Time since last request: 557.308372 seconds.
+  path: Assets/Escenario/Assets escenario/Modular_Slums.usdz
+  artifactKey: Guid(ae1c6bba108b440438f39ceb64e58bde) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Escenario/Assets escenario/Modular_Slums.usdz using Guid(ae1c6bba108b440438f39ceb64e58bde) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '036368d68ef6f7cf8fe50977b3fd7d4d') in 0.001795 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 16.327574 seconds.
+  path: Assets/Escenario/Assets escenario/modular_slums.glb
+  artifactKey: Guid(f5ecb2d28f40f7943ba54cd232d8697e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Escenario/Assets escenario/modular_slums.glb using Guid(f5ecb2d28f40f7943ba54cd232d8697e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '80190c24216f7bd161c21e4299ddfaaf') in 0.001103 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 58.441528 seconds.
+  path: Assets/Escenario/Assets escenario/modular_slums
+  artifactKey: Guid(e0ed1fdb662f32140a549650245fc3e0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Escenario/Assets escenario/modular_slums using Guid(e0ed1fdb662f32140a549650245fc3e0) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: 'a8ae4c96d61f71ac5fba154b58bb5a8f') in 0.000718 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 0

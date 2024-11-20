@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -8,56 +7,91 @@ public class FPSController : MonoBehaviour
     public Camera playerCamera;
     public float walkSpeed = 6f;
     public float runSpeed = 12f;
+    public float dashSpeed = 20f; // Velocidad del dash
     public float jumpPower = 7f;
     public float gravity = 10f;
+    public float dashDuration = 0.2f; // Duración del dash en segundos
+    public float dashCooldown = 1f; // Tiempo de espera entre dashes
+    public int energyCostPerDash = 1; // Energía necesaria para un dash
 
     public float lookSpeed = 2f;
     public float lookXLimit = 45f;
 
-    Vector3 moveDirection = Vector3.zero;
-    float rotationX = 0;
+    public float dashFOV = 90f; // Campo de visión durante el dash
+    public float normalFOV = 60f; // Campo de visión normal
+    public float fovTransitionSpeed = 10f; // Velocidad de transición de FOV
+
+    private Vector3 moveDirection = Vector3.zero;
+    private Vector3 dashDirection = Vector3.zero;
+    private float rotationX = 0;
 
     public bool canMove = true;
 
-    CharacterController characterController;
+    private CharacterController characterController;
+
+    private bool isDashing = false;
+    private float dashTimeRemaining;
+    private float lastDashTime;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        playerCamera.fieldOfView = normalFOV; // Aseguramos el FOV inicial
     }
 
     public void HandleMovement()
     {
-
-        #region Handles Movment
-        Vector3 forward = transform.TransformDirection(Vector3.forward);
-        Vector3 right = transform.TransformDirection(Vector3.right);
-
-        // Press Left Shift to run
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
-        float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
-        float movementDirectionY = moveDirection.y;
-        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
-
-        #endregion
-
-        #region Handles Jumping
-        if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
+        #region Handles Movement
+        if (!isDashing)
         {
-            moveDirection.y = jumpPower;
+            Vector3 forward = transform.TransformDirection(Vector3.forward);
+            Vector3 right = transform.TransformDirection(Vector3.right);
+
+            // Movimiento normal
+            float curSpeedX = canMove ? walkSpeed * Input.GetAxis("Vertical") : 0;
+            float curSpeedY = canMove ? walkSpeed * Input.GetAxis("Horizontal") : 0;
+            float movementDirectionY = moveDirection.y;
+            moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+
+            #region Handles Jumping
+            if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
+            {
+                moveDirection.y = jumpPower;
+            }
+            else
+            {
+                moveDirection.y = movementDirectionY;
+            }
+
+            if (!characterController.isGrounded)
+            {
+                moveDirection.y -= gravity * Time.deltaTime;
+            }
+            #endregion
+
+            #region Start Dash
+            if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time > lastDashTime + dashCooldown)
+            {
+                TryStartDash();
+            }
+            #endregion
         }
         else
         {
-            moveDirection.y = movementDirectionY;
+            // Manejar el movimiento durante el dash
+            dashTimeRemaining -= Time.deltaTime;
+            if (dashTimeRemaining > 0)
+            {
+                moveDirection = dashDirection * dashSpeed;
+                playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, dashFOV, fovTransitionSpeed * Time.deltaTime); // Transición al FOV del dash
+            }
+            else
+            {
+                EndDash();
+            }
         }
-
-        if (!characterController.isGrounded)
-        {
-            moveDirection.y -= gravity * Time.deltaTime;
-        }
-
         #endregion
 
         #region Handles Rotation
@@ -70,10 +104,67 @@ public class FPSController : MonoBehaviour
             playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
-
         #endregion
 
         SendMovement();
+    }
+
+    private void TryStartDash()
+    {
+        // Verificar si el jugador tiene suficiente energía
+        if (Player.Instance.GetEnergy() >= energyCostPerDash)
+        {
+            StartDash();
+        }
+        else
+        {
+            Debug.Log("Not enough energy to dash!");
+        }
+    }
+
+    private void StartDash()
+    {
+        // Reducir la energía del jugador
+        Player.Instance.currentEnergy -= energyCostPerDash;
+
+        isDashing = true;
+        dashTimeRemaining = dashDuration;
+        lastDashTime = Time.time;
+
+        // Determinar la dirección del dash
+        Vector3 forward = transform.TransformDirection(Vector3.forward);
+        Vector3 right = transform.TransformDirection(Vector3.right);
+
+        float inputVertical = Input.GetAxisRaw("Vertical"); // -1 (atrás), 1 (adelante), 0 (sin input)
+        float inputHorizontal = Input.GetAxisRaw("Horizontal"); // -1 (izquierda), 1 (derecha), 0 (sin input)
+
+        dashDirection = (forward * inputVertical + right * inputHorizontal).normalized;
+
+        // Si no hay input, hacer un dash hacia adelante por defecto
+        if (dashDirection == Vector3.zero)
+        {
+            dashDirection = forward;
+        }
+
+        Debug.Log("Dash started in direction: " + dashDirection + " Remaining energy: " + Player.Instance.GetEnergy());
+    }
+
+    private void EndDash()
+    {
+        isDashing = false;
+
+        // Restaurar el FOV a su valor normal
+        StartCoroutine(RestoreFOV());
+    }
+
+    private IEnumerator RestoreFOV()
+    {
+        while (Mathf.Abs(playerCamera.fieldOfView - normalFOV) > 0.1f)
+        {
+            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, normalFOV, fovTransitionSpeed * Time.deltaTime);
+            yield return null;
+        }
+        playerCamera.fieldOfView = normalFOV; // Aseguramos el valor final
     }
 
     public void SendMovement()

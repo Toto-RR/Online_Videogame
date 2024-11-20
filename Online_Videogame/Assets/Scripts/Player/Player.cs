@@ -20,9 +20,6 @@ public class Player : MonoBehaviour
 
     // Shooting 
     public float damage = 10f;
-    public float shootRange = 50f;
-    public int currentAmmo = 10;
-
     // Variables de salud
     public float maxHealth = 100;
 
@@ -59,7 +56,7 @@ public class Player : MonoBehaviour
     {
         // Actualizar los componentes en cada frame
         movement.HandleMovement();
-        shoot.HandleShooting(damage, shootRange);
+        shoot.HandleShooting();
 
         //DEBUG INPUTS
         if(Input.GetKeyDown(KeyCode.H))
@@ -98,7 +95,7 @@ public class Player : MonoBehaviour
 
     public int GetAmmoCount()
     {
-        return currentAmmo;
+        return shoot.currentAmmo;
     }
     // Métodos adicionales para movimiento, disparo, etc. se delegan a componentes como antes.
 }

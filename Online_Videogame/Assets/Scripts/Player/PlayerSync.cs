@@ -7,7 +7,7 @@ public class PlayerSync : MonoBehaviour
     public static PlayerSync Instance { get; private set; }
     public string PlayerId { get; private set; }
     public string PlayerName { get; private set; }
-    
+
     private Player player;
     public GameConfigSO gameConfig;
 
@@ -48,7 +48,7 @@ public class PlayerSync : MonoBehaviour
         }
 
         player = Player.Instance;
-        
+
         PlayerId = Player.Instance.playerId;
         PlayerName = Player.Instance.playerName;
 
@@ -68,7 +68,7 @@ public class PlayerSync : MonoBehaviour
     {
         PlayerData joinData = new PlayerData
         {
-            Command = "JOIN",
+            Command = CommandType.JOIN,
             PlayerId = PlayerId,
             PlayerName = PlayerName,
             Position = transform.position,
@@ -90,7 +90,7 @@ public class PlayerSync : MonoBehaviour
 
             PlayerData moveData = new PlayerData
             {
-                Command = "MOVE",
+                Command = CommandType.MOVE,
                 PlayerId = PlayerId,
                 Position = transform.position,
                 Rotation = transform.rotation,
@@ -104,7 +104,7 @@ public class PlayerSync : MonoBehaviour
     {
         PlayerData shootData = new PlayerData
         {
-            Command = "SHOOT",
+            Command = CommandType.SHOOT,
             PlayerId = PlayerId,
             TargetPlayerId = targetPlayerId,
             Damage = damage
@@ -117,10 +117,21 @@ public class PlayerSync : MonoBehaviour
     {
         PlayerData dieData = new PlayerData
         {
-            Command = "DIE",
+            Command = CommandType.DIE,
             PlayerId = PlayerId,
         };
 
         playerCommunicator.SendMessage(dieData);
+    }
+
+    public void HandleDisconnect()
+    {
+        PlayerData disconnectData = new PlayerData
+        {
+            Command = CommandType.DISCONNECTED,
+            PlayerId = PlayerId,
+        };
+
+        playerCommunicator.SendMessage(disconnectData);
     }
 }

@@ -1,6 +1,15 @@
 using System;
 using UnityEngine;
 
+public enum CommandType
+{
+    JOIN,
+    MOVE,
+    SHOOT,
+    DIE,
+    DISCONNECTED
+}
+
 [Serializable]
 public class PlayerData
 {
@@ -14,5 +23,5 @@ public class PlayerData
     public float Damage;             // Damage
 
     public string TargetPlayerId;
-    public string Command;         // Commands (JOIN, MOVE, SHOOT, etc.)
+    public CommandType Command;         // Commands (JOIN, MOVE, SHOOT, etc.)
 }

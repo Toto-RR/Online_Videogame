@@ -3,14 +3,11 @@ using TMPro; // Importar para TextMeshPro
 
 public class AmmoDisplayUI : MonoBehaviour
 {
-    private TextMeshProUGUI ammoText; // Referencia al objeto TextMeshProUGUI
+    public TextMeshProUGUI ammoText; // Referencia al objeto TextMeshProUGUI
     public Player player; // Referencia al script Player para obtener las balas
 
     void Start()
     {
-        // Intentar encontrar automáticamente el componente TextMeshProUGUI dentro de la jerarquía
-        ammoText = FindObjectOfType<TextMeshProUGUI>();
-
         // Asegurarse de que el texto esté inicializado y actualizado al inicio
         if (ammoText != null)
         {

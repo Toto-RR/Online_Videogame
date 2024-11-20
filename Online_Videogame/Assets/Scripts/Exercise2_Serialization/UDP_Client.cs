@@ -83,52 +83,86 @@ public class UDP_Client : MonoBehaviour
     // Update the game state updating the player data of each player on the list
     private void UpdateGameState(GameState gameState)
     {
+        // Paso 1: Crear un conjunto de IDs de jugadores actualmente conectados en el cliente
+        HashSet<string> activePlayerIds = new HashSet<string>(playerObjects.Keys);
+
+        // Paso 2: Iterar sobre los jugadores recibidos en el GameState
         foreach (var player in gameState.Players)
         {
+            // Verifica si el jugador es local
             if (player.PlayerId == Player.Instance.playerId)
             {
-                /// By setting this we cannot know the health of the enemies 
-                /// as we never process it, only their position. 
-                /// To know if they are dead, we wait for the DIE message.
-
-                // If this player has been hitted
-                if (player.Health != Player.Instance.health.GetCurrentHealth())
-                {
-                    // Update its health
-                    Player.Instance.health.SetHealth(player.Health);
-                    Player.Instance.TakeDamage(player.Damage);
-                }
+                UpdateLocalPlayerHealth(player);
                 continue;
             }
 
+            // Si el jugador no está en el cliente, instanciarlo
             if (!playerObjects.ContainsKey(player.PlayerId))
             {
-                // Player is not registered, instance and register
-                GameObject newPlayer = Instantiate(playerPrefab, player.Position, player.Rotation);
-
-                // Asign its name and ID
-                PlayerIdentity playerIdentity = newPlayer.GetComponent<PlayerIdentity>();
-                if (playerIdentity != null)
-                {
-                    playerIdentity.Initialize(player.PlayerId, player.PlayerName);
-                }
-
-                // Add it to playerObjects
-                playerObjects[player.PlayerId] = newPlayer;
-                newPlayer.name = player.PlayerName;
+                InstantiatePlayer(player);
             }
             else
             {
-                // If player was registered and instanciated, then update the position
-                GameObject playerObject = playerObjects[player.PlayerId];
-                playerObject.transform.position = player.Position;
-                playerObject.transform.rotation = player.Rotation;
+                // Si ya está instanciado, actualizar su posición y rotación
+                UpdatePlayerPosition(player);
             }
+
+            // Eliminarlo del conjunto de jugadores activos ya procesados
+            activePlayerIds.Remove(player.PlayerId);
+        }
+
+        // Paso 3: Eliminar jugadores que ya no están en el GameState (desconectados)
+        RemoveDisconnectedPlayers(activePlayerIds);
+    }
+
+    // Actualiza la salud del jugador local
+    private void UpdateLocalPlayerHealth(PlayerData player)
+    {
+        if (player.Health != Player.Instance.health.GetCurrentHealth())
+        {
+            Player.Instance.health.SetHealth(player.Health);
+            Player.Instance.TakeDamage(player.Damage);  // Actualizar el daño si es necesario
         }
     }
 
+    // Instancia un nuevo jugador
+    private void InstantiatePlayer(PlayerData player)
+    {
+        GameObject newPlayer = Instantiate(playerPrefab, player.Position, player.Rotation);
+        PlayerIdentity playerIdentity = newPlayer.GetComponent<PlayerIdentity>();
+
+        if (playerIdentity != null)
+        {
+            playerIdentity.Initialize(player.PlayerId, player.PlayerName);
+        }
+
+        playerObjects[player.PlayerId] = newPlayer;
+        newPlayer.name = player.PlayerName;
+    }
+
+    // Actualiza la posición y rotación de un jugador ya instanciado
+    private void UpdatePlayerPosition(PlayerData player)
+    {
+        GameObject playerObject = playerObjects[player.PlayerId];
+        playerObject.transform.position = player.Position;
+        playerObject.transform.rotation = player.Rotation;
+    }
+
+    // Elimina a los jugadores desconectados de la escena
+    private void RemoveDisconnectedPlayers(HashSet<string> activePlayerIds)
+    {
+        foreach (var playerId in activePlayerIds)
+        {
+            GameObject playerObject = playerObjects[playerId];
+            Destroy(playerObject);
+            playerObjects.Remove(playerId);
+        }
+    }
+
+
     void OnApplicationQuit()
     {
+        PlayerSync.Instance.HandleDisconnect();
         if (socket != null) socket.Close();
     }
 }

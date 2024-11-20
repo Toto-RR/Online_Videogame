@@ -2,6 +2,7 @@ ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
     - ActivateAnimation
+    - AmmoDisplayUI
     - ConsoleUI
     - EnergyDisplayUI
     - FPSController
@@ -184,15 +185,17 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
+      Script: {instanceID: 1568}
+    - Class: 114
       Script: {instanceID: 1570}
     - Class: 114
-      Script: {instanceID: 1618}
+      Script: {instanceID: 1948}
     - Class: 114
-      Script: {instanceID: 1950}
+      Script: {instanceID: 2130}
     - Class: 114
-      Script: {instanceID: 2132}
+      Script: {instanceID: 2676}
     - Class: 114
-      Script: {instanceID: 2678}
+      Script: {instanceID: 2810}
     - Class: 114
       Script: {instanceID: 2894}
     - Class: 114
@@ -218,13 +221,13 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 6082}
     - Class: 114
-      Script: {instanceID: 6360}
+      Script: {instanceID: 6086}
     - Class: 114
-      Script: {instanceID: 6586}
+      Script: {instanceID: 6362}
     - Class: 114
-      Script: {instanceID: 7898}
+      Script: {instanceID: 6588}
     - Class: 114
-      Script: {instanceID: 24536}
+      Script: {instanceID: 7900}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -275,17 +278,17 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
+      Script: {instanceID: 1568}
+    - Class: 114
       Script: {instanceID: 1570}
     - Class: 114
-      Script: {instanceID: 1618}
+      Script: {instanceID: 1744}
     - Class: 114
-      Script: {instanceID: 1746}
+      Script: {instanceID: 2228}
     - Class: 114
-      Script: {instanceID: 2230}
+      Script: {instanceID: 2314}
     - Class: 114
-      Script: {instanceID: 2316}
-    - Class: 114
-      Script: {instanceID: 2678}
+      Script: {instanceID: 2676}
     - Class: 114
       Script: {instanceID: 2894}
     - Class: 114
@@ -311,7 +314,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 6022}
     - Class: 114
-      Script: {instanceID: 6360}
+      Script: {instanceID: 6362}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -345,6 +348,12 @@ ScriptsOnlyBuild:
     className: CanvasScaler
   - hash:
       serializedVersion: 2
+      Hash: dd9dda1dfd39e605c49e72003342ef5d
+    assemblyName: UnityEngine.UI
+    namespaceName: UnityEngine.UI
+    className: Image
+  - hash:
+      serializedVersion: 2
       Hash: f235b66bbaad891803c9d777dfd67956
     assemblyName: Unity.AdaptivePerformance
     namespaceName: UnityEngine.AdaptivePerformance
@@ -355,12 +364,6 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UIElements
     className: PanelRaycaster
-  - hash:
-      serializedVersion: 2
-      Hash: dd9dda1dfd39e605c49e72003342ef5d
-    assemblyName: UnityEngine.UI
-    namespaceName: UnityEngine.UI
-    className: Image
   - hash:
       serializedVersion: 2
       Hash: 28be742dfed98d22c3acbf7df788a6b1
@@ -565,6 +568,12 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp
     namespaceName: TMPro.Examples
     className: TMP_TextSelector_A
+  - hash:
+      serializedVersion: 2
+      Hash: 67a30038bb341c96dba69b6da15b596e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: EnergyDisplayUI
   - hash:
       serializedVersion: 2
       Hash: 755ec4bae2b3b16276059d8895b977ea
@@ -1317,6 +1326,12 @@ ScriptsOnlyBuild:
     className: ConsoleUI
   - hash:
       serializedVersion: 2
+      Hash: b8771a4b1cccfb925f272a17c6db80d7
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: AmmoDisplayUI
+  - hash:
+      serializedVersion: 2
       Hash: 8994247ddacb8f8856e38bfaae72d2fe
     assemblyName: Unity.AdaptivePerformance
     namespaceName: UnityEngine.AdaptivePerformance
@@ -1711,18 +1726,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSliderValueChangedMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: 67a30038bb341c96dba69b6da15b596e
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: EnergyDisplayUI
-  - hash:
-      serializedVersion: 2
-      Hash: 900809cd1fc7c11221556bf0f10e400f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: AmmoDisplayUI
   platform: 19
   scenePathNames:
   - Assets/Scenes/Start.unity

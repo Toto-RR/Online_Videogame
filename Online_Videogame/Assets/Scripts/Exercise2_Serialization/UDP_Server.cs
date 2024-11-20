@@ -154,18 +154,22 @@ public class UDP_Server : MonoBehaviour
     {
         switch (receivedData.Command)
         {
-            case "JOIN":
+            case CommandType.JOIN:
                 consoleUI.LogToConsole("Player joined " + receivedData.PlayerName);
                 AddPlayer(receivedData, remoteEndPoint);
                 break;
-            case "MOVE":
+            case CommandType.MOVE:
                 UpdatePlayerPosition(receivedData);
                 break;
-            case "SHOOT":
+            case CommandType.SHOOT:
                 ProcessShoot(receivedData);
                 break;
-            case "DIE":
+            case CommandType.DIE:
                 consoleUI.LogToConsole($"{receivedData.PlayerId} HA MUERTO");
+                break;
+            case CommandType.DISCONNECTED:
+                consoleUI.LogToConsole($"{receivedData.PlayerId} DISCONNECTED");
+                HandleDisconnect(receivedData.PlayerId);
                 break;
             default:
                 Debug.LogWarning($"Unknown command: {receivedData.Command}");
@@ -261,6 +265,29 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
+    private void HandleDisconnect(string playerId)
+    {
+        if (connectedClients.ContainsKey(playerId))
+        {
+            connectedClients.Remove(playerId);
+
+            // Eliminar el objeto del jugador en el servidor
+            if (playerObjects.ContainsKey(playerId))
+            {
+                GameObject playerObject = playerObjects[playerId];
+                Destroy(playerObject);  // Elimina el jugador de la escena
+                playerObjects.Remove(playerId);
+            }
+
+            // Actualiza el estado del juego
+            gameState.Players.RemoveAll(p => p.PlayerId == playerId);
+
+            // Notificar a todos los clientes sobre la desconexión
+            BroadcastGameState();
+
+            Debug.Log($"Jugador {playerId} se ha desconectado.");
+        }
+    }
 
     // Add the player to the gamestate list
     void AddPlayerToList(PlayerData playerData)
@@ -295,6 +322,7 @@ public class UDP_Server : MonoBehaviour
 
     void OnApplicationQuit()
     {
+        PlayerSync.Instance.HandleDisconnect();
         StopServer();
     }
 }

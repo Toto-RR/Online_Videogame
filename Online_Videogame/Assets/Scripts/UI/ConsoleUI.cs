@@ -17,6 +17,11 @@ public class ConsoleUI : MonoBehaviour
         Application.logMessageReceived -= HandleLog;
     }
 
+    private void Start()
+    {
+        gameObject.SetActive(false);
+    }
+
     private void HandleLog(string logString, string stackTrace, LogType type)
     {
         // Agregar el mensaje al texto de la consola
@@ -66,7 +71,7 @@ public class ConsoleUI : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.M))
         {
-            LogToConsole("Mensaje de prueba desde el código.");
+            LogToConsole("Example message.");
         }
     }
 

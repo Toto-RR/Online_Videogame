@@ -15,7 +15,7 @@ public class ToggleConsoleUI : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.L))
         {
             consoleUI.ToggleConsole();
         }

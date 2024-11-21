@@ -224,8 +224,8 @@ MonoBehaviour:
   isDead: 0
   takeDamageUI: {fileID: 8137026587703810641}
   deathCanvas: {fileID: 5474187155426840050}
-  respawnTimeText: {fileID: 119870735495533929}
   healthBar: {fileID: 5768684124576659867}
+  consoleUI: {fileID: 0}
 --- !u!114 &3930805234507347834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -591,11 +591,11 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 0
   m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
+  m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!114 &4850513448038828985
@@ -893,8 +893,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -200, y: 50}
-  m_SizeDelta: {x: 400, y: 100}
+  m_AnchoredPosition: {x: -127.6, y: 35.7}
+  m_SizeDelta: {x: 242.8, y: 64.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6564186134545050025
 CanvasRenderer:

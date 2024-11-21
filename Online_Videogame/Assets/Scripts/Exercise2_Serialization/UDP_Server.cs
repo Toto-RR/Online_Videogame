@@ -109,6 +109,8 @@ public class UDP_Server : MonoBehaviour
     // Start to receive messages, recursive
     private void BeginReceive()
     {
+        if (!socket.Connected) return;
+
         EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
         socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
         {

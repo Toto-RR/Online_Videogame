@@ -71,7 +71,7 @@ public class ConsoleUI : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.M))
         {
-            LogToConsole("Example message.");
+            LogToConsole("Mensaje de prueba desde el código.");
         }
     }
 

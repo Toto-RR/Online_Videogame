@@ -36,21 +36,6 @@ public class FPSController : MonoBehaviour
     private Vector3 lastPos;
     private Quaternion lastRot;
 
-    private void Awake()
-    {
-        characterController = GetComponent<CharacterController>();
-        if (characterController == null)
-        {
-            Debug.LogError("CharacterController not found");
-        }
-
-        playerCamera = GetComponentInChildren<Camera>();
-        if (playerCamera == null)
-        {
-            Debug.LogError("Camera not found");
-        }
-    }
-
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -156,8 +141,8 @@ public class FPSController : MonoBehaviour
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
 
-        float inputVertical = Input.GetAxisRaw("Vertical");
-        float inputHorizontal = Input.GetAxisRaw("Horizontal");
+        float inputVertical = Input.GetAxisRaw("Vertical"); // -1 (atrás), 1 (adelante), 0 (sin input)
+        float inputHorizontal = Input.GetAxisRaw("Horizontal"); // -1 (izquierda), 1 (derecha), 0 (sin input)
 
         dashDirection = (forward * inputVertical + right * inputHorizontal).normalized;
 
@@ -174,19 +159,18 @@ public class FPSController : MonoBehaviour
     {
         isDashing = false;
 
-        // Restore to its normal FOV
+        // Restaurar el FOV a su valor normal
         StartCoroutine(RestoreFOV());
     }
 
     private IEnumerator RestoreFOV()
     {
-        // Visual feedback to dash
         while (Mathf.Abs(playerCamera.fieldOfView - normalFOV) > 0.1f)
         {
             playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, normalFOV, fovTransitionSpeed * Time.deltaTime);
             yield return null;
         }
-        playerCamera.fieldOfView = normalFOV;
+        playerCamera.fieldOfView = normalFOV; // Aseguramos el valor final
     }
 
     public void SendMovement()

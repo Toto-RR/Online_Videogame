@@ -4,6 +4,8 @@ using System.Net;
 using System.Text;
 using System;
 using UnityEngine;
+using Unity.VisualScripting;
+using System.Security;
 
 public class UDP_Server : MonoBehaviour
 {
@@ -114,7 +116,7 @@ public class UDP_Server : MonoBehaviour
             {
                 int receivedBytes = socket.EndReceiveFrom(ar, ref remoteEndPoint);
                 string jsonData = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
-                
+
                 HandleMessage(jsonData, remoteEndPoint);
                 BeginReceive();
             }
@@ -166,10 +168,15 @@ public class UDP_Server : MonoBehaviour
                 break;
             case CommandType.DIE:
                 consoleUI.LogToConsole($"{receivedData.PlayerId} HA MUERTO");
+                HandleDie(receivedData);
+                break;
+            case CommandType.RESPAWN:
+                consoleUI.LogToConsole($"{receivedData.PlayerId} RESPAWN");
+                HandleRespawn(receivedData);
                 break;
             case CommandType.DISCONNECTED:
                 consoleUI.LogToConsole($"{receivedData.PlayerId} DISCONNECTED");
-                HandleDisconnect(receivedData.PlayerId);
+                HandleDisconnect(receivedData);
                 break;
             default:
                 Debug.LogWarning($"Unknown command: {receivedData.Command}");
@@ -230,34 +237,19 @@ public class UDP_Server : MonoBehaviour
     {
         // Encuentra los datos del jugador objetivo en el estado del juego
         PlayerData targetPlayerData = gameState.Players.Find(p => p.PlayerId == shooterData.TargetPlayerId);
-        string shooterName = GetPlayerName(shooterData);
-        string targetName = GetPlayerName(targetPlayerData);
 
         if (targetPlayerData != null)
         {
-            //consoleUI.LogToConsole($"{shooterName} shoot to {targetName}");
-
             targetPlayerData.Health -= shooterData.Damage;
-            //consoleUI.LogToConsole($"{targetName} has {targetPlayerData.Health}");
 
             // Target is the player that we controll
             if (targetPlayerData.PlayerId == Player.Instance.playerId)
             {
-                //Debug.Log($"{targetName} (local player) was hit. Applying damage locally.");
-
-                Player localPlayer = FindObjectOfType<Player>();
-                if (localPlayer != null)
-                {
-                    localPlayer.TakeDamage(shooterData.Damage);
-                }
-                else
-                {
-                    Debug.LogWarning("Local Player script not found!");
-                }
+                Player.Instance.TakeDamage(shooterData.Damage);
             }
 
             // Actualiza el estado y retransmite a todos los jugadores
-            BroadcastGameState();
+            //BroadcastGameState();
         }
         else
         {
@@ -265,28 +257,66 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
-    private void HandleDisconnect(string playerId)
+    private void HandleDie(PlayerData player)
     {
-        if (connectedClients.ContainsKey(playerId))
+        try
         {
-            connectedClients.Remove(playerId);
+            Debug.Log($"Jugador {player.PlayerId} ha muerto y respawneado.");
+            consoleUI.LogToConsole($"Jugador {player.PlayerId} ha muerto y respawneado.");
+
+            // Código de la función
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error en HandleDie: {ex.Message}\n{ex.StackTrace}");
+        }
+    }
+
+    private void HandleRespawn(PlayerData playerData)
+    {
+        PlayerData player = gameState.Players.Find(p => p.PlayerId == playerData.PlayerId);
+        if (player != null)
+        {
+            player.Position = playerData.Position;
+            player.Rotation = playerData.Rotation;
+            player.Health = playerData.Health;
+
+            if (playerObjects.ContainsKey(playerData.PlayerId))
+            {
+                GameObject playerObject = playerObjects[playerData.PlayerId];
+                playerObject.transform.position = playerData.Position;
+                playerObject.transform.rotation = playerData.Rotation;
+            }
+
+            // Actualiza el estado del servidor y lo transmite
+            //BroadcastGameState();
+        }
+    }
+
+
+    private void HandleDisconnect(PlayerData playerData)
+    {
+        if (connectedClients.ContainsKey(playerData.PlayerId))
+        {
+            connectedClients.Remove(playerData.PlayerId);
 
             // Eliminar el objeto del jugador en el servidor
-            if (playerObjects.ContainsKey(playerId))
+            if (playerObjects.ContainsKey(playerData.PlayerId))
             {
-                GameObject playerObject = playerObjects[playerId];
+                GameObject playerObject = playerObjects[playerData.PlayerId];
                 Destroy(playerObject);  // Elimina el jugador de la escena
-                playerObjects.Remove(playerId);
+                playerObjects.Remove(playerData.PlayerId);
             }
 
             // Actualiza el estado del juego
-            gameState.Players.RemoveAll(p => p.PlayerId == playerId);
+            gameState.Players.RemoveAll(p => p.PlayerId == playerData.PlayerId);
 
             // Notificar a todos los clientes sobre la desconexión
-            BroadcastGameState();
+            //BroadcastGameState();
 
-            Debug.Log($"Jugador {playerId} se ha desconectado.");
+            Debug.Log($"Jugador {playerData.PlayerId} se ha desconectado.");
         }
+
     }
 
     // Add the player to the gamestate list

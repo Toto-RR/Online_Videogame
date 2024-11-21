@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -6,9 +7,9 @@ public class Player : MonoBehaviour
     public static Player Instance { get; private set; }
 
     // Componentes esenciales
-    public PlayerHealth health;
-    public PlayerShoot shoot;
-    public FPSController movement;
+    public PlayerHealth health { get; private set; }
+    public PlayerShoot Shoot { get; private set; }
+    public FPSController Movement { get; private set; }
 
     // Información de player
     public string playerId { get; private set; }
@@ -20,13 +21,14 @@ public class Player : MonoBehaviour
 
     // Shooting 
     public float damage = 10f;
+
     // Variables de salud
     public float maxHealth = 100;
 
     // Energy (to dash)
     public int currentEnergy = 4; // Able to do 4 dashes
 
-    private PlayerHealthUI healthBar;
+    private bool isRespawning = false;
 
     private void Awake()
     {
@@ -39,8 +41,8 @@ public class Player : MonoBehaviour
 
         // Inicializar los componentes
         health = GetComponent<PlayerHealth>();
-        shoot = GetComponent<PlayerShoot>();
-        movement = GetComponent<FPSController>();
+        Shoot = GetComponent<PlayerShoot>();
+        Movement = GetComponent<FPSController>();
 
         // Si el PlayerHealth no está asignado, crearlo
         if (health == null)
@@ -49,19 +51,23 @@ public class Player : MonoBehaviour
         // Asegurar que la salud inicial sea la máxima
         health.SetHealth(maxHealth);
 
-        healthBar = FindAnyObjectByType<PlayerHealthUI>();
     }
 
     private void Update()
     {
-        // Actualizar los componentes en cada frame
-        movement.HandleMovement();
-        shoot.HandleShooting();
-
-        //DEBUG INPUTS
-        if(Input.GetKeyDown(KeyCode.H))
+        if (!CheckIfDead())
         {
-            TakeDamage(damage);
+            if (!isRespawning) // Evitar movimiento mientras está reapareciendo
+            {
+                Movement.HandleMovement();
+            }
+            Shoot.HandleShooting();
+        }
+
+        // DEBUG INPUTS
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            TakeDamage(100);
         }
         if (Input.GetKeyDown(KeyCode.J))
         {
@@ -71,21 +77,23 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Current Health: " + health.GetCurrentHealth().ToString());
         }
-        
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            SetAtRespawn();
+        }
     }
+
 
     // Método para aplicar daño
     public void TakeDamage(float damage)
     {
         health.TakeDamage(damage);
-        healthBar.UpdateHealthBar(health.GetCurrentHealth());
     }
 
     // Método para curar
     public void Heal(float amount)
     {
         health.Heal(amount);
-        healthBar.UpdateHealthBar(health.GetCurrentHealth());
     }
 
     public int GetEnergy()
@@ -95,7 +103,32 @@ public class Player : MonoBehaviour
 
     public int GetAmmoCount()
     {
-        return shoot.currentAmmo;
+        return Shoot.currentAmmo;
     }
+
+    public bool CheckIfDead()
+    {
+        if (health.isDead) return true;
+        else return false;
+    }
+
+    public void SetAtRespawn()
+    {
+        isRespawning = true;
+
+        // Mover al jugador a la posición y rotación de respawn
+        transform.position = gameConfig.RespawnPos;
+        transform.rotation = gameConfig.RespawnRot;
+
+        // Opcional: Si necesitas realizar una acción después de asegurarte del movimiento
+        StartCoroutine(CompleteRespawn());
+    }
+
+    private IEnumerator CompleteRespawn()
+    {
+        yield return new WaitForSeconds(0.1f); // Breve retraso para estabilizar
+        isRespawning = false;
+    }
+
     // Métodos adicionales para movimiento, disparo, etc. se delegan a componentes como antes.
 }

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -68,14 +68,14 @@ public class UDP_Client : MonoBehaviour
 
                 // The client always receive a game state, so it only has to update the list of player data
                 GameState gameState = JsonUtility.FromJson<GameState>(jsonState);
-                
+
                 UpdateGameState(gameState);
 
                 BeginReceive();
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error en recepción: {ex.Message}");
+                Debug.LogError($"Error en recepciï¿½n: {ex.Message}");
             }
         }, null);
     }
@@ -96,14 +96,14 @@ public class UDP_Client : MonoBehaviour
                 continue;
             }
 
-            // Si el jugador no está en el cliente, instanciarlo
+            // Si el jugador no estï¿½ en el cliente, instanciarlo
             if (!playerObjects.ContainsKey(player.PlayerId))
             {
                 InstantiatePlayer(player);
             }
             else
             {
-                // Si ya está instanciado, actualizar su posición y rotación
+                // Si ya estï¿½ instanciado, actualizar su posiciï¿½n y rotaciï¿½n
                 UpdatePlayerPosition(player);
             }
 
@@ -111,17 +111,30 @@ public class UDP_Client : MonoBehaviour
             activePlayerIds.Remove(player.PlayerId);
         }
 
-        // Paso 3: Eliminar jugadores que ya no están en el GameState (desconectados)
+        // Paso 3: Eliminar jugadores que ya no estï¿½n en el GameState (desconectados)
         RemoveDisconnectedPlayers(activePlayerIds);
     }
 
     // Actualiza la salud del jugador local
     private void UpdateLocalPlayerHealth(PlayerData player)
     {
-        if (player.Health != Player.Instance.health.GetCurrentHealth())
+        float currentHealth = Player.Instance.health.GetCurrentHealth();
+
+        // Si la salud es diferente, calcula el daÃ±o recibido
+        if (player.Health != currentHealth)
         {
-            Player.Instance.health.SetHealth(player.Health);
-            Player.Instance.TakeDamage(player.Damage);  // Actualizar el daño si es necesario
+            float damage = currentHealth - player.Health;
+
+            // Si el daÃ±o es positivo, significa que se recibiÃ³ daÃ±o
+            if (damage > 0)
+            {
+                Player.Instance.health.TakeDamage(damage);
+            }
+            else
+            {
+                // Si el daÃ±o es negativo, significa que se curÃ³
+                Player.Instance.health.Heal(-damage);
+            }
         }
     }
 
@@ -140,7 +153,7 @@ public class UDP_Client : MonoBehaviour
         newPlayer.name = player.PlayerName;
     }
 
-    // Actualiza la posición y rotación de un jugador ya instanciado
+    // Actualiza la posiciï¿½n y rotaciï¿½n de un jugador ya instanciado
     private void UpdatePlayerPosition(PlayerData player)
     {
         GameObject playerObject = playerObjects[player.PlayerId];

@@ -10,11 +10,15 @@ ScriptsOnlyBuild:
     - GameManager
     - GameSceneManager
     - GetIP
+    - HitmarkerUI
     - Player
+    - PlayerHealth
     - PlayerHealthUI
     - PlayerIdentity
     - PlayerShoot
     - PlayerSync
+    - TakeDamageUI
+    - ToggleConsoleUI
     - UDP_Client
     - UDP_Server
     Unity.AdaptivePerformance.Editor.dll:
@@ -40,8 +44,10 @@ ScriptsOnlyBuild:
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
     - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.StateNode
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
@@ -187,47 +193,55 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1568}
     - Class: 114
-      Script: {instanceID: 1570}
+      Script: {instanceID: 1616}
     - Class: 114
-      Script: {instanceID: 1948}
+      Script: {instanceID: 2668}
     - Class: 114
-      Script: {instanceID: 2130}
+      Script: {instanceID: 2884}
     - Class: 114
-      Script: {instanceID: 2676}
+      Script: {instanceID: 3974}
     - Class: 114
-      Script: {instanceID: 2810}
+      Script: {instanceID: 4294}
     - Class: 114
-      Script: {instanceID: 2894}
+      Script: {instanceID: 5172}
     - Class: 114
-      Script: {instanceID: 3164}
+      Script: {instanceID: 5180}
     - Class: 114
-      Script: {instanceID: 3460}
+      Script: {instanceID: 5246}
     - Class: 114
-      Script: {instanceID: 3646}
+      Script: {instanceID: 5990}
     - Class: 114
-      Script: {instanceID: 3994}
+      Script: {instanceID: 6326}
     - Class: 114
-      Script: {instanceID: 4076}
+      Script: {instanceID: 8376}
     - Class: 114
-      Script: {instanceID: 4316}
+      Script: {instanceID: 8384}
     - Class: 114
-      Script: {instanceID: 5198}
+      Script: {instanceID: 8388}
     - Class: 114
-      Script: {instanceID: 5206}
+      Script: {instanceID: 8392}
     - Class: 114
-      Script: {instanceID: 5272}
+      Script: {instanceID: 8396}
     - Class: 114
-      Script: {instanceID: 6022}
+      Script: {instanceID: 8400}
     - Class: 114
-      Script: {instanceID: 6082}
+      Script: {instanceID: 8404}
     - Class: 114
-      Script: {instanceID: 6086}
+      Script: {instanceID: 8408}
     - Class: 114
-      Script: {instanceID: 6362}
+      Script: {instanceID: 8412}
     - Class: 114
-      Script: {instanceID: 6588}
+      Script: {instanceID: 8428}
     - Class: 114
-      Script: {instanceID: 7900}
+      Script: {instanceID: 8436}
+    - Class: 114
+      Script: {instanceID: 8444}
+    - Class: 114
+      Script: {instanceID: 8448}
+    - Class: 114
+      Script: {instanceID: 8452}
+    - Class: 114
+      Script: {instanceID: 8468}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -280,41 +294,41 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1568}
     - Class: 114
-      Script: {instanceID: 1570}
+      Script: {instanceID: 1616}
     - Class: 114
-      Script: {instanceID: 1744}
+      Script: {instanceID: 1742}
     - Class: 114
-      Script: {instanceID: 2228}
+      Script: {instanceID: 2222}
     - Class: 114
-      Script: {instanceID: 2314}
+      Script: {instanceID: 2308}
     - Class: 114
-      Script: {instanceID: 2676}
+      Script: {instanceID: 2668}
     - Class: 114
-      Script: {instanceID: 2894}
+      Script: {instanceID: 2884}
     - Class: 114
-      Script: {instanceID: 3164}
+      Script: {instanceID: 3200}
     - Class: 114
-      Script: {instanceID: 3212}
+      Script: {instanceID: 4126}
     - Class: 114
-      Script: {instanceID: 4148}
+      Script: {instanceID: 4222}
     - Class: 114
-      Script: {instanceID: 4244}
+      Script: {instanceID: 4236}
     - Class: 114
-      Script: {instanceID: 4258}
+      Script: {instanceID: 4500}
     - Class: 114
-      Script: {instanceID: 4522}
+      Script: {instanceID: 4596}
     - Class: 114
-      Script: {instanceID: 4618}
+      Script: {instanceID: 5056}
     - Class: 114
-      Script: {instanceID: 5082}
+      Script: {instanceID: 5246}
     - Class: 114
-      Script: {instanceID: 5272}
+      Script: {instanceID: 5394}
     - Class: 114
-      Script: {instanceID: 5420}
+      Script: {instanceID: 5990}
     - Class: 114
-      Script: {instanceID: 6022}
+      Script: {instanceID: 6326}
     - Class: 114
-      Script: {instanceID: 6362}
+      Script: {instanceID: 8388}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -348,12 +362,6 @@ ScriptsOnlyBuild:
     className: CanvasScaler
   - hash:
       serializedVersion: 2
-      Hash: dd9dda1dfd39e605c49e72003342ef5d
-    assemblyName: UnityEngine.UI
-    namespaceName: UnityEngine.UI
-    className: Image
-  - hash:
-      serializedVersion: 2
       Hash: f235b66bbaad891803c9d777dfd67956
     assemblyName: Unity.AdaptivePerformance
     namespaceName: UnityEngine.AdaptivePerformance
@@ -366,16 +374,16 @@ ScriptsOnlyBuild:
     className: PanelRaycaster
   - hash:
       serializedVersion: 2
+      Hash: dd9dda1dfd39e605c49e72003342ef5d
+    assemblyName: UnityEngine.UI
+    namespaceName: UnityEngine.UI
+    className: Image
+  - hash:
+      serializedVersion: 2
       Hash: 28be742dfed98d22c3acbf7df788a6b1
     assemblyName: Unity.AdaptivePerformance
     namespaceName: UnityEngine.AdaptivePerformance
     className: AdaptiveDecals
-  - hash:
-      serializedVersion: 2
-      Hash: 7c6b91d859cdd32bf89af4c6ecb3619e
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PlayManager
   - hash:
       serializedVersion: 2
       Hash: f45600bcc886206dd55a3208474aad61
@@ -438,18 +446,6 @@ ScriptsOnlyBuild:
     className: SimpleScript
   - hash:
       serializedVersion: 2
-      Hash: c6e3a19263b739568288451b0d10e850
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: GameSceneManager
-  - hash:
-      serializedVersion: 2
-      Hash: f061e823223c30820b0bf824cdb80785
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PlayerShoot
-  - hash:
-      serializedVersion: 2
       Hash: b12640dfdb5966813e9dd838893e6c4a
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -490,12 +486,6 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: ActivateAnimation
-  - hash:
-      serializedVersion: 2
-      Hash: d1fca403872b22f78906bea81a65ef8f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PlayerController
   - hash:
       serializedVersion: 2
       Hash: 1ab136900c0edaeeb49424c852595030
@@ -568,12 +558,6 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp
     namespaceName: TMPro.Examples
     className: TMP_TextSelector_A
-  - hash:
-      serializedVersion: 2
-      Hash: 67a30038bb341c96dba69b6da15b596e
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: EnergyDisplayUI
   - hash:
       serializedVersion: 2
       Hash: 755ec4bae2b3b16276059d8895b977ea
@@ -672,12 +656,6 @@ ScriptsOnlyBuild:
     className: VertexShakeA
   - hash:
       serializedVersion: 2
-      Hash: ac0ca23b0783e33e1f8cb2ebeb9dc1b5
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: GameConfigSO
-  - hash:
-      serializedVersion: 2
       Hash: a1ac4c50e55874de16eee3db71aa9784
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
@@ -732,12 +710,6 @@ ScriptsOnlyBuild:
     className: UnityOnScrollMessageListener
   - hash:
       serializedVersion: 2
-      Hash: edf3c0e2ebca363b40a465a888a2225b
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: ButtonLamp
-  - hash:
-      serializedVersion: 2
       Hash: 715f7928b39881049ce8c46350cb8681
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -756,12 +728,6 @@ ScriptsOnlyBuild:
     className: VariablesAsset
   - hash:
       serializedVersion: 2
-      Hash: 65c8651d3dd48c36a79aa7e4b34c13da
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: UDP_Server
-  - hash:
-      serializedVersion: 2
       Hash: 7bdff9e91edfd9600f92a185def7e34a
     assemblyName: Unity.VisualScripting.Flow
     namespaceName: Unity.VisualScripting
@@ -778,12 +744,6 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: FaceToCam
-  - hash:
-      serializedVersion: 2
-      Hash: c71ac584105c443637ef9dbbea899b0d
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: SceneChanger
   - hash:
       serializedVersion: 2
       Hash: 5b8b7230ad968399f6726aa1269dcdcb
@@ -814,12 +774,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnControllerColliderHitMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: 8e88824044984f5146de62d71574b40d
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: FPSController
   - hash:
       serializedVersion: 2
       Hash: 960935b102b3064f4b924de16426e340
@@ -922,12 +876,6 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: Mask
-  - hash:
-      serializedVersion: 2
-      Hash: 2b5064fafa53cfd23046490a440589bc
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: Player
   - hash:
       serializedVersion: 2
       Hash: 4718916586b3818eb69bf65df61f0f3a
@@ -1060,12 +1008,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnPointerClickMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: 0106495f7bcd213ff3f76c824165cedd
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PlayerControllerClient
   - hash:
       serializedVersion: 2
       Hash: aa349b22cd61b9e8488d736f82590d6b
@@ -1278,12 +1220,6 @@ ScriptsOnlyBuild:
     className: StateGraphAsset
   - hash:
       serializedVersion: 2
-      Hash: 6561a5cadf658541518b72d9c43336a1
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: VolumeController
-  - hash:
-      serializedVersion: 2
       Hash: 35e0b31791c377513b6fc7b9568c50cd
     assemblyName: Assembly-CSharp
     namespaceName: TMPro.Examples
@@ -1318,18 +1254,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
     className: TextMeshProUGUI
-  - hash:
-      serializedVersion: 2
-      Hash: 7b4171a62c1b4d6205d51389fa7853c1
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: ConsoleUI
-  - hash:
-      serializedVersion: 2
-      Hash: b8771a4b1cccfb925f272a17c6db80d7
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: AmmoDisplayUI
   - hash:
       serializedVersion: 2
       Hash: 8994247ddacb8f8856e38bfaae72d2fe
@@ -1396,12 +1320,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
     className: TextContainer
-  - hash:
-      serializedVersion: 2
-      Hash: ca4b16a82a0ce6f3fff002640fff9cae
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: UDP_Client
   - hash:
       serializedVersion: 2
       Hash: 7fdd3ee28e9042c3ec83463d0bb3b230
@@ -1482,12 +1400,6 @@ ScriptsOnlyBuild:
     className: PositionAsUV1
   - hash:
       serializedVersion: 2
-      Hash: 63d92d04270a13591c5ef000205dafe0
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: ControlAnimateLights
-  - hash:
-      serializedVersion: 2
       Hash: 6a0b5b415c00f783202fd1ae2d556cb2
     assemblyName: Unity.Timeline
     namespaceName: UnityEngine.Timeline
@@ -1566,22 +1478,10 @@ ScriptsOnlyBuild:
     className: ControlTrack
   - hash:
       serializedVersion: 2
-      Hash: bd50af0a7a6567b8cf7a781d34ddfb0f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: Monitor
-  - hash:
-      serializedVersion: 2
       Hash: d5cd7f207e91ca8336c65a577a6fb2a0
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: ScrollRect
-  - hash:
-      serializedVersion: 2
-      Hash: 431dc4fa27ea2c3e7299a113ca7ff2c2
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PlayerHealth
   - hash:
       serializedVersion: 2
       Hash: 710ae1c9b325f59a36007abceb039638
@@ -1668,12 +1568,6 @@ ScriptsOnlyBuild:
     className: TeleType
   - hash:
       serializedVersion: 2
-      Hash: 2a02b469583a0c0e7dec263430b5964a
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PlayerSync
-  - hash:
-      serializedVersion: 2
       Hash: 9fb1c3ab48b256d508ecddd967f98652
     assemblyName: Assembly-CSharp
     namespaceName: TMPro.Examples
@@ -1726,6 +1620,144 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSliderValueChangedMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: 8e88824044984f5146de62d71574b40d
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: FPSController
+  - hash:
+      serializedVersion: 2
+      Hash: 2a02b469583a0c0e7dec263430b5964a
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PlayerSync
+  - hash:
+      serializedVersion: 2
+      Hash: 1e81c973b279fb029d31c830d6b58bcc
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GameConfigSO
+  - hash:
+      serializedVersion: 2
+      Hash: 1188ac1e7d73608050e715905c11b078
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: TakeDamageUI
+  - hash:
+      serializedVersion: 2
+      Hash: bb5805f16c6e0824cf1f34fe60f35c5f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: ToggleConsoleUI
+  - hash:
+      serializedVersion: 2
+      Hash: 97c57e81d677bf1c4969c2f215a714a8
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PlayerHealth
+  - hash:
+      serializedVersion: 2
+      Hash: 7b4171a62c1b4d6205d51389fa7853c1
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: ConsoleUI
+  - hash:
+      serializedVersion: 2
+      Hash: 21139fcaf085a9a93a116e22c32a8a16
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: HitmarkerUI
+  - hash:
+      serializedVersion: 2
+      Hash: f275a104db5594c3c3f4fbe8504428c9
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PlayerShoot
+  - hash:
+      serializedVersion: 2
+      Hash: 7c6b91d859cdd32bf89af4c6ecb3619e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PlayManager
+  - hash:
+      serializedVersion: 2
+      Hash: bd50af0a7a6567b8cf7a781d34ddfb0f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: Monitor
+  - hash:
+      serializedVersion: 2
+      Hash: 67a30038bb341c96dba69b6da15b596e
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: EnergyDisplayUI
+  - hash:
+      serializedVersion: 2
+      Hash: d1fca403872b22f78906bea81a65ef8f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PlayerController
+  - hash:
+      serializedVersion: 2
+      Hash: 65c8651d3dd48c36a79aa7e4b34c13da
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: UDP_Server
+  - hash:
+      serializedVersion: 2
+      Hash: 6561a5cadf658541518b72d9c43336a1
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: VolumeController
+  - hash:
+      serializedVersion: 2
+      Hash: b8771a4b1cccfb925f272a17c6db80d7
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: AmmoDisplayUI
+  - hash:
+      serializedVersion: 2
+      Hash: ca4b16a82a0ce6f3fff002640fff9cae
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: UDP_Client
+  - hash:
+      serializedVersion: 2
+      Hash: 3826a4923580e310a7c6d2219eef96bc
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GameSceneManager
+  - hash:
+      serializedVersion: 2
+      Hash: c71ac584105c443637ef9dbbea899b0d
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: SceneChanger
+  - hash:
+      serializedVersion: 2
+      Hash: edf3c0e2ebca363b40a465a888a2225b
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: ButtonLamp
+  - hash:
+      serializedVersion: 2
+      Hash: fa8b2295446994338486882a5a1f5882
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: Player
+  - hash:
+      serializedVersion: 2
+      Hash: 0106495f7bcd213ff3f76c824165cedd
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PlayerControllerClient
+  - hash:
+      serializedVersion: 2
+      Hash: 63d92d04270a13591c5ef000205dafe0
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: ControlAnimateLights
   platform: 19
   scenePathNames:
   - Assets/Scenes/Start.unity

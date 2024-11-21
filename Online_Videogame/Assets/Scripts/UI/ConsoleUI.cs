@@ -69,4 +69,9 @@ public class ConsoleUI : MonoBehaviour
             LogToConsole("Mensaje de prueba desde el código.");
         }
     }
+
+    public void ToggleConsole()
+    {
+        gameObject.SetActive(!gameObject.activeSelf);
+    }
 }

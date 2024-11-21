@@ -10,10 +10,6 @@ public class PlayerSync : MonoBehaviour
 
     private Player player;
     public GameConfigSO gameConfig;
-
-    private Vector3 lastPosition;
-    private Quaternion lastRotation;
-
     private IPlayerCommunicator playerCommunicator;
 
     private bool isHost = false;
@@ -52,9 +48,6 @@ public class PlayerSync : MonoBehaviour
         PlayerId = Player.Instance.playerId;
         PlayerName = Player.Instance.playerName;
 
-        lastPosition = transform.position;
-        lastRotation = transform.rotation;
-
         // Envía un JOIN al servidor
         SendJoinRequest();
     }
@@ -71,8 +64,8 @@ public class PlayerSync : MonoBehaviour
             Command = CommandType.JOIN,
             PlayerId = PlayerId,
             PlayerName = PlayerName,
-            Position = transform.position,
-            Rotation = transform.rotation,
+            Position = gameConfig.RespawnPos,
+            Rotation = gameConfig.RespawnRot,
             Health = player.health.GetCurrentHealth(),
             Energy = player.GetEnergy(),
             AmmoCount = player.GetAmmoCount(),
@@ -81,23 +74,18 @@ public class PlayerSync : MonoBehaviour
         playerCommunicator.SendMessage(joinData);
     }
 
-    public void SendPositionUpdate(Transform transform)
+    public void SendPositionUpdate(Vector3 pos, Quaternion rot)
     {
-        if (lastPosition != transform.position || lastRotation != transform.rotation)
+        PlayerData moveData = new PlayerData
         {
-            lastPosition = transform.position;
-            lastRotation = transform.rotation;
+            Command = CommandType.MOVE,
+            PlayerId = PlayerId,
+            Damage = 0,
+            Position = pos,
+            Rotation = rot,
+        };
 
-            PlayerData moveData = new PlayerData
-            {
-                Command = CommandType.MOVE,
-                PlayerId = PlayerId,
-                Position = transform.position,
-                Rotation = transform.rotation,
-            };
-
-            playerCommunicator.SendMessage(moveData);
-        }
+        playerCommunicator.SendMessage(moveData);
     }
 
     public void HandleShooting(float damage, string targetPlayerId)
@@ -121,6 +109,22 @@ public class PlayerSync : MonoBehaviour
             PlayerId = PlayerId,
         };
 
+        Debug.Log("Die message sent");
+        playerCommunicator.SendMessage(dieData);
+    }
+
+    public void HandleRespawn(Vector3 respawnPos, Quaternion respawnRot, float maxHealth)
+    {
+        PlayerData dieData = new PlayerData
+        {
+            Command = CommandType.RESPAWN,
+            PlayerId = PlayerId,
+            Position = respawnPos,
+            Rotation = respawnRot,
+            Health = maxHealth
+        };
+
+        Debug.Log("Respawn message sent");
         playerCommunicator.SendMessage(dieData);
     }
 

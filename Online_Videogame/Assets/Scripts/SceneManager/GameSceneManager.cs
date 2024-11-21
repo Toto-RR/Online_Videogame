@@ -7,6 +7,9 @@ public class GameSceneManager : MonoBehaviour
     public GameObject playerPrefab;            // Player Prefab
     public GameConfigSO gameConfig;          // Referencia al GameConfigSO
 
+    public GameObject clientRespawn;
+    public GameObject serverRespawn;
+
     void Start()
     {
         // Asegurarse de que el GameConfigSO esté asignado
@@ -23,15 +26,26 @@ public class GameSceneManager : MonoBehaviour
             // Si es Host
             hostServerScript.enabled = true;   // Activar el servidor (host)
             clientScript.enabled = false;      // Desactivar el script del cliente
+
+            gameConfig.SetRespawnPos(serverRespawn.transform.position);
+            gameConfig.SetRespawnRot(serverRespawn.transform.rotation);
+
+            Instantiate(playerPrefab, serverRespawn.transform.position, Quaternion.identity);
         }
         else
         {
             // Si es Cliente
             clientScript.enabled = true;      // Activar el script del cliente
             hostServerScript.enabled = false; // Desactivar el script del host
+
+            gameConfig.SetRespawnPos(clientRespawn.transform.position);
+            gameConfig.SetRespawnRot(clientRespawn.transform.rotation);
+
+            Instantiate(playerPrefab, clientRespawn.transform.position, Quaternion.identity);
         }
 
-        playerPrefab.SetActive(true);
+        
+        //playerPrefab.SetActive(true);
     }
 
     bool DetermineIfHost()

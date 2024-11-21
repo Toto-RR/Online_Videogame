@@ -3,29 +3,30 @@ using UnityEngine;
 
 public class PlayerShoot : MonoBehaviour
 {
-    public LineRenderer raycastLine; // Línea para dibujar el raycast
-    public GameObject shootEffectPrefab; // Prefab del efecto visual de disparo
+    public LineRenderer raycastLine; // Line to draw raycast
+    public GameObject shootEffectPrefab; // Prefab for a shoot VFX
 
     public Camera playerCamera;
-    public RectTransform crosshair; // Mirilla en el Canvas UI
+    public RectTransform crosshair; // "Crosshair" reference
+    public HitmarkerUI hitmarker; // Hitmarker reference
 
-    public int maxAmmo = 30;   // Munición máxima
-    public int currentAmmo;    // Munición actual
-    public float damage = 10f;   // Daño del disparo
-    public float shootRange = 50f;   // Alcance del disparo
-    public float reloadTime = 2f;    // Tiempo de recarga en segundos
+    public int maxAmmo = 30;
+    public int currentAmmo;
+    public float damage = 10f;
+    public float shootRange = 50f;
+    public float reloadTime = 2f;
 
-    private bool isReloading = false; // Si está recargando
+    private bool isReloading = false;
 
     void Start()
     {
-        currentAmmo = maxAmmo; // Inicializar la munición
+        currentAmmo = maxAmmo;
     }
 
     internal void HandleShooting()
     {
-        // Lógica de disparo
-        if (currentAmmo > 0 && !isReloading && Input.GetMouseButtonDown(0)) // Si tiene balas
+        // If its not reloading and has ammo
+        if (currentAmmo > 0 && !isReloading && Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
             Ray ray = CreateShootRay();
@@ -37,6 +38,7 @@ public class PlayerShoot : MonoBehaviour
 
                 if (targetPlayerId != null)
                 {
+                    hitmarker.GetHitmarker();
                     SendDamage(damage, targetPlayerId);
                 }
 
@@ -46,9 +48,9 @@ public class PlayerShoot : MonoBehaviour
                 }
             }
 
-            currentAmmo--; // Reducir las balas después de disparar
+            currentAmmo--;
         }
-        else if (Input.GetKeyDown(KeyCode.R) && !isReloading) // Si presiona R
+        else if (Input.GetKeyDown(KeyCode.R) && !isReloading) // Reload when R
         {
             StartCoroutine(Reload());
         }
@@ -66,14 +68,14 @@ public class PlayerShoot : MonoBehaviour
 
     private Ray CreateShootRay()
     {
-        return playerCamera.ScreenPointToRay(crosshair.position); // Crear un raycast desde la mirilla
+        return playerCamera.ScreenPointToRay(crosshair.position);
     }
 
     private IEnumerator Reload()
     {
         isReloading = true;
-        yield return new WaitForSeconds(reloadTime);  // Simulación de recarga
-        currentAmmo = maxAmmo;   // Recargar balas
+        yield return new WaitForSeconds(reloadTime);
+        currentAmmo = maxAmmo;
         isReloading = false;
     }
 }

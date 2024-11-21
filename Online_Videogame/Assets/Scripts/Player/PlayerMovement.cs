@@ -33,12 +33,18 @@ public class FPSController : MonoBehaviour
     private float dashTimeRemaining;
     private float lastDashTime;
 
+    private Vector3 lastPos;
+    private Quaternion lastRot;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         playerCamera.fieldOfView = normalFOV; // Aseguramos el FOV inicial
+
+        lastPos = transform.position;
+        lastRot = transform.rotation;
     }
 
     public void HandleMovement()
@@ -169,6 +175,12 @@ public class FPSController : MonoBehaviour
 
     public void SendMovement()
     {
-        PlayerSync.Instance.SendPositionUpdate(transform);
+        if(lastPos != transform.position || lastRot != transform.rotation)
+        {
+            lastPos = transform.position;
+            lastRot = transform.rotation;
+
+            PlayerSync.Instance.SendPositionUpdate(transform.position, transform.rotation);
+        }
     }
 }

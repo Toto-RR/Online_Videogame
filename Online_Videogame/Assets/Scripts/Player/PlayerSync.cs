@@ -39,7 +39,7 @@ public class PlayerSync : MonoBehaviour
     {
         while (!playerCommunicator.IsConnected)
         {
-            Debug.LogWarning("Esperando a que se inicialice la comunicación...");
+            Debug.LogWarning("Waiting for the communication to initialize...");
             yield return null;
         }
 

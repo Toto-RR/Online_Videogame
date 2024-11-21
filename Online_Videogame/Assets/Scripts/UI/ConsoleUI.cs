@@ -3,9 +3,9 @@ using TMPro;
 
 public class ConsoleUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI consoleText; // Asocia el objeto TextMeshPro desde el editor
-    private string logOutput = ""; // Almacenará los logs
-    private int maxLogLines = 100; // Máximo de líneas
+    [SerializeField] private TextMeshProUGUI consoleText;
+    private string logOutput = "";
+    private int maxLogLines = 9;
 
     void OnEnable()
     {
@@ -24,7 +24,6 @@ public class ConsoleUI : MonoBehaviour
 
     private void HandleLog(string logString, string stackTrace, LogType type)
     {
-        // Agregar el mensaje al texto de la consola
         AppendToConsole(logString);
     }
 
@@ -32,27 +31,23 @@ public class ConsoleUI : MonoBehaviour
     {
         logOutput += $"{message}\n";
 
-        // Limitar el número de líneas
         var lines = logOutput.Split('\n');
         if (lines.Length > maxLogLines)
         {
             logOutput = string.Join("\n", lines, lines.Length - maxLogLines, maxLogLines);
         }
 
-        // Actualizar el texto en la UI
         if (consoleText != null)
         {
             consoleText.text = logOutput;
         }
     }
 
-    // Método público para registrar mensajes adicionales
     public void LogToConsole(string message)
     {
-        AppendToConsole(message); // Añadir mensaje a la consola
+        AppendToConsole(message);
     }
 
-    // Limpiar la consola si es necesario
     public void ClearConsole()
     {
         logOutput = "";
@@ -64,10 +59,9 @@ public class ConsoleUI : MonoBehaviour
 
     void Update()
     {
-        // Detectar si se presionan teclas específicas
         if (Input.GetKeyDown(KeyCode.C))
         {
-            ClearConsole(); // Limpia la consola
+            ClearConsole();
         }
         if (Input.GetKeyUp(KeyCode.M))
         {

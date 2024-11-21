@@ -53,7 +53,6 @@ public class UDP_Client : MonoBehaviour
         string json = JsonUtility.ToJson(message);
         byte[] data = Encoding.UTF8.GetBytes(json);
         socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
-        //Debug.Log($"{json}");
     }
 
     private void BeginReceive()
@@ -83,62 +82,55 @@ public class UDP_Client : MonoBehaviour
     // Update the game state updating the player data of each player on the list
     private void UpdateGameState(GameState gameState)
     {
-        // Paso 1: Crear un conjunto de IDs de jugadores actualmente conectados en el cliente
+        // List to process the players
         HashSet<string> activePlayerIds = new HashSet<string>(playerObjects.Keys);
 
-        // Paso 2: Iterar sobre los jugadores recibidos en el GameState
         foreach (var player in gameState.Players)
         {
-            // Verifica si el jugador es local
             if (player.PlayerId == Player.Instance.playerId)
             {
                 UpdateLocalPlayerHealth(player);
                 continue;
             }
 
-            // Si el jugador no est� en el cliente, instanciarlo
+            // If it's a new player then instanciate it
             if (!playerObjects.ContainsKey(player.PlayerId))
             {
                 InstantiatePlayer(player);
             }
             else
             {
-                // Si ya est� instanciado, actualizar su posici�n y rotaci�n
+                // If it's not a new player, update its position
                 UpdatePlayerPosition(player);
             }
 
-            // Eliminarlo del conjunto de jugadores activos ya procesados
+            // Delete the player processed from the player list
             activePlayerIds.Remove(player.PlayerId);
         }
 
-        // Paso 3: Eliminar jugadores que ya no est�n en el GameState (desconectados)
+        // Disconnect the players that are not in gameState player list
         RemoveDisconnectedPlayers(activePlayerIds);
     }
 
-    // Actualiza la salud del jugador local
+    // Update Health
     private void UpdateLocalPlayerHealth(PlayerData player)
     {
         float currentHealth = Player.Instance.health.GetCurrentHealth();
 
-        // Si la salud es diferente, calcula el daño recibido
         if (player.Health != currentHealth)
         {
             float damage = currentHealth - player.Health;
-
-            // Si el daño es positivo, significa que se recibió daño
             if (damage > 0)
             {
                 Player.Instance.health.TakeDamage(damage);
             }
             else
             {
-                // Si el daño es negativo, significa que se curó
                 Player.Instance.health.Heal(-damage);
             }
         }
     }
 
-    // Instancia un nuevo jugador
     private void InstantiatePlayer(PlayerData player)
     {
         GameObject newPlayer = Instantiate(playerPrefab, player.Position, player.Rotation);
@@ -153,7 +145,6 @@ public class UDP_Client : MonoBehaviour
         newPlayer.name = player.PlayerName;
     }
 
-    // Actualiza la posici�n y rotaci�n de un jugador ya instanciado
     private void UpdatePlayerPosition(PlayerData player)
     {
         GameObject playerObject = playerObjects[player.PlayerId];
@@ -161,7 +152,6 @@ public class UDP_Client : MonoBehaviour
         playerObject.transform.rotation = player.Rotation;
     }
 
-    // Elimina a los jugadores desconectados de la escena
     private void RemoveDisconnectedPlayers(HashSet<string> activePlayerIds)
     {
         foreach (var playerId in activePlayerIds)
@@ -171,7 +161,6 @@ public class UDP_Client : MonoBehaviour
             playerObjects.Remove(playerId);
         }
     }
-
 
     void OnApplicationQuit()
     {

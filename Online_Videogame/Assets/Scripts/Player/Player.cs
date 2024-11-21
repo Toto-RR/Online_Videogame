@@ -5,24 +5,21 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public static Player Instance { get; private set; }
-
-    // Componentes esenciales
     public PlayerHealth health { get; private set; }
     public PlayerShoot Shoot { get; private set; }
     public FPSController Movement { get; private set; }
-
-    // Información de player
     public string playerId { get; private set; }
     public string playerName { get; private set; }
+
     public GameConfigSO gameConfig;
 
-    // Valores de movimiento
+    // Movement
     public float moveSpeed = 5f;
 
     // Shooting 
     public float damage = 10f;
 
-    // Variables de salud
+    // Health
     public float maxHealth = 100;
 
     // Energy (to dash)
@@ -39,16 +36,15 @@ public class Player : MonoBehaviour
         Debug.Log("ID: " + playerId);
         Debug.Log("Name: " + playerName);
 
-        // Inicializar los componentes
+        // Initialize components
         health = GetComponent<PlayerHealth>();
         Shoot = GetComponent<PlayerShoot>();
         Movement = GetComponent<FPSController>();
 
-        // Si el PlayerHealth no está asignado, crearlo
+        // Verify player has a PlayerHealth component
         if (health == null)
             health = gameObject.AddComponent<PlayerHealth>();
 
-        // Asegurar que la salud inicial sea la máxima
         health.SetHealth(maxHealth);
 
     }
@@ -57,7 +53,7 @@ public class Player : MonoBehaviour
     {
         if (!CheckIfDead())
         {
-            if (!isRespawning) // Evitar movimiento mientras está reapareciendo
+            if (!isRespawning)
             {
                 Movement.HandleMovement();
             }
@@ -83,14 +79,11 @@ public class Player : MonoBehaviour
         }
     }
 
-
-    // Método para aplicar daño
     public void TakeDamage(float damage)
     {
         health.TakeDamage(damage);
     }
 
-    // Método para curar
     public void Heal(float amount)
     {
         health.Heal(amount);
@@ -116,19 +109,15 @@ public class Player : MonoBehaviour
     {
         isRespawning = true;
 
-        // Mover al jugador a la posición y rotación de respawn
         transform.position = gameConfig.RespawnPos;
         transform.rotation = gameConfig.RespawnRot;
 
-        // Opcional: Si necesitas realizar una acción después de asegurarte del movimiento
         StartCoroutine(CompleteRespawn());
     }
 
     private IEnumerator CompleteRespawn()
     {
-        yield return new WaitForSeconds(0.1f); // Breve retraso para estabilizar
+        yield return new WaitForSeconds(0.1f);
         isRespawning = false;
     }
-
-    // Métodos adicionales para movimiento, disparo, etc. se delegan a componentes como antes.
 }

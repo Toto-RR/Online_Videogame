@@ -1,14 +1,13 @@
 using UnityEngine;
-using TMPro; // Importar para TextMeshPro
+using TMPro;
 
 public class AmmoDisplayUI : MonoBehaviour
 {
-    public TextMeshProUGUI ammoText; // Referencia al objeto TextMeshProUGUI
-    public Player player; // Referencia al script Player para obtener las balas
+    public TextMeshProUGUI ammoText;
+    public Player player;
 
     void Start()
     {
-        // Asegurarse de que el texto esté inicializado y actualizado al inicio
         if (ammoText != null)
         {
             UpdateAmmoText();
@@ -21,7 +20,6 @@ public class AmmoDisplayUI : MonoBehaviour
 
     void Update()
     {
-        // Actualizar el texto de las balas en cada frame
         if (ammoText != null && player != null)
         {
             UpdateAmmoText();
@@ -30,7 +28,6 @@ public class AmmoDisplayUI : MonoBehaviour
 
     private void UpdateAmmoText()
     {
-        // Verifica que el jugador tenga un valor válido de balas
         if (ammoText != null && player != null)
         {
             ammoText.text = "Ammo: " + player.GetAmmoCount().ToString() + " / " + player.Shoot.maxAmmo;

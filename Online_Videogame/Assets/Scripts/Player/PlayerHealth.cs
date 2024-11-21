@@ -62,28 +62,13 @@ public class PlayerHealth : MonoBehaviour
     {
         if (!isDead) return;
 
-        //Debug.Log("HAS MUERTO");
-        //consoleUI.LogToConsole("HAS MUERTO");
         PlayerSync.Instance.HandleDie();
-        //consoleUI.LogToConsole("HANDLE DIE HECHO");
-
         OnPlayerDeath?.Invoke();
-        //consoleUI.LogToConsole("INVOKE HECHO");
-
-        //if (deathCanvas != null)
-        //{
-        //    consoleUI.LogToConsole("ACTIVANDO PANTALLA DE MUERTE");
-        //    deathCanvas.SetActive(true);
-        //}
-        //else consoleUI.LogToConsole("PANTALLA DE MUERTE NULL");
-
-        //consoleUI.LogToConsole("EMPEZANDO COROUTINA");
         StartCoroutine(RespawnTimer(3f));
     }
 
     private IEnumerator RespawnTimer(float waitTime)
     {
-        //consoleUI.LogToConsole("SPAWNTIMER ENCENDIDO");
         yield return new WaitForSeconds(waitTime);
         Respawn();
     }

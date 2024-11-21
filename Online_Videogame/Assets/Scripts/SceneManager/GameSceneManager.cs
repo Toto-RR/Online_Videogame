@@ -2,30 +2,30 @@ using UnityEngine;
 
 public class GameSceneManager : MonoBehaviour
 {
-    public UDP_Server hostServerScript;      // Script para el host
-    public UDP_Client clientScript;          // Script para el cliente
-    public GameObject playerPrefab;            // Player Prefab
-    public GameConfigSO gameConfig;          // Referencia al GameConfigSO
+    public UDP_Server hostServerScript;      // Host script
+    public UDP_Client clientScript;          // Client script
+    public GameObject playerPrefab;          // Player Prefab
+    public GameConfigSO gameConfig;          // GameConfigSO reference
 
     public GameObject clientRespawn;
     public GameObject serverRespawn;
 
     void Start()
     {
-        // Asegurarse de que el GameConfigSO esté asignado
+        // Check GameConfigSO
         if (gameConfig == null)
         {
-            Debug.LogError("GameConfigSO no está asignado en el GameSceneManager.");
+            Debug.LogError("GameConfigSO is not assigned at GameSceneManager.");
             return;
         }
 
-        bool isHost = DetermineIfHost(); // Función para determinar el rol (Host o Cliente)
+        bool isHost = DetermineIfHost();
 
         if (isHost)
         {
             // Si es Host
-            hostServerScript.enabled = true;   // Activar el servidor (host)
-            clientScript.enabled = false;      // Desactivar el script del cliente
+            hostServerScript.enabled = true;   // Enable host script
+            clientScript.enabled = false;      // Disable client script
 
             gameConfig.SetRespawnPos(serverRespawn.transform.position);
             gameConfig.SetRespawnRot(serverRespawn.transform.rotation);
@@ -35,8 +35,8 @@ public class GameSceneManager : MonoBehaviour
         else
         {
             // Si es Cliente
-            clientScript.enabled = true;      // Activar el script del cliente
-            hostServerScript.enabled = false; // Desactivar el script del host
+            clientScript.enabled = true;      // Enable client script
+            hostServerScript.enabled = false; // Disable host script
 
             gameConfig.SetRespawnPos(clientRespawn.transform.position);
             gameConfig.SetRespawnRot(clientRespawn.transform.rotation);
@@ -50,11 +50,10 @@ public class GameSceneManager : MonoBehaviour
 
     bool DetermineIfHost()
     {
-        // Asegurarse de que el rol esté correctamente asignado en el GameConfigSO
         if (gameConfig.PlayerRole == "Host")
         {
-            return true; // Es el Host
+            return true; // Is host
         }
-        return false; // Es el Cliente
+        return false; // Is client
     }
 }

@@ -8,40 +8,33 @@ using System.Text;
 
 public class GameManager : MonoBehaviour
 {
-    public TMP_InputField hostNameInputField;    // Nombre del jugador
-    public TMP_InputField clientNameInputField;    // Nombre del jugador
-    public TMP_InputField ipInputField;      // IP del servidor (solo para Cliente)
-    public TextMeshProUGUI errorMessageTextHost;  // Mensaje de error para Host
-    public TextMeshProUGUI errorMessageTextClient; // Mensaje de error para Cliente
+    public TMP_InputField hostNameInputField;    // Player name
+    public TMP_InputField clientNameInputField;    // Player ID
+    public TMP_InputField ipInputField;      // Server IP (only client)
+    public TextMeshProUGUI errorMessageTextHost;  // Host error message
+    public TextMeshProUGUI errorMessageTextClient; // Client error message
 
     public GameConfigSO gameConfig;
 
     private void Start()
     {
-        // Aseguramos que ambos Canvas estén desactivados al principio
-        //hostCanvas.SetActive(false);
-        //clientCanvas.SetActive(false);
-
-        // Limpiar mensajes de error
         if (errorMessageTextHost != null) errorMessageTextHost.text = "";
         if (errorMessageTextClient != null) errorMessageTextClient.text = "";
     }
 
-    // Al hacer clic en "Create Server" (Host)
     public void StartHost()
     {
-        //hostCanvas.SetActive(false);  // Desactivar el Canvas del Host
-        //clientCanvas.SetActive(false);  // Desactivar el Canvas del Cliente
-        ShowErrorMessageHost("");  // Limpiar el mensaje de error
+        // Clean the error message
+        ShowErrorMessageHost("");
 
-        // Validar nombre
+        // Valid name
         if (string.IsNullOrWhiteSpace(hostNameInputField.text))
         {
-            ShowErrorMessageHost("Por favor, introduce un nombre de usuario.");
+            ShowErrorMessageHost("Please, enter a valid username.");
             return;
         }
 
-        // Establecer parámetros en GameConfigSO
+        // Set parameters on GameConfigSO
         gameConfig.SetPlayerName(hostNameInputField.text);
         gameConfig.SetID(Guid.NewGuid().ToString());
         gameConfig.SetRole("Host");
@@ -50,32 +43,27 @@ public class GameManager : MonoBehaviour
         GoToGameScene();
     }
 
-    // Al hacer clic en "Join Game" (Cliente)
     public void JoinServer()
     {
-        //hostCanvas.SetActive(false);  // Desactivar el Canvas del Host
-        //clientCanvas.SetActive(false);  // Desactivar el Canvas del Cliente
-        ShowErrorMessageClient("");  // Limpiar el mensaje de error
+        ShowErrorMessageClient("");
 
-        // Validar nombre
+        // Valid name
         if (string.IsNullOrWhiteSpace(clientNameInputField.text))
         {
             ShowErrorMessageClient("Please, enter a valid username.");
             return;
         }
 
-        // Establecer parámetros en GameConfigSO
-        gameConfig.SetPlayerName(clientNameInputField.text);
-        gameConfig.SetID(Guid.NewGuid().ToString());
-
-        // Validar IP solo si es Cliente
+        // Valid IP
         if (string.IsNullOrWhiteSpace(ipInputField.text))
         {
             ShowErrorMessageClient("Please, enter a valid IP.");
             return;
         }
 
-        // Establecer IP en GameConfigSO
+        // Set parameters on GameConfigSO
+        gameConfig.SetPlayerName(clientNameInputField.text);
+        gameConfig.SetID(Guid.NewGuid().ToString());
         gameConfig.SetPlayerIP(ipInputField.text);
         gameConfig.SetRole("Client");
 
@@ -92,7 +80,6 @@ public class GameManager : MonoBehaviour
 
     }
 
-    // Mostrar mensaje de error para Host
     private void ShowErrorMessageHost(string message)
     {
         if (errorMessageTextHost != null)
@@ -101,7 +88,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Mostrar mensaje de error para Cliente
     private void ShowErrorMessageClient(string message)
     {
         if (errorMessageTextClient != null)
@@ -122,7 +108,7 @@ public class GameManager : MonoBehaviour
 
                 IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), port);
 
-                // Mensaje de prueba (puede ser un simple "ping")
+                // Test message ("ping")
                 string pingMessage = "ping";
                 byte[] pingData = Encoding.UTF8.GetBytes(pingMessage);
                 udpSocket.SendTo(pingData, serverEndPoint);
@@ -135,7 +121,7 @@ public class GameManager : MonoBehaviour
 
                 // Process if is available
                 string responseMessage = Encoding.UTF8.GetString(responseBuffer, 0, receivedBytes);
-                if (responseMessage == "pong") // El servidor debe responder "pong"
+                if (responseMessage == "pong") // The server must respond “pong”
                 {
                     isServerAvailable = true;
                 }
@@ -149,8 +135,6 @@ public class GameManager : MonoBehaviour
         return isServerAvailable;
     }
 
-
-    // Cargar la escena del juego
     private void GoToGameScene()
     {
         Debug.Log("ID: " + gameConfig.PlayerID);

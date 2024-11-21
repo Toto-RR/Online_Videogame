@@ -33,7 +33,7 @@ public class AmmoDisplayUI : MonoBehaviour
         // Verifica que el jugador tenga un valor válido de balas
         if (ammoText != null && player != null)
         {
-            ammoText.text = "Ammo: " + player.GetAmmoCount().ToString();
+            ammoText.text = "Ammo: " + player.GetAmmoCount().ToString() + " / " + player.Shoot.maxAmmo;
         }
     }
 }

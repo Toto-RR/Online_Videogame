@@ -16,6 +16,7 @@ public class UDP_Client : MonoBehaviour
     internal Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>(); // Para instanciar jugadores en el cliente
 
     public GameConfigSO gameConfig;
+    public LobbyManager lobbyManager;
 
     public static UDP_Client Instance;
     public ConsoleUI consoleUI;
@@ -37,6 +38,8 @@ public class UDP_Client : MonoBehaviour
         serverEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), port);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         isConnected = true;
+
+        SendJoinMessage();
 
         BeginReceive();
     }
@@ -83,6 +86,20 @@ public class UDP_Client : MonoBehaviour
     // Update the game state updating the player data of each player on the list
     private void UpdateGameState(GameState gameState)
     {
+        if (gameState.currentState == GameState.ServerState.LOBBY)
+        {
+            foreach (PlayerData player in gameState.Players)
+            {
+                lobbyManager.JoinPlayer(player);
+            }
+            Debug.Log($"Lobby actualizado. Jugadores recibidos: {gameState.Players.Count}");
+        }
+        else
+        {
+            Debug.LogWarning("Estado actual no es LOBBY. Actualización ignorada.");
+        }
+
+
         // Paso 1: Crear un conjunto de IDs de jugadores actualmente conectados en el cliente
         HashSet<string> activePlayerIds = new HashSet<string>(playerObjects.Keys);
 
@@ -113,6 +130,7 @@ public class UDP_Client : MonoBehaviour
 
         // Paso 3: Eliminar jugadores que ya no est�n en el GameState (desconectados)
         RemoveDisconnectedPlayers(activePlayerIds);
+
     }
 
     // Actualiza la salud del jugador local
@@ -171,8 +189,32 @@ public class UDP_Client : MonoBehaviour
             playerObjects.Remove(playerId);
         }
     }
+    private void SendJoinMessage()
+    {
+        PlayerData joinData = new PlayerData
+        {
+            Command = CommandType.JOIN_LOBBY,
+            PlayerId = gameConfig.PlayerID,
+            PlayerName = gameConfig.PlayerName
+        };
 
+        SendMessage(joinData);
+        Debug.Log($"Mensaje JOIN enviado al servidor: {joinData.PlayerName}");
+    }
 
+    public void SendReadyMessage()
+    {
+        PlayerData readyData = new PlayerData
+        {
+            Command = CommandType.READY,
+            PlayerId = gameConfig.PlayerID,
+            PlayerName = gameConfig.PlayerName,
+            IsReady = true
+        };
+
+        SendMessage(readyData);
+        Debug.Log("Mensaje READY enviado al servidor.");
+    }
     void OnApplicationQuit()
     {
         PlayerSync.Instance.HandleDisconnect();

@@ -7,17 +7,22 @@ using UnityEngine;
 using Unity.VisualScripting;
 using System.Security;
 
+
 public class UDP_Server : MonoBehaviour
 {
     private Socket socket;
     private Dictionary<string, EndPoint> connectedClients = new Dictionary<string, EndPoint>();
     public Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>();
-    private GameState gameState = new GameState();
+    private List<PlayerData> players = new List<PlayerData>();
     private byte[] buffer = new byte[1024];
     public static UDP_Server Instance;
 
     public GameObject playerPrefab;
     public ConsoleUI consoleUI;
+
+    private GameState.ServerState currentState = GameState.ServerState.LOBBY;
+
+    public LobbyManager lobbyManager;
 
     private void Awake()
     {
@@ -39,8 +44,41 @@ public class UDP_Server : MonoBehaviour
         socket.Bind(ipep);
 
         Debug.Log($"Server started at: {ipep.Address}:{ipep.Port}");
+        AddHostToLobby();
+
         BeginReceive();
     }
+    private void AddHostToLobby()
+    {
+        // Verificar que GameConfigSO esté configurado
+        if (GameConfigSO.Instance == null)
+        {
+            Debug.LogError("GameConfigSO no está asignado. No se puede añadir el host al lobby.");
+            return;
+        }
+
+        // Crear el PlayerData para el host usando los datos de GameConfigSO
+        PlayerData hostPlayer = new PlayerData
+        {
+            Command = CommandType.JOIN_LOBBY,
+            PlayerId = GameConfigSO.Instance.PlayerID,  // ID del host configurado
+            PlayerName = GameConfigSO.Instance.PlayerName // Nombre del host configurado
+        };
+
+        // Añadir el host al lobby si no existe ya
+        if (!players.Exists(p => p.PlayerId == hostPlayer.PlayerId))
+        {
+            players.Add(hostPlayer);
+            Debug.Log($"El host ({hostPlayer.PlayerName}) ha sido añadido al lobby con ID {hostPlayer.PlayerId}.");
+
+            // Actualizar el LobbyManager si está presente
+            if (lobbyManager != null)
+            {
+                lobbyManager.JoinPlayer(hostPlayer);
+            }
+        }
+    }
+
 
     public void StopServer()
     {
@@ -85,6 +123,22 @@ public class UDP_Server : MonoBehaviour
     public void Update()
     {
         StartManually();
+
+        if (currentState == GameState.ServerState.LOBBY)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                // Simula un mensaje JOIN
+                PlayerData simulatedPlayer = new PlayerData
+                {
+                    Command = CommandType.JOIN_LOBBY,
+                    PlayerId = Guid.NewGuid().ToString(),
+                    PlayerName = $"Jugador {UnityEngine.Random.Range(1, 100)}"
+                };
+
+                AddPlayerToLobby(simulatedPlayer, null);
+            }
+        }
     }
 
     // Add and update the server player game object
@@ -97,6 +151,8 @@ public class UDP_Server : MonoBehaviour
     // Broadcast the game state (all players data) to all players
     private void BroadcastGameState()
     {
+        GameState gameState = new GameState(currentState, players);
+
         string jsonState = JsonUtility.ToJson(gameState);
         byte[] data = Encoding.UTF8.GetBytes(jsonState);
 
@@ -156,7 +212,14 @@ public class UDP_Server : MonoBehaviour
     {
         switch (receivedData.Command)
         {
-            case CommandType.JOIN:
+            case CommandType.JOIN_LOBBY:
+                Debug.Log($"Player {receivedData.PlayerName} joined the lobby");
+                AddPlayerToLobby(receivedData, remoteEndPoint);
+                break;
+            case CommandType.READY:
+                Debug.Log($"Player {receivedData.PlayerName} is ready");
+                break;
+            case CommandType.JOIN_GAME:
                 consoleUI.LogToConsole("Player joined " + receivedData.PlayerName);
                 AddPlayer(receivedData, remoteEndPoint);
                 break;
@@ -215,10 +278,11 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
+
     // Update all the position/rotation players data (LOCALLY)
     private void UpdatePlayerPosition(PlayerData playerData)
     {
-        PlayerData player = gameState.Players.Find(p => p.PlayerId == playerData.PlayerId);
+        PlayerData player = players.Find(p => p.PlayerId == playerData.PlayerId);
         if (player != null)
         {
             player.Position = playerData.Position;
@@ -236,7 +300,7 @@ public class UDP_Server : MonoBehaviour
     private void ProcessShoot(PlayerData shooterData)
     {
         // Encuentra los datos del jugador objetivo en el estado del juego
-        PlayerData targetPlayerData = gameState.Players.Find(p => p.PlayerId == shooterData.TargetPlayerId);
+        PlayerData targetPlayerData = players.Find(p => p.PlayerId == shooterData.TargetPlayerId);
 
         if (targetPlayerData != null)
         {
@@ -274,7 +338,7 @@ public class UDP_Server : MonoBehaviour
 
     private void HandleRespawn(PlayerData playerData)
     {
-        PlayerData player = gameState.Players.Find(p => p.PlayerId == playerData.PlayerId);
+        PlayerData player = players.Find(p => p.PlayerId == playerData.PlayerId);
         if (player != null)
         {
             player.Position = playerData.Position;
@@ -293,7 +357,6 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
-
     private void HandleDisconnect(PlayerData playerData)
     {
         if (connectedClients.ContainsKey(playerData.PlayerId))
@@ -309,7 +372,7 @@ public class UDP_Server : MonoBehaviour
             }
 
             // Actualiza el estado del juego
-            gameState.Players.RemoveAll(p => p.PlayerId == playerData.PlayerId);
+            players.RemoveAll(p => p.PlayerId == playerData.PlayerId);
 
             // Notificar a todos los clientes sobre la desconexión
             //BroadcastGameState();
@@ -322,14 +385,14 @@ public class UDP_Server : MonoBehaviour
     // Add the player to the gamestate list
     void AddPlayerToList(PlayerData playerData)
     {
-        gameState.Players.Add(playerData);
+        players.Add(playerData);
         Debug.Log("Name: " + playerData.PlayerName);
-        Debug.Log("Players: " + gameState.Players.Count);
+        Debug.Log("Players: " + players.Count);
     }
 
     private string GetPlayerName(PlayerData playerData)
     {
-        PlayerData data = gameState.Players.Find(p => p.PlayerId == playerData.PlayerId);
+        PlayerData data = players.Find(p => p.PlayerId == playerData.PlayerId);
         return data.PlayerName;
     }
 
@@ -349,6 +412,50 @@ public class UDP_Server : MonoBehaviour
             Debug.LogError($"Error responding to ping: {ex.Message}");
         }
     }
+
+    private void AddPlayerToLobby(PlayerData playerData, EndPoint remoteEndPoint = null)
+    {
+        if (!connectedClients.ContainsKey(playerData.PlayerId))
+        {
+            connectedClients[playerData.PlayerId] = remoteEndPoint;
+
+            // Agregar el jugador a la lista global de jugadores
+            players.Add(playerData);
+
+            Debug.Log($"Jugador {playerData.PlayerName} conectado y añadido al lobby.");
+
+            // Llama al LobbyManager del servidor (si es necesario)
+            if (lobbyManager != null)
+            {
+                lobbyManager.JoinPlayer(playerData);
+            }
+            else
+            {
+                Debug.LogError("LobbyManager no está asignado en UDP_Server.");
+            }
+
+            // Transmitir la lista actualizada a los clientes
+            BroadcastGameState();
+        }
+    }
+
+    public GameState.ServerState GetGameState()
+    {
+        return currentState;
+    }
+
+    public void SetGameState(GameState.ServerState newState)
+    {
+        currentState = newState;
+        BroadcastGameState();
+        Debug.Log($"Estado del juego cambiado a: {newState}");
+    }
+
+    public List<PlayerData> GetPlayers()
+    {
+        return players;
+    }
+
 
     void OnApplicationQuit()
     {

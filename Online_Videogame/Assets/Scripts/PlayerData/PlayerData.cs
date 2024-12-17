@@ -3,8 +3,7 @@ using UnityEngine;
 
 public enum CommandType
 {
-    JOIN_LOBBY,
-    READY,
+    START_GAME,
     JOIN_GAME,
     MOVE,
     SHOOT,
@@ -25,8 +24,7 @@ public class PlayerData
     public int AmmoCount;           // Ammo
     public float Damage;            // Damage
     public float EntryDamage;       // Entry Damage
-    
-
+   
     public string TargetPlayerId;
     public CommandType Command;     // Commands (JOIN, MOVE, SHOOT, etc.)
 }

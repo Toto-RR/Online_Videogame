@@ -106,6 +106,11 @@ public class Player : MonoBehaviour
         return Shoot.currentAmmo;
     }
 
+    public float GetActualDamage()
+    {
+        return damage;
+    }
+
     public bool CheckIfDead()
     {
         if (health.isDead) return true;

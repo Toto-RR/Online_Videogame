@@ -54,12 +54,26 @@ public class UDP_Client : MonoBehaviour
         string json = JsonUtility.ToJson(message);
         byte[] data = Encoding.UTF8.GetBytes(json);
         socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
+        Debug.Log($"{json}");
+    }
+
+    public void SendMessage(LobbyPlayerData message)
+    {
+        if (serverEndPoint == null)
+        {
+            Debug.LogError("Server EndPoint is null.");
+            return;
+        }
+
+        string json = JsonUtility.ToJson(message);
+        byte[] data = Encoding.UTF8.GetBytes(json);
+        socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
         //Debug.Log($"{json}");
     }
 
     private void BeginReceive()
     {
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[4096];
         socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref serverEndPoint, (ar) =>
         {
             try
@@ -67,10 +81,21 @@ public class UDP_Client : MonoBehaviour
                 int recv = socket.EndReceiveFrom(ar, ref serverEndPoint);
                 string jsonState = Encoding.UTF8.GetString(buffer, 0, recv);
 
-                // The client always receive a game state, so it only has to update the list of player data
-                GameState gameState = JsonUtility.FromJson<GameState>(jsonState);
+                consoleUI.LogToConsole(jsonState); 
 
-                UpdateGameState(gameState);
+                if (jsonState.Contains("Players")) // LobbyState
+                {
+                    consoleUI.LogToConsole("LobbyState");
+                    LobbyState lobbyState = JsonUtility.FromJson<LobbyState>(jsonState);
+                    LobbyManager.Instance.UpdateLobbyUI(lobbyState.Players);
+                }
+                else
+                {
+                    consoleUI.LogToConsole("GameState");
+                    // The client always receive a game state, so it only has to update the list of player data
+                    GameState gameState = JsonUtility.FromJson<GameState>(jsonState);
+                    UpdateGameState(gameState);
+                }
 
                 BeginReceive();
             }
@@ -81,49 +106,37 @@ public class UDP_Client : MonoBehaviour
         }, null);
     }
 
+
     // Update the game state updating the player data of each player on the list
     private void UpdateGameState(GameState gameState)
     {
         // Paso 1: Crear un conjunto de IDs de jugadores actualmente conectados en el cliente
         HashSet<string> activePlayerIds = new HashSet<string>(playerObjects.Keys);
 
-        Debug.Log($"Updating GameState. Players received: {gameState.Players.Count}");
-
         // Paso 2: Iterar sobre los jugadores recibidos en el GameState
         foreach (var player in gameState.Players)
         {
-            Debug.Log("Player command: " + player.Command);
-
-            if(player.Command == CommandType.JOIN_LOBBY)
+            // Verifica si el jugador es local
+            if (player.PlayerId == Player.Instance.playerId)
             {
-                Debug.Log("Adding player...");
-                LobbyManager lobbyManager = FindAnyObjectByType<LobbyManager>();
-                lobbyManager.JoinPlayer(player);
+                UpdateLocalPlayerHealth(player);
+                continue;
             }
-            
-            if(player.Command == CommandType.JOIN_GAME) 
+
+            // Si el jugador no est� en el cliente, instanciarlo
+            if (!playerObjects.ContainsKey(player.PlayerId))
             {
-                // Verifica si el jugador es local
-                if (player.PlayerId == Player.Instance.playerId)
-                {
-                    UpdateLocalPlayerHealth(player);
-                    continue;
-                }
-
-                // Si el jugador no est� en el cliente, instanciarlo
-                if (!playerObjects.ContainsKey(player.PlayerId))
-                {
-                    InstantiatePlayer(player);
-                }
-                else
-                {
-                    // Si ya est� instanciado, actualizar su posici�n y rotaci�n
-                    UpdatePlayerPosition(player);
-                }
-
-                // Eliminarlo del conjunto de jugadores activos ya procesados
-                activePlayerIds.Remove(player.PlayerId);
+                InstantiatePlayer(player);
             }
+            else
+            {
+                // Si ya est� instanciado, actualizar su posici�n y rotaci�n
+                UpdatePlayerPosition(player);
+            }
+
+            // Eliminarlo del conjunto de jugadores activos ya procesados
+            activePlayerIds.Remove(player.PlayerId);
+
 
             // Paso 3: Eliminar jugadores que ya no est�n en el GameState (desconectados)
             RemoveDisconnectedPlayers(activePlayerIds);
@@ -135,21 +148,17 @@ public class UDP_Client : MonoBehaviour
     {
         float currentHealth = Player.Instance.health.GetCurrentHealth();
 
-        // Si la salud es diferente, calcula el daño recibido
-        if (player.Health != currentHealth)
-        {
-            float damage = currentHealth - player.Health;
+        float damage = currentHealth - player.Damage;
 
-            // Si el daño es positivo, significa que se recibió daño
-            if (damage > 0)
-            {
-                Player.Instance.health.TakeDamage(damage);
-            }
-            else
-            {
-                // Si el daño es negativo, significa que se curó
-                Player.Instance.health.Heal(-damage);
-            }
+        // Si el daño es positivo, significa que se recibió daño
+        if (damage > 0)
+        {
+            Player.Instance.health.TakeDamage(player.Damage);
+        }
+        else
+        {
+            // Si el daño es negativo, significa que se curó
+            Player.Instance.health.Heal(-player.Damage);
         }
     }
 

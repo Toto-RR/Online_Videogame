@@ -7,6 +7,7 @@ using UnityEngine;
 using Unity.VisualScripting;
 using System.Security;
 using System.Collections.Concurrent;
+using static LobbyState;
 
 public class UDP_Server : MonoBehaviour
 {
@@ -14,10 +15,12 @@ public class UDP_Server : MonoBehaviour
     private Dictionary<string, EndPoint> connectedClients = new Dictionary<string, EndPoint>();
     public Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>();
     private GameState gameState = new GameState();
-    private byte[] buffer = new byte[1024];
+    private byte[] buffer = new byte[4096];
     public static UDP_Server Instance;
 
     public LobbyManager lobbyManager;
+    private LobbyState lobbyState = new LobbyState();
+    private bool inGame = false; // Estado: lobby o juego
 
     public GameObject playerPrefab;
     public ConsoleUI consoleUI;
@@ -101,8 +104,36 @@ public class UDP_Server : MonoBehaviour
     // Add and update the server player game object
     public void ServerUpdate(PlayerData playerData)
     {
-        ProcessMessage(playerData);
-        BroadcastGameState();
+        if (inGame)
+        {
+            ProcessMessage(playerData);
+            BroadcastGameState();
+        }
+    }
+
+    public void ServerUpdate(LobbyPlayerData playerData)
+    {
+        if (!inGame)
+        {
+            ProcessLobbyMessage(playerData);
+            BroadcastLobbyState();
+        }
+    }
+
+    private void BroadcastLobbyState()
+    {
+        var uniquePlayers = new HashSet<string>();
+        lobbyState.Players.RemoveAll(p => !uniquePlayers.Add(p.PlayerId));
+
+        string jsonState = JsonUtility.ToJson(lobbyState);
+        Debug.Log(jsonState);
+        byte[] data = Encoding.UTF8.GetBytes(jsonState);
+
+        foreach (var client in connectedClients.Values)
+        {
+            Debug.Log($"Broadcasting LobbyState to: {client}");
+            socket.SendTo(data, data.Length, SocketFlags.None, client);
+        }
     }
 
     // Broadcast the game state (all players data) to all players
@@ -160,15 +191,39 @@ public class UDP_Server : MonoBehaviour
                 return;
             }
 
-            //consoleUI.LogToConsole("Received: " + jsonData);
-            PlayerData receivedData = JsonUtility.FromJson<PlayerData>(jsonData);
-
-            ProcessMessage(receivedData, remoteEndPoint);
-            BroadcastGameState();
+            if (!inGame)
+            {
+                LobbyPlayerData lobbyPlayer = JsonUtility.FromJson<LobbyPlayerData>(jsonData);
+                ProcessLobbyMessage(lobbyPlayer, remoteEndPoint);
+                BroadcastLobbyState();
+            }
+            else
+            {
+                //consoleUI.LogToConsole("Received: " + jsonData);
+                PlayerData receivedData = JsonUtility.FromJson<PlayerData>(jsonData);
+                ProcessMessage(receivedData, remoteEndPoint);
+                BroadcastGameState();
+            }
         }
         catch (Exception ex)
         {
             Debug.LogError($"Error processing message: {ex.Message}");
+        }
+    }
+
+    private void ProcessLobbyMessage(LobbyPlayerData receivedData, EndPoint remoteEndPoint = null)
+    {
+        switch (receivedData.Command)
+        {
+            case LobbyCommandType.JOIN_LOBBY:
+                AddPlayerToLobby(receivedData, remoteEndPoint);
+                break;
+            case LobbyCommandType.READY:
+                lobbyState.SetPlayerReady(receivedData.PlayerId);
+                break;
+            default:
+                Debug.LogWarning($"Unknown command: {receivedData.Command}");
+                break;
         }
     }
 
@@ -177,9 +232,6 @@ public class UDP_Server : MonoBehaviour
     {
         switch (receivedData.Command)
         {
-            case CommandType.JOIN_LOBBY:
-                AddPlayerToLobby(receivedData, remoteEndPoint);
-                break;
             case CommandType.JOIN_GAME:
                 consoleUI.LogToConsole("Player joined " + receivedData.PlayerName);
                 AddPlayer(receivedData, remoteEndPoint);
@@ -374,31 +426,24 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
-    private void AddPlayerToLobby(PlayerData playerData, EndPoint remoteEndPoint = null)
+    private void AddPlayerToLobby(LobbyPlayerData playerData, EndPoint remoteEndPoint = null)
     {
         if (playerData.PlayerId == PlayerSync.Instance.PlayerId)
         {
-            lobbyManager.JoinPlayer(playerData);
-            AddPlayerToList(playerData);
-            return;
-        }
-
-        if (!connectedClients.ContainsKey(playerData.PlayerId))
-        {
-            connectedClients[playerData.PlayerId] = remoteEndPoint;
-
-            if (!gameState.Players.Exists(p => p.PlayerId == playerData.PlayerId))
-            {
-                gameState.Players.Add(playerData);
-                Debug.Log($"Player {playerData.PlayerName} added to GameState. Total players: {gameState.Players.Count}");
-            }
-
-            lobbyManager.JoinPlayer(playerData, remoteEndPoint);
+            lobbyState.AddPlayer(playerData.PlayerId, playerData.PlayerName);
+            //AddPlayerToList(playerData);
         }
         else
         {
-            Debug.LogWarning($"Player {playerData.PlayerId} is already in connectedClients.");
+            if (!connectedClients.ContainsKey(playerData.PlayerId))
+            {
+                connectedClients[playerData.PlayerId] = remoteEndPoint;
+                lobbyState.AddPlayer(playerData.PlayerId, playerData.PlayerName);
+                //AddPlayerToList(playerData);
+                Debug.Log($"Player {playerData.PlayerName} added to LobbyState.");
+            }
         }
+        LobbyManager.Instance.UpdateLobbyUI(lobbyState.Players);
     }
 
 

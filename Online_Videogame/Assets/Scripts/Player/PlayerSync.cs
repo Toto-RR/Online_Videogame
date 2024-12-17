@@ -67,15 +67,20 @@ public class PlayerSync : MonoBehaviour
 
     public void SendJoinLobbyRequest()
     {
-        PlayerData joinData = new PlayerData
-        {
-            Command = CommandType.JOIN_LOBBY,
-            PlayerId = PlayerId,
-            PlayerName = PlayerName,
-        };
+        LobbyPlayerData joinData = new LobbyPlayerData(PlayerId, PlayerName, LobbyCommandType.JOIN_LOBBY);
+        joinData.IsReady = false; // Configurar el estado inicial
 
-        playerCommunicator.SendMessage(joinData);
+        playerCommunicator.SendLobbyMessage(joinData);
         Debug.Log("Lobby Request sent");
+    }
+
+    public void SendReadyRequest()
+    {
+        LobbyPlayerData readyData = new LobbyPlayerData(PlayerId, PlayerName, LobbyCommandType.READY);
+        readyData.IsReady = true;
+
+        playerCommunicator.SendLobbyMessage(readyData);
+        Debug.Log("Lobby ready sent");
     }
 
     public void SendJoinGameRequest()
@@ -87,9 +92,6 @@ public class PlayerSync : MonoBehaviour
             PlayerName = PlayerName,
             Position = gameConfig.RespawnPos,
             Rotation = gameConfig.RespawnRot,
-            Health = player.health.GetCurrentHealth(),
-            Energy = player.GetEnergy(),
-            AmmoCount = player.GetAmmoCount(),
         };
 
         playerCommunicator.SendMessage(joinData);
@@ -101,7 +103,6 @@ public class PlayerSync : MonoBehaviour
         {
             Command = CommandType.MOVE,
             PlayerId = PlayerId,
-            Damage = 0,
             Position = pos,
             Rotation = rot,
         };
@@ -116,7 +117,7 @@ public class PlayerSync : MonoBehaviour
             Command = CommandType.SHOOT,
             PlayerId = PlayerId,
             TargetPlayerId = targetPlayerId,
-            Damage = damage
+            Damage = damage,
         };
 
         playerCommunicator.SendMessage(shootData);
@@ -142,7 +143,6 @@ public class PlayerSync : MonoBehaviour
             PlayerId = PlayerId,
             Position = respawnPos,
             Rotation = respawnRot,
-            Health = maxHealth
         };
 
         Debug.Log("Respawn message sent");

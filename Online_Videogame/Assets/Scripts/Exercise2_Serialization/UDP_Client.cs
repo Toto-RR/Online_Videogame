@@ -37,6 +37,7 @@ public class UDP_Client : MonoBehaviour
         serverEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), port);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         isConnected = true;
+        consoleUI.LogToConsole("Connected to server");
 
         BeginReceive();
     }
@@ -86,33 +87,47 @@ public class UDP_Client : MonoBehaviour
         // Paso 1: Crear un conjunto de IDs de jugadores actualmente conectados en el cliente
         HashSet<string> activePlayerIds = new HashSet<string>(playerObjects.Keys);
 
+        Debug.Log($"Updating GameState. Players received: {gameState.Players.Count}");
+
         // Paso 2: Iterar sobre los jugadores recibidos en el GameState
         foreach (var player in gameState.Players)
         {
-            // Verifica si el jugador es local
-            if (player.PlayerId == Player.Instance.playerId)
+            Debug.Log("Player command: " + player.Command);
+
+            if(player.Command == CommandType.JOIN_LOBBY)
             {
-                UpdateLocalPlayerHealth(player);
-                continue;
+                Debug.Log("Adding player...");
+                LobbyManager lobbyManager = FindAnyObjectByType<LobbyManager>();
+                lobbyManager.JoinPlayer(player);
+            }
+            
+            if(player.Command == CommandType.JOIN_GAME) 
+            {
+                // Verifica si el jugador es local
+                if (player.PlayerId == Player.Instance.playerId)
+                {
+                    UpdateLocalPlayerHealth(player);
+                    continue;
+                }
+
+                // Si el jugador no est� en el cliente, instanciarlo
+                if (!playerObjects.ContainsKey(player.PlayerId))
+                {
+                    InstantiatePlayer(player);
+                }
+                else
+                {
+                    // Si ya est� instanciado, actualizar su posici�n y rotaci�n
+                    UpdatePlayerPosition(player);
+                }
+
+                // Eliminarlo del conjunto de jugadores activos ya procesados
+                activePlayerIds.Remove(player.PlayerId);
             }
 
-            // Si el jugador no est� en el cliente, instanciarlo
-            if (!playerObjects.ContainsKey(player.PlayerId))
-            {
-                InstantiatePlayer(player);
-            }
-            else
-            {
-                // Si ya est� instanciado, actualizar su posici�n y rotaci�n
-                UpdatePlayerPosition(player);
-            }
-
-            // Eliminarlo del conjunto de jugadores activos ya procesados
-            activePlayerIds.Remove(player.PlayerId);
+            // Paso 3: Eliminar jugadores que ya no est�n en el GameState (desconectados)
+            RemoveDisconnectedPlayers(activePlayerIds);
         }
-
-        // Paso 3: Eliminar jugadores que ya no est�n en el GameState (desconectados)
-        RemoveDisconnectedPlayers(activePlayerIds);
     }
 
     // Actualiza la salud del jugador local
@@ -171,7 +186,6 @@ public class UDP_Client : MonoBehaviour
             playerObjects.Remove(playerId);
         }
     }
-
 
     void OnApplicationQuit()
     {

@@ -43,13 +43,21 @@ public class PlayerSync : MonoBehaviour
             yield return null;
         }
 
-        player = Player.Instance;
-
-        PlayerId = Player.Instance.playerId;
-        PlayerName = Player.Instance.playerName;
+        if (player != null)
+        {
+            player = Player.Instance;
+            PlayerId = Player.Instance.playerId;
+            PlayerName = Player.Instance.playerName;
+            
+        }
+        else
+        {
+            PlayerId = gameConfig.PlayerID;
+            PlayerName = gameConfig.PlayerName;
+        }
 
         // Envía un JOIN al servidor
-        SendJoinRequest();
+        SendJoinLobbyRequest();
     }
 
     private void Start()
@@ -57,11 +65,24 @@ public class PlayerSync : MonoBehaviour
         StartCoroutine(WaitForClientInitialization());
     }
 
-    public void SendJoinRequest()
+    public void SendJoinLobbyRequest()
     {
         PlayerData joinData = new PlayerData
         {
-            Command = CommandType.JOIN,
+            Command = CommandType.JOIN_LOBBY,
+            PlayerId = PlayerId,
+            PlayerName = PlayerName,
+        };
+
+        playerCommunicator.SendMessage(joinData);
+        Debug.Log("Lobby Request sent");
+    }
+
+    public void SendJoinGameRequest()
+    {
+        PlayerData joinData = new PlayerData
+        {
+            Command = CommandType.JOIN_GAME,
             PlayerId = PlayerId,
             PlayerName = PlayerName,
             Position = gameConfig.RespawnPos,

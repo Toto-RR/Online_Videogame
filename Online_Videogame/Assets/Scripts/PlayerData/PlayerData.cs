@@ -3,7 +3,9 @@ using UnityEngine;
 
 public enum CommandType
 {
-    JOIN,
+    JOIN_LOBBY,
+    READY,
+    JOIN_GAME,
     MOVE,
     SHOOT,
     DIE,

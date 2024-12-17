@@ -156,6 +156,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("ID: " + gameConfig.PlayerID);
         Debug.Log("Name: " + gameConfig.PlayerName);
         Debug.Log("Starting...!");
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("Lobby");
     }
 }

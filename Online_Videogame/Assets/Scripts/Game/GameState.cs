@@ -5,4 +5,5 @@ using System.Collections.Generic;
 public class GameState
 {
     public List<PlayerData> Players = new List<PlayerData>();
+
 }

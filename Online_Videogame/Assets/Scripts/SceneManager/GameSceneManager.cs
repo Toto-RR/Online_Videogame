@@ -4,7 +4,7 @@ public class GameSceneManager : MonoBehaviour
 {
     public UDP_Server hostServerScript;      // Script para el host
     public UDP_Client clientScript;          // Script para el cliente
-    public GameObject playerPrefab;            // Player Prefab
+    public GameObject playerPrefab;          // Player Prefab
     public GameConfigSO gameConfig;          // Referencia al GameConfigSO
 
     public GameObject clientRespawn;

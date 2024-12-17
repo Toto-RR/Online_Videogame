@@ -6,6 +6,7 @@ using System;
 using UnityEngine;
 using Unity.VisualScripting;
 using System.Security;
+using System.Collections.Concurrent;
 
 public class UDP_Server : MonoBehaviour
 {
@@ -16,8 +17,12 @@ public class UDP_Server : MonoBehaviour
     private byte[] buffer = new byte[1024];
     public static UDP_Server Instance;
 
+    public LobbyManager lobbyManager;
+
     public GameObject playerPrefab;
     public ConsoleUI consoleUI;
+
+    private ConcurrentQueue<(string, EndPoint)> messageQueue = new ConcurrentQueue<(string, EndPoint)>();
 
     private void Awake()
     {
@@ -85,6 +90,12 @@ public class UDP_Server : MonoBehaviour
     public void Update()
     {
         StartManually();
+
+        // Procesar mensajes en el hilo principal
+        while (messageQueue.TryDequeue(out var message))
+        {
+            HandleMessage(message.Item1, message.Item2);
+        }
     }
 
     // Add and update the server player game object
@@ -97,19 +108,26 @@ public class UDP_Server : MonoBehaviour
     // Broadcast the game state (all players data) to all players
     private void BroadcastGameState()
     {
+        // Eliminar duplicados en GameState
+        var uniquePlayers = new HashSet<string>();
+        gameState.Players.RemoveAll(p => !uniquePlayers.Add(p.PlayerId));
+
         string jsonState = JsonUtility.ToJson(gameState);
         byte[] data = Encoding.UTF8.GetBytes(jsonState);
 
         foreach (var client in connectedClients.Values)
         {
+            Debug.Log($"Broadcasting GameState to client {client}");
             socket.SendTo(data, data.Length, SocketFlags.None, client);
         }
     }
+
 
     // Start to receive messages, recursive
     private void BeginReceive()
     {
         EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+
         socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
         {
             try
@@ -117,12 +135,15 @@ public class UDP_Server : MonoBehaviour
                 int receivedBytes = socket.EndReceiveFrom(ar, ref remoteEndPoint);
                 string jsonData = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
 
-                HandleMessage(jsonData, remoteEndPoint);
+                // Encolar el mensaje para procesarlo en el hilo principal
+                messageQueue.Enqueue((jsonData, remoteEndPoint));
+
+                // Continuar recibiendo
                 BeginReceive();
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error: {ex.Message}");
+                Debug.LogError($"Error en recepción: {ex.Message}");
             }
         }, null);
     }
@@ -156,7 +177,10 @@ public class UDP_Server : MonoBehaviour
     {
         switch (receivedData.Command)
         {
-            case CommandType.JOIN:
+            case CommandType.JOIN_LOBBY:
+                AddPlayerToLobby(receivedData, remoteEndPoint);
+                break;
+            case CommandType.JOIN_GAME:
                 consoleUI.LogToConsole("Player joined " + receivedData.PlayerName);
                 AddPlayer(receivedData, remoteEndPoint);
                 break;
@@ -342,13 +366,41 @@ public class UDP_Server : MonoBehaviour
 
             // Enviar respuesta "pong" al cliente
             socket.SendTo(pongData, clientEndPoint);
-            Debug.Log($"Responded to ping from {clientEndPoint}");
+            //Debug.Log($"Responded to ping from {clientEndPoint}");
         }
         catch (Exception ex)
         {
             Debug.LogError($"Error responding to ping: {ex.Message}");
         }
     }
+
+    private void AddPlayerToLobby(PlayerData playerData, EndPoint remoteEndPoint = null)
+    {
+        if (playerData.PlayerId == PlayerSync.Instance.PlayerId)
+        {
+            lobbyManager.JoinPlayer(playerData);
+            AddPlayerToList(playerData);
+            return;
+        }
+
+        if (!connectedClients.ContainsKey(playerData.PlayerId))
+        {
+            connectedClients[playerData.PlayerId] = remoteEndPoint;
+
+            if (!gameState.Players.Exists(p => p.PlayerId == playerData.PlayerId))
+            {
+                gameState.Players.Add(playerData);
+                Debug.Log($"Player {playerData.PlayerName} added to GameState. Total players: {gameState.Players.Count}");
+            }
+
+            lobbyManager.JoinPlayer(playerData, remoteEndPoint);
+        }
+        else
+        {
+            Debug.LogWarning($"Player {playerData.PlayerId} is already in connectedClients.");
+        }
+    }
+
 
     void OnApplicationQuit()
     {

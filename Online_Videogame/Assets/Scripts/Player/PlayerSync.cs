@@ -49,7 +49,7 @@ public class PlayerSync : MonoBehaviour
         PlayerName = Player.Instance.playerName;
 
         // Envía un JOIN al servidor
-        SendJoinLobbyRequest();
+        SendJoinRequest();
     }
 
     private void Start()
@@ -57,29 +57,11 @@ public class PlayerSync : MonoBehaviour
         StartCoroutine(WaitForClientInitialization());
     }
 
-    public void SendJoinLobbyRequest()
-    {
-        PlayerData joinLobbyData = new PlayerData
-        {
-            Command = CommandType.JOIN_LOBBY,
-            PlayerId = PlayerId,
-            PlayerName = PlayerName,
-            Position = gameConfig.RespawnPos,
-            Rotation = gameConfig.RespawnRot,
-            Health = player.health.GetCurrentHealth(),
-            Energy = player.GetEnergy(),
-            AmmoCount = player.GetAmmoCount(),
-        };
-
-        playerCommunicator.SendMessage(joinLobbyData);
-        Debug.Log("Join request sent");
-    }
-
     public void SendJoinRequest()
     {
         PlayerData joinData = new PlayerData
         {
-            Command = CommandType.READY,
+            Command = CommandType.JOIN,
             PlayerId = PlayerId,
             PlayerName = PlayerName,
             Position = gameConfig.RespawnPos,

@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class GameConfigSO : ScriptableObject
 {
-    public static GameConfigSO Instance;
-
     [SerializeField] private string playerName;
     [SerializeField] private string playerIP;
     [SerializeField] private string playerRole;
@@ -34,11 +32,6 @@ public class GameConfigSO : ScriptableObject
         this.playerID = playerid;
         this.respawnPos = respawnpos;
         this.respawnRot = respawnrot;
-    }
-    private void OnEnable()
-    {
-        Instance = this;
-        DontDestroyOnLoad(this);
     }
 
     public void SetPlayerName(string name) => playerName = name;

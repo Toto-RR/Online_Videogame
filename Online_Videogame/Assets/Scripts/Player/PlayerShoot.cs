@@ -18,9 +18,19 @@ public class PlayerShoot : MonoBehaviour
 
     private bool isReloading = false;
 
+    // Audio variables
+    public AudioClip shootSound; // Sound for shooting
+    public AudioClip reloadSound; // Sound for reloading
+    private AudioSource audioSource;
+
     void Start()
     {
         currentAmmo = maxAmmo;
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     internal void HandleShooting()
@@ -54,6 +64,9 @@ public class PlayerShoot : MonoBehaviour
             }
 
             currentAmmo--;
+
+            // Play shooting sound
+            PlaySound(shootSound);
         }
         else if (Input.GetKeyDown(KeyCode.R) && !isReloading) // Reload when R
         {
@@ -84,8 +97,20 @@ public class PlayerShoot : MonoBehaviour
     private IEnumerator Reload()
     {
         isReloading = true;
+
+        // Play reload sound
+        PlaySound(reloadSound);
+
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
         isReloading = false;
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 }

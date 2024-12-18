@@ -7,13 +7,14 @@ using UnityEngine;
 public class LobbyState
 {
     public List<LobbyPlayerData> Players = new List<LobbyPlayerData>();
+    public bool isGameStarted = false; // Nuevo campo para indicar si el juego ha comenzado
 
     public void AddPlayer(string playerId, string playerName)
     {
         if (!Players.Exists(p => p.PlayerId == playerId))
         {
             Players.Add(new LobbyPlayerData(playerId, playerName));
-            Debug.Log($"Player {playerName} joined the lobby.");
+            LobbyManager.Instance.UpdateLobbyUI(Players);
         }
     }
 
@@ -23,7 +24,7 @@ public class LobbyState
         if (player != null)
         {
             player.IsReady = true;
-            Debug.Log($"Player {player.PlayerName} is ready.");
+            LobbyManager.Instance.UpdateLobbyUI(Players);
         }
     }
 
@@ -31,7 +32,11 @@ public class LobbyState
     {
         foreach (var player in Players)
         {
-            if (!player.IsReady) return false;
+            if (!player.IsReady)
+            {
+                Debug.Log(player.PlayerName + " is not ready");
+                return false;
+            }
         }
         return true;
     }

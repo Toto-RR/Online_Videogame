@@ -51,6 +51,13 @@ public class Player : MonoBehaviour
         // Asegurar que la salud inicial sea la máxima
         health.SetHealth(maxHealth);
 
+        SendJoin();
+    }
+
+    void SendJoin()
+    {
+        Debug.Log("Enviando Join desde Player");
+        PlayerSync.Instance.SendJoinGameRequest();
     }
 
     private void Update()
@@ -80,6 +87,10 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
         {
             SetAtRespawn();
+        }
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            SendJoin();
         }
     }
 

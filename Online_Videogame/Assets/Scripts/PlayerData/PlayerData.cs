@@ -3,7 +3,6 @@ using UnityEngine;
 
 public enum CommandType
 {
-    START_GAME,
     JOIN_GAME,
     MOVE,
     SHOOT,

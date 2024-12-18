@@ -4,6 +4,7 @@ public enum LobbyCommandType
 {
     JOIN_LOBBY,
     READY,
+    START_GAME,
     LEAVE_LOBBY
 }
 

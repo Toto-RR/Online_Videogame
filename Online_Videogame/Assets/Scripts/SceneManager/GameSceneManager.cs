@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class GameSceneManager : MonoBehaviour
 {
-    public UDP_Server hostServerScript;      // Script para el host
-    public UDP_Client clientScript;          // Script para el cliente
+    private UDP_Server hostServerScript;      // Script para el host
+    private UDP_Client clientScript;          // Script para el cliente
     public GameObject playerPrefab;          // Player Prefab
     public GameConfigSO gameConfig;          // Referencia al GameConfigSO
 
@@ -12,6 +12,9 @@ public class GameSceneManager : MonoBehaviour
 
     void Start()
     {
+        hostServerScript = FindAnyObjectByType<UDP_Server>();
+        clientScript = FindAnyObjectByType<UDP_Client>();
+
         // Asegurarse de que el GameConfigSO esté asignado
         if (gameConfig == null)
         {
@@ -31,6 +34,7 @@ public class GameSceneManager : MonoBehaviour
             gameConfig.SetRespawnRot(serverRespawn.transform.rotation);
 
             Instantiate(playerPrefab, serverRespawn.transform.position, Quaternion.identity);
+            //PlayerSync.Instance.SendJoinGameRequest();
         }
         else
         {
@@ -42,9 +46,10 @@ public class GameSceneManager : MonoBehaviour
             gameConfig.SetRespawnRot(clientRespawn.transform.rotation);
 
             Instantiate(playerPrefab, clientRespawn.transform.position, Quaternion.identity);
+            //PlayerSync.Instance.SendJoinGameRequest();
         }
 
-        
+
         //playerPrefab.SetActive(true);
     }
 

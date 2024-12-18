@@ -7,19 +7,18 @@ using UnityEngine;
 using Unity.VisualScripting;
 using System.Security;
 using System.Collections.Concurrent;
-using static LobbyState;
 
 public class UDP_Server : MonoBehaviour
 {
     private Socket socket;
     private Dictionary<string, EndPoint> connectedClients = new Dictionary<string, EndPoint>();
     public Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>();
-    private GameState gameState = new GameState();
-    private byte[] buffer = new byte[4096];
+    public GameState gameState = new GameState();
+    private byte[] buffer = new byte[1024];
     public static UDP_Server Instance;
 
     public LobbyManager lobbyManager;
-    private LobbyState lobbyState = new LobbyState();
+    public LobbyState lobbyState = new LobbyState();
     private bool inGame = false; // Estado: lobby o juego
 
     public GameObject playerPrefab;
@@ -36,17 +35,16 @@ public class UDP_Server : MonoBehaviour
     {
         consoleUI = FindAnyObjectByType<ConsoleUI>();
 
-        Application.runInBackground = true;
         StartServer();
     }
 
     public void StartServer()
     {
-        IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 9050);
-        socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        socket.Bind(ipep);
+        Application.runInBackground = true;
+        SocketManager.Instance.InitializeServer(9050); // Inicia el socket del servidor
+        socket = SocketManager.Instance.GetSocket();
 
-        Debug.Log($"Server started at: {ipep.Address}:{ipep.Port}");
+        Debug.Log($"Server started");
         BeginReceive();
     }
 
@@ -126,12 +124,11 @@ public class UDP_Server : MonoBehaviour
         lobbyState.Players.RemoveAll(p => !uniquePlayers.Add(p.PlayerId));
 
         string jsonState = JsonUtility.ToJson(lobbyState);
-        Debug.Log(jsonState);
+        //Debug.Log($"Tamaño del mensaje: {Encoding.UTF8.GetBytes(jsonState).Length} bytes");
         byte[] data = Encoding.UTF8.GetBytes(jsonState);
 
         foreach (var client in connectedClients.Values)
         {
-            Debug.Log($"Broadcasting LobbyState to: {client}");
             socket.SendTo(data, data.Length, SocketFlags.None, client);
         }
     }
@@ -139,16 +136,11 @@ public class UDP_Server : MonoBehaviour
     // Broadcast the game state (all players data) to all players
     private void BroadcastGameState()
     {
-        // Eliminar duplicados en GameState
-        var uniquePlayers = new HashSet<string>();
-        gameState.Players.RemoveAll(p => !uniquePlayers.Add(p.PlayerId));
-
         string jsonState = JsonUtility.ToJson(gameState);
         byte[] data = Encoding.UTF8.GetBytes(jsonState);
 
         foreach (var client in connectedClients.Values)
         {
-            Debug.Log($"Broadcasting GameState to client {client}");
             socket.SendTo(data, data.Length, SocketFlags.None, client);
         }
     }
@@ -221,6 +213,22 @@ public class UDP_Server : MonoBehaviour
             case LobbyCommandType.READY:
                 lobbyState.SetPlayerReady(receivedData.PlayerId);
                 break;
+            case LobbyCommandType.START_GAME:
+                lobbyState.SetPlayerReady(receivedData.PlayerId);
+                if (lobbyState.AreAllPlayersReady())
+                {
+                    //Debug.Log("All players are ready. Starting the game...");
+                    lobbyState.isGameStarted = true; // Actualiza el estado
+                    BroadcastLobbyState(); // Envia LobbyState actualizado
+                    inGame = true; // Cambia el estado interno del servidor
+                    SceneLoader.LoadGameScene();
+                }
+                else
+                {
+                    Debug.LogWarning("Cannot start game. Not all players are ready.");
+                }
+                break;
+
             default:
                 Debug.LogWarning($"Unknown command: {receivedData.Command}");
                 break;
@@ -267,14 +275,14 @@ public class UDP_Server : MonoBehaviour
         //TODO: Instanciate the player that we control right here so it can be deleted from the scene (better(?))
         if (playerData.PlayerId == PlayerSync.Instance.PlayerId)
         {
+            Debug.Log("Añadiendo Host a gamestate");
             AddPlayerToList(playerData);
             return;
         }
 
-        if (!connectedClients.ContainsKey(playerData.PlayerId))
+        if (connectedClients.ContainsKey(playerData.PlayerId) && !gameState.Players.Exists(p => p.PlayerId == playerData.PlayerId))
         {
-            connectedClients[playerData.PlayerId] = remoteEndPoint;
-
+            Debug.Log("Añadiendo nuevo cliente...");
             GameObject playerObject = Instantiate(playerPrefab, playerData.Position, playerData.Rotation);
 
             PlayerIdentity playerIdentity = playerObject.GetComponent<PlayerIdentity>();
@@ -386,6 +394,7 @@ public class UDP_Server : MonoBehaviour
 
             // Actualiza el estado del juego
             gameState.Players.RemoveAll(p => p.PlayerId == playerData.PlayerId);
+            lobbyState.Players.RemoveAll(p => p.PlayerId == playerData.PlayerId);
 
             // Notificar a todos los clientes sobre la desconexión
             //BroadcastGameState();
@@ -399,7 +408,7 @@ public class UDP_Server : MonoBehaviour
     void AddPlayerToList(PlayerData playerData)
     {
         gameState.Players.Add(playerData);
-        Debug.Log("Name: " + playerData.PlayerName);
+        Debug.Log("Player added Name: " + playerData.PlayerName);
         Debug.Log("Players: " + gameState.Players.Count);
     }
 
@@ -431,7 +440,6 @@ public class UDP_Server : MonoBehaviour
         if (playerData.PlayerId == PlayerSync.Instance.PlayerId)
         {
             lobbyState.AddPlayer(playerData.PlayerId, playerData.PlayerName);
-            //AddPlayerToList(playerData);
         }
         else
         {
@@ -439,7 +447,6 @@ public class UDP_Server : MonoBehaviour
             {
                 connectedClients[playerData.PlayerId] = remoteEndPoint;
                 lobbyState.AddPlayer(playerData.PlayerId, playerData.PlayerName);
-                //AddPlayerToList(playerData);
                 Debug.Log($"Player {playerData.PlayerName} added to LobbyState.");
             }
         }
@@ -450,6 +457,6 @@ public class UDP_Server : MonoBehaviour
     void OnApplicationQuit()
     {
         PlayerSync.Instance.HandleDisconnect();
-        StopServer();
+        SocketManager.Instance.CloseSocket();
     }
 }

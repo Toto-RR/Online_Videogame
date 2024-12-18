@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 public interface IPlayerCommunicator
 {
     bool IsConnected { get; }

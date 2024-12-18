@@ -43,18 +43,10 @@ public class PlayerSync : MonoBehaviour
             yield return null;
         }
 
-        if (player != null)
-        {
-            player = Player.Instance;
-            PlayerId = Player.Instance.playerId;
-            PlayerName = Player.Instance.playerName;
-            
-        }
-        else
-        {
-            PlayerId = gameConfig.PlayerID;
-            PlayerName = gameConfig.PlayerName;
-        }
+
+        PlayerId = gameConfig.PlayerID;
+        PlayerName = gameConfig.PlayerName;
+
 
         // Envía un JOIN al servidor
         SendJoinLobbyRequest();
@@ -67,24 +59,50 @@ public class PlayerSync : MonoBehaviour
 
     public void SendJoinLobbyRequest()
     {
-        LobbyPlayerData joinData = new LobbyPlayerData(PlayerId, PlayerName, LobbyCommandType.JOIN_LOBBY);
-        joinData.IsReady = false; // Configurar el estado inicial
-
+        LobbyPlayerData joinData = new LobbyPlayerData(
+            PlayerId,
+            PlayerName,
+            LobbyCommandType.JOIN_LOBBY
+        );
+        joinData.IsReady = false;
         playerCommunicator.SendLobbyMessage(joinData);
-        Debug.Log("Lobby Request sent");
     }
 
     public void SendReadyRequest()
     {
-        LobbyPlayerData readyData = new LobbyPlayerData(PlayerId, PlayerName, LobbyCommandType.READY);
+        LobbyPlayerData readyData = new LobbyPlayerData(
+            PlayerId,
+            PlayerName,
+            LobbyCommandType.READY
+        );
         readyData.IsReady = true;
 
         playerCommunicator.SendLobbyMessage(readyData);
         Debug.Log("Lobby ready sent");
     }
 
+    public void SendStartGameRequest()
+    {
+        LobbyPlayerData startGameData = new LobbyPlayerData(
+            PlayerId,
+            PlayerName,
+            LobbyCommandType.START_GAME
+        );
+        startGameData.IsReady = true;
+
+        playerCommunicator.SendLobbyMessage(startGameData);
+        Debug.Log("START_GAME request sent to server.");
+    }
+
     public void SendJoinGameRequest()
     {
+        player = FindAnyObjectByType<Player>();
+        if (player == null) // Si no se encuentra, se lanza un aviso
+        {
+            Debug.LogError("No se encontró el objeto Player. Asegúrate de que exista en la escena antes de enviar el JoinGameRequest.");
+            return;
+        }
+
         PlayerData joinData = new PlayerData
         {
             Command = CommandType.JOIN_GAME,
@@ -92,9 +110,13 @@ public class PlayerSync : MonoBehaviour
             PlayerName = PlayerName,
             Position = gameConfig.RespawnPos,
             Rotation = gameConfig.RespawnRot,
+            Health = player.health.GetCurrentHealth(),
+            Energy = player.GetEnergy(),
+            AmmoCount = player.GetAmmoCount(),
         };
 
         playerCommunicator.SendMessage(joinData);
+        Debug.Log("Join Request sent: " + joinData);
     }
 
     public void SendPositionUpdate(Vector3 pos, Quaternion rot)
@@ -103,6 +125,7 @@ public class PlayerSync : MonoBehaviour
         {
             Command = CommandType.MOVE,
             PlayerId = PlayerId,
+            Damage = 0,
             Position = pos,
             Rotation = rot,
         };

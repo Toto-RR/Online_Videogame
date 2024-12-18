@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviour
 {
-    private UDP_Client udpClient;
-    private UDP_Server udpServer;
+    public UDP_Client udpClient;
+    public UDP_Server udpServer;
 
     public GameConfigSO gameConfig;
 
@@ -20,6 +20,7 @@ public class LobbyManager : MonoBehaviour
     public TextMeshProUGUI playerNames; // UI para la lista de jugadores
     private List<LobbyPlayerData> lobbyPlayers = new List<LobbyPlayerData>();
 
+    private LobbyState lobbyState;
     public static LobbyManager Instance;
     private void Awake()
     {
@@ -28,9 +29,6 @@ public class LobbyManager : MonoBehaviour
 
     void Start()
     {
-        udpClient = GetComponentInChildren<UDP_Client>();
-        udpServer = GetComponentInChildren<UDP_Server>();
-
         if (DetermineIfHost())
         {
             udpServer.enabled = true;
@@ -84,21 +82,19 @@ public class LobbyManager : MonoBehaviour
         {
             playerNames.text += $"{player.PlayerName} {(player.IsReady ? "(Ready)" : "")}\n";
         }
-
-        Debug.Log("Lobby UI Updated.");
     }
 
     // Enviar READY al servidor (Clientes)
-    private void OnReadyPressed()
+    public void OnReadyPressed()
     {
         PlayerSync.Instance.SendReadyRequest();
         Debug.Log("READY request sent.");
     }
 
     // Enviar START_GAME al servidor (Host)
-    private void OnStartGamePressed()
+    public void OnStartGamePressed()
     {
-        PlayerSync.Instance.SendJoinGameRequest();
+        PlayerSync.Instance.SendStartGameRequest();
         Debug.Log("START GAME request sent.");
     }
 }

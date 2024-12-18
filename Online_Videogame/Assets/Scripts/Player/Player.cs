@@ -32,6 +32,10 @@ public class Player : MonoBehaviour
 
     private PlayerCanvasManager playerCanvasManager;
 
+    // Audio variables
+    public AudioClip healSound; // Sound for healing
+    private AudioSource audioSource;
+
     private void Awake()
     {
         Instance = this;
@@ -54,6 +58,13 @@ public class Player : MonoBehaviour
 
         // Asegurar que la salud inicial sea la máxima
         health.SetHealth(maxHealth);
+
+        // Configurar audio
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
 
         SendJoin();
     }
@@ -124,7 +135,8 @@ public class Player : MonoBehaviour
     // Método para curar
     public void Heal(float amount)
     {
-        //TODO SFX: Heal
+        // Play sound for healing
+        PlaySound(healSound);
 
         health.Heal(amount);
     }
@@ -168,5 +180,12 @@ public class Player : MonoBehaviour
         isRespawning = false;
     }
 
-    // Métodos adicionales para movimiento, disparo, etc. se delegan a componentes como antes.
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+    }
 }
+

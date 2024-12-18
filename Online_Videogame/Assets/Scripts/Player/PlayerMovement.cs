@@ -36,6 +36,9 @@ public class FPSController : MonoBehaviour
     private Vector3 lastPos;
     private Quaternion lastRot;
 
+    public AudioClip dashSound; // Sonido para el dash
+    private AudioSource audioSource;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -143,7 +146,8 @@ public class FPSController : MonoBehaviour
         dashTimeRemaining = dashDuration;
         lastDashTime = Time.time;
 
-        //TODO SFX: Dash (Se podrían incluir particulas)
+        //TODO SFX: Dash
+        PlayDashSound();
 
         // Determinar la dirección del dash
         Vector3 forward = transform.TransformDirection(Vector3.forward);
@@ -198,6 +202,17 @@ public class FPSController : MonoBehaviour
             lastRot = transform.rotation;
 
             PlayerSync.Instance.SendPositionUpdate(transform.position, transform.rotation);
+        }
+    }
+
+    private void PlayDashSound()
+    {
+        if (dashSound != null)
+        {
+            if (!audioSource)
+                audioSource = gameObject.AddComponent<AudioSource>();
+
+            audioSource.PlayOneShot(dashSound);
         }
     }
 }

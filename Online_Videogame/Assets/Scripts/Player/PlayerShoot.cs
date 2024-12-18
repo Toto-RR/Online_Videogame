@@ -21,6 +21,8 @@ public class PlayerShoot : MonoBehaviour
     // Audio variables
     public AudioClip shootSound; // Sound for shooting
     public AudioClip reloadSound; // Sound for reloading
+    public AudioClip emptyClipSound; // Sound when trying to shoot without bullets
+    public AudioClip hitSound; // Sound for hitting an enemy
     private AudioSource audioSource;
 
     void Start()
@@ -50,15 +52,15 @@ public class PlayerShoot : MonoBehaviour
                 {
                     hitmarker.GetHitmarker();
 
-                    //TODO SFX: Enemy hit
+                    // TODO SFX: Play sound for hitting an enemy
+                    PlaySound(hitSound);
 
                     SendDamage(damage, targetPlayerId);
                 }
 
                 if (shootEffectPrefab != null)
                 {
-                    //TODO FX particulas de disparo
-
+                    // TODO FX: Trigger shooting particles at hit point
                     Instantiate(shootEffectPrefab, hit.point, Quaternion.LookRotation(hit.normal));
                 }
             }
@@ -66,16 +68,18 @@ public class PlayerShoot : MonoBehaviour
             currentAmmo--;
 
             // Play shooting sound
+            // TODO SFX: Shooting sound effect
             PlaySound(shootSound);
         }
         else if (Input.GetKeyDown(KeyCode.R) && !isReloading) // Reload when R
         {
-            //TODO SFX: Reloading
+            // TODO SFX: Play reloading sound effect
             StartCoroutine(Reload());
         }
-        else if(currentAmmo <= 0 && !isReloading)
+        else if (currentAmmo <= 0 && !isReloading)
         {
-            //TODO SFX: Intentando disparar sin balas
+            // TODO SFX: Play sound for attempting to shoot without bullets
+            PlaySound(emptyClipSound);
         }
     }
 
@@ -99,6 +103,7 @@ public class PlayerShoot : MonoBehaviour
         isReloading = true;
 
         // Play reload sound
+        // TODO SFX: Reloading sound effect
         PlaySound(reloadSound);
 
         yield return new WaitForSeconds(reloadTime);

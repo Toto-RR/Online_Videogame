@@ -16,10 +16,20 @@ public class PlayerHealth : MonoBehaviour
     public PlayerHealthUI healthBar;
     public ConsoleUI consoleUI;
 
+    // Audio variables
+    public AudioClip takeDamageSound; // Sound for taking damage
+    public AudioClip dieSound; // Sound for dying
+    public AudioClip respawnSound; // Sound for respawn
+    private AudioSource audioSource;
+
     private void Start()
     {
         consoleUI = FindAnyObjectByType<ConsoleUI>();
-
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
     // Setear la salud
     public void SetHealth(float maxHealth)
@@ -38,7 +48,8 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth > 0)
         {
-            //TODO SFX: Player Hit
+            // Play sound for taking damage
+            PlaySound(takeDamageSound);
 
             currentHealth -= damage;
             healthBar.UpdateHealthBar(GetCurrentHealth());
@@ -51,7 +62,8 @@ public class PlayerHealth : MonoBehaviour
             healthBar.UpdateHealthBar(GetCurrentHealth());
             takeDamageUI.GetTakedamage();
 
-            //TODO SFX: DIE
+            // Play sound for dying
+            PlaySound(dieSound);
 
             Die();
         }
@@ -83,23 +95,27 @@ public class PlayerHealth : MonoBehaviour
         OnPlayerDeath?.Invoke();
 
         StartCoroutine(RespawnTimer(3f));
-
-        //consoleUI.LogToConsole("INVOKE HECHO");
-
-        //if (deathCanvas != null)
-        //{
-        //    consoleUI.LogToConsole("ACTIVANDO PANTALLA DE MUERTE");
-        //    deathCanvas.SetActive(true);
-        //}
-        //else consoleUI.LogToConsole("PANTALLA DE MUERTE NULL");
-
-        //consoleUI.LogToConsole("EMPEZANDO COROUTINA");
     }
+
+    //consoleUI.LogToConsole("INVOKE HECHO");
+
+    //if (deathCanvas != null)
+    //{
+    //    consoleUI.LogToConsole("ACTIVANDO PANTALLA DE MUERTE");
+    //    deathCanvas.SetActive(true);
+    //}
+    //else consoleUI.LogToConsole("PANTALLA DE MUERTE NULL");
+
+    //consoleUI.LogToConsole("EMPEZANDO COROUTINA");
+
 
     private IEnumerator RespawnTimer(float waitTime)
     {
-        //consoleUI.LogToConsole("SPAWNTIMER ENCENDIDO");
         yield return new WaitForSeconds(waitTime);
+
+        // Play sound for respawn
+        PlaySound(respawnSound);
+
         Respawn();
     }
 
@@ -141,4 +157,13 @@ public class PlayerHealth : MonoBehaviour
     {
         return currentHealth;
     }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+    }
+
 }

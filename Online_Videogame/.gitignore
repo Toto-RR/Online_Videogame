@@ -1,0 +1,65 @@
+# Archivos y carpetas de Unity que NO deben ser versionados
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+MemoryCaptures/
+
+# Configuración local del paquete de Addressables
+/Library/com.unity.addressables/
+
+# Archivos generados por el sistema operativo
+.DS_Store
+.DS_Store?
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+
+# Archivos específicos del editor
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# Archivos específicos de Visual Studio
+.vscode/
+.vs/
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Archivos generados por Rider/JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Archivos de Unity Collab
+*.collabignore
+.collab/
+
+# Archivos temporales de depuración
+*.swp
+*.bak
+*.orig
+*.idb
+
+# Archivos de compilación o empaquetado
+*.apk
+*.aab
+*.unitypackage
+
+# Ignorar configuraciones locales
+ProjectSettings/EditorBuildSettings.asset
+

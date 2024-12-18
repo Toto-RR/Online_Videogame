@@ -68,17 +68,20 @@ public class PlayerSync : MonoBehaviour
         playerCommunicator.SendLobbyMessage(joinData);
     }
 
-    public void SendReadyRequest()
+    public void SendReadyRequest(Color playerColor)
     {
         LobbyPlayerData readyData = new LobbyPlayerData(
             PlayerId,
             PlayerName,
             LobbyCommandType.READY
-        );
-        readyData.IsReady = true;
+        )
+        {
+            IsReady = true,
+            PlayerColor = playerColor,
+        };
 
         playerCommunicator.SendLobbyMessage(readyData);
-        Debug.Log("Lobby ready sent");
+        Debug.Log($"Lobby ready sent with color: {playerColor}");
     }
 
     public void SendStartGameRequest()

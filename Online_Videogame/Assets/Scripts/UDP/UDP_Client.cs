@@ -209,8 +209,16 @@ public class UDP_Client : MonoBehaviour
     private void InstantiatePlayer(PlayerData player)
     {
         GameObject newPlayer = Instantiate(playerPrefab, player.Position, player.Rotation);
-        PlayerIdentity playerIdentity = newPlayer.GetComponent<PlayerIdentity>();
 
+        // Configurar el color del jugador
+         Renderer playerRenderer = newPlayer.GetComponentInChildren<Renderer>();
+        if (playerRenderer != null)
+        {
+            playerRenderer.material.color = player.PlayerColor;
+            Debug.Log($"Color aplicado al jugador {player.PlayerName}: {player.PlayerColor}");
+        }
+
+        PlayerIdentity playerIdentity = newPlayer.GetComponent<PlayerIdentity>();
         if (playerIdentity != null)
         {
             playerIdentity.Initialize(player.PlayerId, player.PlayerName);

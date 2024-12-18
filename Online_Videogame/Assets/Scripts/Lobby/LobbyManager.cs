@@ -98,13 +98,14 @@ public class LobbyManager : MonoBehaviour
     // Enviar READY al servidor (Clientes)
     public void OnReadyPressed()
     {
-        PlayerSync.Instance.SendReadyRequest();
+        PlayerSync.Instance.SendReadyRequest(playerRenderer.material.color);
         Debug.Log("READY request sent.");
     }
 
     // Enviar START_GAME al servidor (Host)
     public void OnStartGamePressed()
     {
+        PlayerSync.Instance.SendReadyRequest(playerRenderer.material.color);
         PlayerSync.Instance.SendStartGameRequest();
         Debug.Log("START GAME request sent.");
     }

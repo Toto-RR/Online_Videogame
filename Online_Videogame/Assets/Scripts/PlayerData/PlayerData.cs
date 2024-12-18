@@ -26,4 +26,5 @@ public class PlayerData
    
     public string TargetPlayerId;
     public CommandType Command;     // Commands (JOIN, MOVE, SHOOT, etc.)
+    public Color PlayerColor;
 }

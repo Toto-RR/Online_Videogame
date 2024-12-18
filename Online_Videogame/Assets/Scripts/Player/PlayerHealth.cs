@@ -38,6 +38,8 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth > 0)
         {
+            //TODO SFX: Player Hit
+
             currentHealth -= damage;
             healthBar.UpdateHealthBar(GetCurrentHealth());
             takeDamageUI.GetTakedamage();
@@ -48,6 +50,8 @@ public class PlayerHealth : MonoBehaviour
             currentHealth = 0;
             healthBar.UpdateHealthBar(GetCurrentHealth());
             takeDamageUI.GetTakedamage();
+
+            //TODO SFX: DIE
 
             Die();
         }

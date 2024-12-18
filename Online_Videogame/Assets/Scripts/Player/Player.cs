@@ -30,6 +30,8 @@ public class Player : MonoBehaviour
 
     private bool isRespawning = false;
 
+    private PlayerCanvasManager playerCanvasManager;
+
     private void Awake()
     {
         Instance = this;
@@ -38,6 +40,8 @@ public class Player : MonoBehaviour
         playerName = string.IsNullOrEmpty(gameConfig.PlayerName) ? "Player1" : gameConfig.PlayerName;
         Debug.Log("ID: " + playerId);
         Debug.Log("Name: " + playerName);
+
+        playerCanvasManager = GetComponentInChildren<PlayerCanvasManager>();
 
         // Inicializar los componentes
         health = GetComponent<PlayerHealth>();
@@ -62,16 +66,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (!CheckIfDead())
-        {
-            if (!isRespawning) // Evitar movimiento mientras está reapareciendo
-            {
-                Movement.HandleMovement();
-            }
-            Shoot.HandleShooting();
-        }
-
         // DEBUG INPUTS
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            if (playerCanvasManager.IsPaused()) playerCanvasManager.SetCanvasHUD();
+            else playerCanvasManager.SetCanvasPause();
+        }
         if (Input.GetKeyDown(KeyCode.H))
         {
             TakeDamage(100);
@@ -88,12 +88,32 @@ public class Player : MonoBehaviour
         {
             SetAtRespawn();
         }
-        if(Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             SendJoin();
         }
-    }
 
+        if (playerCanvasManager.IsPaused())
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            return;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        if (!CheckIfDead())
+        {
+            if (!isRespawning)
+            {
+                Movement.HandleMovement();
+            }
+            Shoot.HandleShooting();
+        }
+    }
 
     // Método para aplicar daño
     public void TakeDamage(float damage)
@@ -104,6 +124,8 @@ public class Player : MonoBehaviour
     // Método para curar
     public void Heal(float amount)
     {
+        //TODO SFX: Heal
+
         health.Heal(amount);
     }
 

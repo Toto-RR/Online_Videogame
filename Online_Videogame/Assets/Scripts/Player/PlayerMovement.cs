@@ -17,8 +17,8 @@ public class FPSController : MonoBehaviour
     public float lookSpeed = 2f;
     public float lookXLimit = 45f;
 
-    public float dashFOV = 90f; // Campo de visión durante el dash
     public float normalFOV = 60f; // Campo de visión normal
+    private float dashFOV = 90f; // Campo de visión durante el dash
     public float fovTransitionSpeed = 10f; // Velocidad de transición de FOV
 
     private Vector3 moveDirection = Vector3.zero;
@@ -43,6 +43,8 @@ public class FPSController : MonoBehaviour
         Cursor.visible = false;
         playerCamera.fieldOfView = normalFOV; // Aseguramos el FOV inicial
 
+        dashFOV = normalFOV + normalFOV * 0.3f;
+
         lastPos = transform.position;
         lastRot = transform.rotation;
     }
@@ -52,6 +54,10 @@ public class FPSController : MonoBehaviour
         #region Handles Movement
         if (!isDashing)
         {
+            if(!canMove) return; 
+
+            //TODO SFX: Movement (steps o algo asi)
+
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);
 
@@ -137,6 +143,8 @@ public class FPSController : MonoBehaviour
         dashTimeRemaining = dashDuration;
         lastDashTime = Time.time;
 
+        //TODO SFX: Dash (Se podrían incluir particulas)
+
         // Determinar la dirección del dash
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
@@ -162,6 +170,14 @@ public class FPSController : MonoBehaviour
         // Restaurar el FOV a su valor normal
         StartCoroutine(RestoreFOV());
     }
+    public void SetFOV(float newFOV)
+    {
+        normalFOV = newFOV;
+        if (!isDashing)
+        {
+            playerCamera.fieldOfView = normalFOV;
+        }
+    }
 
     private IEnumerator RestoreFOV()
     {
@@ -172,6 +188,7 @@ public class FPSController : MonoBehaviour
         }
         playerCamera.fieldOfView = normalFOV; // Aseguramos el valor final
     }
+
 
     public void SendMovement()
     {

@@ -3,32 +3,32 @@
   "WorkspaceRootPath": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\player\\playerhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\playerhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|d:\\grado\\grado\\4tocarrera\\xarxes i videojocs online\\repositorio\\online_videogame\\online_videogame\\assets\\scripts\\ui\\pause\\pausemenusettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\ui\\pause\\pausemenusettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\udp\\udp_server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\udp\\udp_server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\udp\\udp_client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\udp\\udp_client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\player\\playersync.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\playersync.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\player\\playermovement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\playermovement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|d:\\grado\\grado\\4tocarrera\\xarxes i videojocs online\\repositorio\\online_videogame\\online_videogame\\assets\\scripts\\player\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|d:\\grado\\grado\\4tocarrera\\xarxes i videojocs online\\repositorio\\online_videogame\\online_videogame\\assets\\scripts\\playerdata\\playerdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playerdata\\playerdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\udp\\udp_server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\udp\\udp_server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|d:\\grado\\grado\\4tocarrera\\xarxes i videojocs online\\repositorio\\online_videogame\\online_videogame\\assets\\scripts\\udp\\udp_client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\udp\\udp_client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|d:\\grado\\grado\\4tocarrera\\xarxes i videojocs online\\repositorio\\online_videogame\\online_videogame\\assets\\scripts\\lobby\\lobbyplayerdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\lobby\\lobbyplayerdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\playerdata\\playerdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playerdata\\playerdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\scenemanager\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -47,20 +47,12 @@
       "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\udp\\socketmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\game\\iplayercommunicator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\game\\iplayercommunicator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\lobby\\lobbymanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\lobby\\lobbymanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\scenemanager\\gamescenemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\scenemanager\\gamescenemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\player\\playermovement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\playermovement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3FD1F796-0090-22FA-DC94-577C705068F0}|Assembly-CSharp.csproj|D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\assets\\scripts\\scenemanager\\sceneloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -77,25 +69,38 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 544,
+          "DockedWidth": 758,
           "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "PlayerHealth.cs",
-              "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Player\\PlayerHealth.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Player\\PlayerHealth.cs",
-              "ToolTip": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Player\\PlayerHealth.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Player\\PlayerHealth.cs",
-              "ViewState": "AQIAAAIAAAAAAAAAAAAAADQAAAAAAAAA",
+              "Title": "PauseMenuSettings.cs",
+              "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\UI\\Pause\\PauseMenuSettings.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UI\\Pause\\PauseMenuSettings.cs",
+              "ToolTip": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\UI\\Pause\\PauseMenuSettings.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UI\\Pause\\PauseMenuSettings.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB8AAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-18T14:50:38.802Z",
+              "WhenOpened": "2024-12-18T17:19:52.779Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
+              "Title": "Player.cs",
+              "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Player\\Player.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Player\\Player.cs",
+              "ToolTip": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Player\\Player.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Player\\Player.cs",
+              "ViewState": "AQIAAC8AAAAAAAAAAAAuwGMAAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T14:36:57.086Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "UDP_Server.cs",
               "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\UDP\\UDP_Server.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\UDP\\UDP_Server.cs",
@@ -103,62 +108,24 @@
               "RelativeToolTip": "Assets\\Scripts\\UDP\\UDP_Server.cs",
               "ViewState": "AQIAACABAAAAAAAAAAAUwD8BAAARAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T23:49:12.377Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-17T23:49:12.377Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "IPlayerCommunicator.cs",
-              "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Game\\IPlayerCommunicator.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Game\\IPlayerCommunicator.cs",
-              "ToolTip": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Game\\IPlayerCommunicator.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Game\\IPlayerCommunicator.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwCEAAAAjAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T21:55:58.38Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "PlayerSync.cs",
-              "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Player\\PlayerSync.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Player\\PlayerSync.cs",
-              "ToolTip": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Player\\PlayerSync.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Player\\PlayerSync.cs",
-              "ViewState": "AQIAAHYAAAAAAAAAAADwv5sAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-16T11:15:29.009Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Player.cs",
-              "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Player\\Player.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Player\\Player.cs",
-              "ToolTip": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Player\\Player.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Player\\Player.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAoAAAARAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T14:36:57.086Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 1,
               "Title": "PlayerMovement.cs",
               "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Player\\PlayerMovement.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Player\\PlayerMovement.cs",
               "ToolTip": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Player\\PlayerMovement.cs",
               "RelativeToolTip": "Assets\\Scripts\\Player\\PlayerMovement.cs",
-              "ViewState": "AQIAAB0AAAAAAAAAAAAhwEkAAAAwAAAA",
+              "ViewState": "AQIAAIAAAAAAAAAAAAAkwLAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-16T19:27:31.956Z"
+              "WhenOpened": "2024-12-16T19:27:31.956Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 14,
               "Title": "GameConfigSO.cs",
               "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\ScriptableObjects\\GameConfigSO.cs",
               "RelativeDocumentMoniker": "Assets\\ScriptableObjects\\GameConfigSO.cs",
@@ -170,7 +137,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 13,
               "Title": "SceneLoader.cs",
               "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\SceneManager\\SceneLoader.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\SceneManager\\SceneLoader.cs",
@@ -183,25 +150,25 @@
           ]
         },
         {
-          "DockedWidth": 443,
+          "DockedWidth": 229,
           "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "UDP_Client.cs",
               "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\UDP\\UDP_Client.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\UDP\\UDP_Client.cs",
               "ToolTip": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\UDP\\UDP_Client.cs",
               "RelativeToolTip": "Assets\\Scripts\\UDP\\UDP_Client.cs",
-              "ViewState": "AQIAAHkAAAAAAAAAAAAAAMcAAAAnAAAA",
+              "ViewState": "AQIAAE4AAAAAAAAAAAAwwKsAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-17T23:49:11.991Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "PlayerData.cs",
               "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\PlayerData\\PlayerData.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerData\\PlayerData.cs",
@@ -209,12 +176,11 @@
               "RelativeToolTip": "Assets\\Scripts\\PlayerData\\PlayerData.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAqwB0AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-16T16:52:53.045Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-16T16:52:53.045Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 11,
               "Title": "LobbyManager.cs",
               "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Lobby\\LobbyManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Lobby\\LobbyManager.cs",
@@ -232,7 +198,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 12,
               "Title": "GameSceneManager.cs",
               "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\SceneManager\\GameSceneManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\SceneManager\\GameSceneManager.cs",
@@ -280,13 +246,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "LobbyPlayerData.cs",
               "DocumentMoniker": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Lobby\\LobbyPlayerData.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Lobby\\LobbyPlayerData.cs",
               "ToolTip": "D:\\GRADO\\GRADO\\4toCARRERA\\Xarxes i Videojocs Online\\Repositorio\\Online_Videogame\\Online_Videogame\\Assets\\Scripts\\Lobby\\LobbyPlayerData.cs",
               "RelativeToolTip": "Assets\\Scripts\\Lobby\\LobbyPlayerData.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAPAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABsAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-17T20:47:43.103Z",
               "EditorCaption": ""

@@ -39,11 +39,16 @@ public class PlayerShoot : MonoBehaviour
                 if (targetPlayerId != null)
                 {
                     hitmarker.GetHitmarker();
+
+                    //TODO SFX: Enemy hit
+
                     SendDamage(damage, targetPlayerId);
                 }
 
                 if (shootEffectPrefab != null)
                 {
+                    //TODO FX particulas de disparo
+
                     Instantiate(shootEffectPrefab, hit.point, Quaternion.LookRotation(hit.normal));
                 }
             }
@@ -52,7 +57,12 @@ public class PlayerShoot : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.R) && !isReloading) // Reload when R
         {
+            //TODO SFX: Reloading
             StartCoroutine(Reload());
+        }
+        else if(currentAmmo <= 0 && !isReloading)
+        {
+            //TODO SFX: Intentando disparar sin balas
         }
     }
 

@@ -1,13 +1,10 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
     private float currentHealth;
     private float maxHealth;
-
-    [SerializeField] private Image fillBar;
 
     public bool isDead = false;
 
@@ -45,9 +42,7 @@ public class PlayerHealth : MonoBehaviour
             Die();
         }
 
-        // Actualiza la barra de salud visualmente
-        healthBar.UpdateHealthBar(currentHealth / maxHealth);
-
+        healthBar.UpdateHealthBar(GetCurrentHealth());
         takeDamageUI.GetTakedamage();
         OnHealthChanged?.Invoke(currentHealth);
     }
@@ -131,5 +126,4 @@ public class PlayerHealth : MonoBehaviour
     {
         return currentHealth;
     }
-
 }

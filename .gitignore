@@ -26,6 +26,7 @@ Online_Videogame/*.svd
 # Archivos específicos de Visual Studio
 Online_Videogame/.vscode/
 Online_Videogame/.vs/
+Online_Videogame/.vs/Online_Videogame/
 Online_Videogame/*.pdb
 Online_Videogame/*.mdb
 Online_Videogame/*.opendb

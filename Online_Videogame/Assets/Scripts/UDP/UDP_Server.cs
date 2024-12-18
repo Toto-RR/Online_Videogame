@@ -211,10 +211,9 @@ public class UDP_Server : MonoBehaviour
                 AddPlayerToLobby(receivedData, remoteEndPoint);
                 break;
             case LobbyCommandType.READY:
-                lobbyState.SetPlayerReady(receivedData.PlayerId);
+                lobbyState.SetPlayerReady(receivedData.PlayerId, receivedData.PlayerColor);
                 break;
             case LobbyCommandType.START_GAME:
-                lobbyState.SetPlayerReady(receivedData.PlayerId);
                 if (lobbyState.AreAllPlayersReady())
                 {
                     //Debug.Log("All players are ready. Starting the game...");
@@ -242,6 +241,12 @@ public class UDP_Server : MonoBehaviour
         {
             case CommandType.JOIN_GAME:
                 consoleUI.LogToConsole("Player joined " + receivedData.PlayerName);
+                var lobbyPlayer = lobbyState.Players.Find(p => p.PlayerId == receivedData.PlayerId);
+                if (lobbyPlayer != null)
+                {
+                    receivedData.PlayerColor = lobbyPlayer.PlayerColor;
+                    Debug.Log($"Color transferido desde LobbyState: {receivedData.PlayerColor}");
+                }
                 AddPlayer(receivedData, remoteEndPoint);
                 break;
             case CommandType.MOVE:
@@ -284,6 +289,12 @@ public class UDP_Server : MonoBehaviour
         {
             Debug.Log("Añadiendo nuevo cliente...");
             GameObject playerObject = Instantiate(playerPrefab, playerData.Position, playerData.Rotation);
+            Renderer playerRenderer = playerObject.GetComponentInChildren<Renderer>();
+            if (playerRenderer != null)
+            {
+                playerRenderer.material.color = playerData.PlayerColor;
+                Debug.Log($"Color aplicado al jugador {playerData.PlayerName}: {playerData.PlayerColor}");
+            }
 
             PlayerIdentity playerIdentity = playerObject.GetComponent<PlayerIdentity>();
             if (playerIdentity != null)
@@ -439,14 +450,14 @@ public class UDP_Server : MonoBehaviour
     {
         if (playerData.PlayerId == PlayerSync.Instance.PlayerId)
         {
-            lobbyState.AddPlayer(playerData.PlayerId, playerData.PlayerName);
+            lobbyState.AddPlayer(playerData);
         }
         else
         {
             if (!connectedClients.ContainsKey(playerData.PlayerId))
             {
                 connectedClients[playerData.PlayerId] = remoteEndPoint;
-                lobbyState.AddPlayer(playerData.PlayerId, playerData.PlayerName);
+                lobbyState.AddPlayer(playerData);
                 Debug.Log($"Player {playerData.PlayerName} added to LobbyState.");
             }
         }

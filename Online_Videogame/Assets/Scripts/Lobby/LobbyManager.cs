@@ -22,6 +22,9 @@ public class LobbyManager : MonoBehaviour
 
     private LobbyState lobbyState;
     public static LobbyManager Instance;
+
+    private Renderer playerRenderer;
+
     private void Awake()
     {
         Instance = this;
@@ -52,6 +55,7 @@ public class LobbyManager : MonoBehaviour
         if (playerPrefab != null && playerParent != null)
         {
             playerObject = Instantiate(playerPrefab, playerParent);
+            playerRenderer = playerObject.GetComponentInChildren<Renderer>();
         }
 
         playerNames.text = ""; // Inicializar UI
@@ -63,6 +67,13 @@ public class LobbyManager : MonoBehaviour
         if (playerObject != null)
         {
             playerObject.transform.Rotate(0, 50 * Time.deltaTime, 0);
+        }
+    }
+    public void OnColorChange(Color color)
+    {
+        if (playerRenderer != null)
+        {
+            playerRenderer.material.color = color;
         }
     }
 
@@ -87,13 +98,14 @@ public class LobbyManager : MonoBehaviour
     // Enviar READY al servidor (Clientes)
     public void OnReadyPressed()
     {
-        PlayerSync.Instance.SendReadyRequest();
+        PlayerSync.Instance.SendReadyRequest(playerRenderer.material.color);
         Debug.Log("READY request sent.");
     }
 
     // Enviar START_GAME al servidor (Host)
     public void OnStartGamePressed()
     {
+        PlayerSync.Instance.SendReadyRequest(playerRenderer.material.color);
         PlayerSync.Instance.SendStartGameRequest();
         Debug.Log("START GAME request sent.");
     }

@@ -239,6 +239,8 @@ MonoBehaviour:
   damage: 10
   shootRange: 50
   reloadTime: 2
+  shootSound: {fileID: 0}
+  reloadSound: {fileID: 0}
 --- !u!114 &3797746991238266421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2426,7 +2428,7 @@ Camera:
   m_GameObject: {fileID: 7050373586217704004}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2

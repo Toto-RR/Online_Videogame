@@ -166,6 +166,7 @@ public class PlayerSync : MonoBehaviour
             PlayerId = PlayerId,
             Position = respawnPos,
             Rotation = respawnRot,
+            Health = maxHealth
         };
 
         Debug.Log("Respawn message sent");

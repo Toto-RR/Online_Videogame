@@ -34,18 +34,27 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        currentHealth -= damage;
+        if (isDead) return;
+
+        if (currentHealth > 0)
+        {
+            currentHealth -= damage;
+            healthBar.UpdateHealthBar(GetCurrentHealth());
+            takeDamageUI.GetTakedamage();
+        }
+
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            isDead = true;
+            healthBar.UpdateHealthBar(GetCurrentHealth());
+            takeDamageUI.GetTakedamage();
+
             Die();
         }
 
-        healthBar.UpdateHealthBar(GetCurrentHealth());
-        takeDamageUI.GetTakedamage();
         OnHealthChanged?.Invoke(currentHealth);
     }
+
 
     public void Heal(float amount)
     {
@@ -60,14 +69,17 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        if (!isDead) return;
+        if (isDead) return; // Verificar si ya está muerto para evitar duplicados
 
-        //Debug.Log("HAS MUERTO");
-        //consoleUI.LogToConsole("HAS MUERTO");
-        PlayerSync.Instance.HandleDie();
-        //consoleUI.LogToConsole("HANDLE DIE HECHO");
+        isDead = true;
+
+        PlayerSync.Instance.HandleDie(); // Enviar el mensaje de muerte
+        Debug.Log("HANDLE DIE HECHO");
 
         OnPlayerDeath?.Invoke();
+
+        StartCoroutine(RespawnTimer(3f));
+
         //consoleUI.LogToConsole("INVOKE HECHO");
 
         //if (deathCanvas != null)
@@ -78,7 +90,6 @@ public class PlayerHealth : MonoBehaviour
         //else consoleUI.LogToConsole("PANTALLA DE MUERTE NULL");
 
         //consoleUI.LogToConsole("EMPEZANDO COROUTINA");
-        StartCoroutine(RespawnTimer(3f));
     }
 
     private IEnumerator RespawnTimer(float waitTime)

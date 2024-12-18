@@ -463,6 +463,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1717593299880323025, guid: 5a63e4e1f252664438ea42fc3f104e59, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 19.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6460731035311963218, guid: 5a63e4e1f252664438ea42fc3f104e59, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.4005065
@@ -511,6 +515,10 @@ PrefabInstance:
       propertyPath: clientScript
       value: 
       objectReference: {fileID: 1413010254}
+    - target: {fileID: 8549341052957702545, guid: 5a63e4e1f252664438ea42fc3f104e59, type: 3}
+      propertyPath: playerPrefab
+      value: 
+      objectReference: {fileID: 4492087729320407121, guid: 052698033c778c94eb69cf3e7524ad4b, type: 3}
     - target: {fileID: 8549341052957702545, guid: 5a63e4e1f252664438ea42fc3f104e59, type: 3}
       propertyPath: hostServerScript
       value: 

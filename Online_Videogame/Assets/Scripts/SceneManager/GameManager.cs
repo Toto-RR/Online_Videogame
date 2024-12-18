@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
         gameConfig.SetRole("Host");
 
         Debug.Log("Starting as Host");
-        GoToLobby();
+        GoToGameScene();
     }
 
     // Al hacer clic en "Join Game" (Cliente)
@@ -82,7 +82,8 @@ public class GameManager : MonoBehaviour
         if (CheckConexion(gameConfig.PlayerIP, 9050))
         {
             Debug.Log("Starting as Client");
-            GoToLobby();
+            GoToGameScene();
+
         }
         else
         {
@@ -150,7 +151,7 @@ public class GameManager : MonoBehaviour
 
 
     // Cargar la escena del juego
-    private void GoToLobby()
+    private void GoToGameScene()
     {
         Debug.Log("ID: " + gameConfig.PlayerID);
         Debug.Log("Name: " + gameConfig.PlayerName);

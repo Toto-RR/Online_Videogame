@@ -51,6 +51,13 @@ public class Player : MonoBehaviour
         // Asegurar que la salud inicial sea la máxima
         health.SetHealth(maxHealth);
 
+        SendJoin();
+    }
+
+    void SendJoin()
+    {
+        Debug.Log("Enviando Join desde Player");
+        PlayerSync.Instance.SendJoinGameRequest();
     }
 
     private void Update()
@@ -81,6 +88,10 @@ public class Player : MonoBehaviour
         {
             SetAtRespawn();
         }
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            SendJoin();
+        }
     }
 
 
@@ -104,6 +115,11 @@ public class Player : MonoBehaviour
     public int GetAmmoCount()
     {
         return Shoot.currentAmmo;
+    }
+
+    public float GetActualDamage()
+    {
+        return damage;
     }
 
     public bool CheckIfDead()

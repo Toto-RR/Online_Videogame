@@ -6,6 +6,7 @@ public class ConsoleUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI consoleText; // Asocia el objeto TextMeshPro desde el editor
     private string logOutput = ""; // Almacenará los logs
     private int maxLogLines = 100; // Máximo de líneas
+    public bool initStarted = true;
 
     void OnEnable()
     {
@@ -19,7 +20,7 @@ public class ConsoleUI : MonoBehaviour
 
     private void Start()
     {
-        gameObject.SetActive(false);
+        gameObject.SetActive(initStarted);
     }
 
     private void HandleLog(string logString, string stackTrace, LogType type)

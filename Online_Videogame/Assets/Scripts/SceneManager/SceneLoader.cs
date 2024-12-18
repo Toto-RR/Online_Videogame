@@ -12,4 +12,9 @@ public static class SceneLoader
     {
         SceneManager.LoadScene("Lobby");
     }
+
+    public static void LoadStart()
+    {
+        SceneManager.LoadScene("Start");
+    }
 }

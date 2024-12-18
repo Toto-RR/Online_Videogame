@@ -439,7 +439,7 @@ PrefabInstance:
     - target: {fileID: 8549341052957702545, guid: 5a63e4e1f252664438ea42fc3f104e59, type: 3}
       propertyPath: playerPrefab
       value: 
-      objectReference: {fileID: 7649990621257320051, guid: c0af126c3b4764642bc28ba3ee5ed09d, type: 3}
+      objectReference: {fileID: 183464393271189027, guid: c0af126c3b4764642bc28ba3ee5ed09d, type: 3}
     - target: {fileID: 8549341052957702545, guid: 5a63e4e1f252664438ea42fc3f104e59, type: 3}
       propertyPath: hostServerScript
       value: 

@@ -134,6 +134,42 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 878743978902331766, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: dashSound
+      value: 
+      objectReference: {fileID: 8300000, guid: dd36e8c8c412dff418de28f3aa7f7a07, type: 3}
+    - target: {fileID: 1763970077672443718, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1763970077672443718, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2274608920953204265, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: dieSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 095d49f23d20cda4bb5f342a234751a2, type: 3}
+    - target: {fileID: 2274608920953204265, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: respawnSound
+      value: 
+      objectReference: {fileID: 8300000, guid: a3d754dd2eb405243a62010844330145, type: 3}
+    - target: {fileID: 2274608920953204265, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: takeDamageSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 26553a23238f1954a9c26f3640b4901f, type: 3}
+    - target: {fileID: 3197148123486312472, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197148123486312472, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197148123486312472, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3683716677024295231, guid: b045e78313da6c74d84220058f84393e, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.47
@@ -174,6 +210,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3797746991238266421, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: healSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 5a5ca714980155242b0428dc56d3eac5, type: 3}
+    - target: {fileID: 7143688981897614042, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: hitSound
+      value: 
+      objectReference: {fileID: 8300000, guid: a7212a001e843504dbd67b8f5719c2d6, type: 3}
+    - target: {fileID: 7143688981897614042, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: shootSound
+      value: 
+      objectReference: {fileID: 8300000, guid: a3c1df80236aa864ea1179f0f1f92169, type: 3}
+    - target: {fileID: 7143688981897614042, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: reloadSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 5144937ae85c3d94d9294440f64ed5e1, type: 3}
+    - target: {fileID: 7143688981897614042, guid: b045e78313da6c74d84220058f84393e, type: 3}
+      propertyPath: emptyClipSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 7b9d8d4c2650d4f4688e36b011f4af2a, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

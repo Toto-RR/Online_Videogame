@@ -240,7 +240,7 @@ public class UDP_Server : MonoBehaviour
         switch (receivedData.Command)
         {
             case CommandType.JOIN_GAME:
-                consoleUI.LogToConsole("Player joined " + receivedData.PlayerName);
+                //consoleUI.LogToConsole("Player joined " + receivedData.PlayerName);
                 var lobbyPlayer = lobbyState.Players.Find(p => p.PlayerId == receivedData.PlayerId);
                 if (lobbyPlayer != null)
                 {
@@ -256,15 +256,15 @@ public class UDP_Server : MonoBehaviour
                 ProcessShoot(receivedData);
                 break;
             case CommandType.DIE:
-                consoleUI.LogToConsole($"{receivedData.PlayerId} HA MUERTO");
+                //consoleUI.LogToConsole($"{receivedData.PlayerId} HA MUERTO");
                 HandleDie(receivedData);
                 break;
             case CommandType.RESPAWN:
-                consoleUI.LogToConsole($"{receivedData.PlayerId} RESPAWN");
+                //consoleUI.LogToConsole($"{receivedData.PlayerId} RESPAWN");
                 HandleRespawn(receivedData);
                 break;
             case CommandType.DISCONNECTED:
-                consoleUI.LogToConsole($"{receivedData.PlayerId} DISCONNECTED");
+                //consoleUI.LogToConsole($"{receivedData.PlayerId} DISCONNECTED");
                 HandleDisconnect(receivedData);
                 break;
             default:
@@ -357,7 +357,7 @@ public class UDP_Server : MonoBehaviour
         try
         {
             Debug.Log($"Jugador {player.PlayerId} ha muerto y respawneado.");
-            consoleUI.LogToConsole($"Jugador {player.PlayerId} ha muerto y respawneado.");
+            //consoleUI.LogToConsole($"Jugador {player.PlayerId} ha muerto y respawneado.");
 
             // Código de la función
         }

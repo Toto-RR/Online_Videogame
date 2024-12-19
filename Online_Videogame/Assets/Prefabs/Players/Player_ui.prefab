@@ -2090,10 +2090,10 @@ MonoBehaviour:
   energyCostPerDash: 1
   lookSpeed: 2
   lookXLimit: 45
-  dashFOV: 90
   normalFOV: 60
   fovTransitionSpeed: 10
   canMove: 1
+  dashSound: {fileID: 0}
 --- !u!114 &6553571002831227634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2107,7 +2107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   raycastLine: {fileID: 0}
-  shootEffectPrefab: {fileID: 4844508840263987368, guid: 88535682df7d73b4cbfbc9276f1095f2, type: 3}
+  shootEffectPrefab: {fileID: 0}
   playerCamera: {fileID: 1495298144964823535}
   crosshair: {fileID: 8803703575416193549}
   hitmarker: {fileID: 7783580718072146042}
@@ -2116,6 +2116,10 @@ MonoBehaviour:
   damage: 10
   shootRange: 50
   reloadTime: 2
+  shootSound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  emptyClipSound: {fileID: 0}
+  hitSound: {fileID: 0}
 --- !u!114 &4945194996200953451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2133,6 +2137,7 @@ MonoBehaviour:
   damage: 10
   maxHealth: 100
   currentEnergy: 4
+  healSound: {fileID: 0}
 --- !u!114 &4041889288406575310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2150,6 +2155,9 @@ MonoBehaviour:
   deathCanvas: {fileID: 9053328162300330194}
   healthBar: {fileID: 8336205950560545537}
   consoleUI: {fileID: 0}
+  takeDamageSound: {fileID: 0}
+  dieSound: {fileID: 0}
+  respawnSound: {fileID: 0}
 --- !u!114 &6550919427862377530
 MonoBehaviour:
   m_ObjectHideFlags: 0

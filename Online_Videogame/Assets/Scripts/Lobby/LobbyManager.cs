@@ -16,6 +16,7 @@ public class LobbyManager : MonoBehaviour
 
     public Button startGameButton; // Solo visible para el Host
     public Button readyButton;     // Visible para los clientes
+    public TextMeshProUGUI ipText;
 
     public TextMeshProUGUI playerNames; // UI para la lista de jugadores
     private List<LobbyPlayerData> lobbyPlayers = new List<LobbyPlayerData>();
@@ -40,6 +41,8 @@ public class LobbyManager : MonoBehaviour
             startGameButton.enabled = true;
             readyButton.enabled = false;
             readyButton.transform.gameObject.SetActive(false);
+
+
         }
         else
         {
@@ -49,6 +52,8 @@ public class LobbyManager : MonoBehaviour
             readyButton.enabled = true;
             startGameButton.enabled = false;
             startGameButton.transform.gameObject.SetActive(false);
+
+            ipText.text = "Connected to IP: " + gameConfig.PlayerIP;
         }
 
         // Instanciar el modelo del jugador en el lobby
@@ -59,6 +64,8 @@ public class LobbyManager : MonoBehaviour
         }
 
         playerNames.text = ""; // Inicializar UI
+        GetLobbyState();
+        UpdateLobbyUI(lobbyPlayers);
     }
 
     private void Update()
@@ -69,6 +76,12 @@ public class LobbyManager : MonoBehaviour
             playerObject.transform.Rotate(0, 50 * Time.deltaTime, 0);
         }
     }
+
+    public void GetLobbyState()
+    {
+        lobbyPlayers = udpServer.lobbyState.Players;
+    }
+
     public void OnColorChange(Color color)
     {
         if (playerRenderer != null)

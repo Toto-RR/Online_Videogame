@@ -36,7 +36,7 @@ public class UDP_Client : MonoBehaviour
         if (!isConnected) // Evita reiniciar si ya está conectado
         {
             ConnectToServer(gameConfig.PlayerIP, 9050);
-            consoleUI = FindAnyObjectByType<ConsoleUI>();
+            //consoleUI = FindAnyObjectByType<ConsoleUI>();
         }
         else
         {
@@ -52,7 +52,7 @@ public class UDP_Client : MonoBehaviour
         serverEndPoint = SocketManager.Instance.ServerEndPoint;
 
         isConnected = true;
-        consoleUI.LogToConsole("Connected to server");
+        //consoleUI.LogToConsole("Connected to server");
 
         BeginReceive();
     }
@@ -123,7 +123,7 @@ public class UDP_Client : MonoBehaviour
     {
         if (!gameStarted) // LobbyState
         {
-            consoleUI.LogToConsole("Receiving lobby state");
+            //consoleUI.LogToConsole("Receiving lobby state");
 
             LobbyState lobbyState = JsonUtility.FromJson<LobbyState>(jsonState);
 
@@ -133,14 +133,14 @@ public class UDP_Client : MonoBehaviour
             // Si el juego ha comenzado, carga la escena del juego
             if (lobbyState.isGameStarted)
             {
-                consoleUI.LogToConsole("Game has started. Loading game scene...");
+                //consoleUI.LogToConsole("Game has started. Loading game scene...");
                 gameStarted = true;
                 SceneLoader.LoadGameScene();
             }
         }
         else
         {
-            consoleUI.LogToConsole("Receiving game state");
+            //consoleUI.LogToConsole("Receiving game state");
             GameState gameState = JsonUtility.FromJson<GameState>(jsonState);
             UpdateGameState(gameState);
         }
@@ -148,7 +148,7 @@ public class UDP_Client : MonoBehaviour
 
     private void UpdateGameState(GameState gameState)
     {
-        consoleUI.LogToConsole("GameState received");
+        //consoleUI.LogToConsole("GameState received");
         if (!playerInstanciated)
         {
             // Asegurarse de que el Player esté inicializado

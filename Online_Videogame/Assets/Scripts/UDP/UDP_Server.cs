@@ -6,18 +6,25 @@ using System;
 using UnityEngine;
 using Unity.VisualScripting;
 using System.Security;
+using System.Collections.Concurrent;
 
 public class UDP_Server : MonoBehaviour
 {
     private Socket socket;
     private Dictionary<string, EndPoint> connectedClients = new Dictionary<string, EndPoint>();
     public Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>();
-    private GameState gameState = new GameState();
+    public GameState gameState = new GameState();
     private byte[] buffer = new byte[1024];
     public static UDP_Server Instance;
 
+    public LobbyManager lobbyManager;
+    public LobbyState lobbyState = new LobbyState();
+    private bool inGame = false; // Estado: lobby o juego
+
     public GameObject playerPrefab;
     public ConsoleUI consoleUI;
+
+    private ConcurrentQueue<(string, EndPoint)> messageQueue = new ConcurrentQueue<(string, EndPoint)>();
 
     private void Awake()
     {
@@ -28,17 +35,16 @@ public class UDP_Server : MonoBehaviour
     {
         consoleUI = FindAnyObjectByType<ConsoleUI>();
 
-        Application.runInBackground = true;
         StartServer();
     }
 
     public void StartServer()
     {
-        IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 9050);
-        socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        socket.Bind(ipep);
+        Application.runInBackground = true;
+        SocketManager.Instance.InitializeServer(9050); // Inicia el socket del servidor
+        socket = SocketManager.Instance.GetSocket();
 
-        Debug.Log($"Server started at: {ipep.Address}:{ipep.Port}");
+        Debug.Log($"Server started");
         BeginReceive();
     }
 
@@ -85,13 +91,46 @@ public class UDP_Server : MonoBehaviour
     public void Update()
     {
         StartManually();
+
+        // Procesar mensajes en el hilo principal
+        while (messageQueue.TryDequeue(out var message))
+        {
+            HandleMessage(message.Item1, message.Item2);
+        }
     }
 
     // Add and update the server player game object
     public void ServerUpdate(PlayerData playerData)
     {
-        ProcessMessage(playerData);
-        BroadcastGameState();
+        if (inGame)
+        {
+            ProcessMessage(playerData);
+            BroadcastGameState();
+        }
+    }
+
+    public void ServerUpdate(LobbyPlayerData playerData)
+    {
+        if (!inGame)
+        {
+            ProcessLobbyMessage(playerData);
+            BroadcastLobbyState();
+        }
+    }
+
+    private void BroadcastLobbyState()
+    {
+        var uniquePlayers = new HashSet<string>();
+        lobbyState.Players.RemoveAll(p => !uniquePlayers.Add(p.PlayerId));
+
+        string jsonState = JsonUtility.ToJson(lobbyState);
+        //Debug.Log($"Tamaño del mensaje: {Encoding.UTF8.GetBytes(jsonState).Length} bytes");
+        byte[] data = Encoding.UTF8.GetBytes(jsonState);
+
+        foreach (var client in connectedClients.Values)
+        {
+            socket.SendTo(data, data.Length, SocketFlags.None, client);
+        }
     }
 
     // Broadcast the game state (all players data) to all players
@@ -106,10 +145,12 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
+
     // Start to receive messages, recursive
     private void BeginReceive()
     {
         EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+
         socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
         {
             try
@@ -117,12 +158,15 @@ public class UDP_Server : MonoBehaviour
                 int receivedBytes = socket.EndReceiveFrom(ar, ref remoteEndPoint);
                 string jsonData = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
 
-                HandleMessage(jsonData, remoteEndPoint);
+                // Encolar el mensaje para procesarlo en el hilo principal
+                messageQueue.Enqueue((jsonData, remoteEndPoint));
+
+                // Continuar recibiendo
                 BeginReceive();
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error: {ex.Message}");
+                Debug.LogError($"Error en recepción: {ex.Message}");
             }
         }, null);
     }
@@ -139,15 +183,54 @@ public class UDP_Server : MonoBehaviour
                 return;
             }
 
-            //consoleUI.LogToConsole("Received: " + jsonData);
-            PlayerData receivedData = JsonUtility.FromJson<PlayerData>(jsonData);
-
-            ProcessMessage(receivedData, remoteEndPoint);
-            BroadcastGameState();
+            if (!inGame)
+            {
+                LobbyPlayerData lobbyPlayer = JsonUtility.FromJson<LobbyPlayerData>(jsonData);
+                ProcessLobbyMessage(lobbyPlayer, remoteEndPoint);
+                BroadcastLobbyState();
+            }
+            else
+            {
+                //consoleUI.LogToConsole("Received: " + jsonData);
+                PlayerData receivedData = JsonUtility.FromJson<PlayerData>(jsonData);
+                ProcessMessage(receivedData, remoteEndPoint);
+                BroadcastGameState();
+            }
         }
         catch (Exception ex)
         {
             Debug.LogError($"Error processing message: {ex.Message}");
+        }
+    }
+
+    private void ProcessLobbyMessage(LobbyPlayerData receivedData, EndPoint remoteEndPoint = null)
+    {
+        switch (receivedData.Command)
+        {
+            case LobbyCommandType.JOIN_LOBBY:
+                AddPlayerToLobby(receivedData, remoteEndPoint);
+                break;
+            case LobbyCommandType.READY:
+                lobbyState.SetPlayerReady(receivedData.PlayerId, receivedData.PlayerColor);
+                break;
+            case LobbyCommandType.START_GAME:
+                if (lobbyState.AreAllPlayersReady())
+                {
+                    //Debug.Log("All players are ready. Starting the game...");
+                    lobbyState.isGameStarted = true; // Actualiza el estado
+                    BroadcastLobbyState(); // Envia LobbyState actualizado
+                    inGame = true; // Cambia el estado interno del servidor
+                    SceneLoader.LoadGameScene();
+                }
+                else
+                {
+                    Debug.LogWarning("Cannot start game. Not all players are ready.");
+                }
+                break;
+
+            default:
+                Debug.LogWarning($"Unknown command: {receivedData.Command}");
+                break;
         }
     }
 
@@ -156,8 +239,14 @@ public class UDP_Server : MonoBehaviour
     {
         switch (receivedData.Command)
         {
-            case CommandType.JOIN:
-                consoleUI.LogToConsole("Player joined " + receivedData.PlayerName);
+            case CommandType.JOIN_GAME:
+                //consoleUI.LogToConsole("Player joined " + receivedData.PlayerName);
+                var lobbyPlayer = lobbyState.Players.Find(p => p.PlayerId == receivedData.PlayerId);
+                if (lobbyPlayer != null)
+                {
+                    receivedData.PlayerColor = lobbyPlayer.PlayerColor;
+                    Debug.Log($"Color transferido desde LobbyState: {receivedData.PlayerColor}");
+                }
                 AddPlayer(receivedData, remoteEndPoint);
                 break;
             case CommandType.MOVE:
@@ -167,15 +256,15 @@ public class UDP_Server : MonoBehaviour
                 ProcessShoot(receivedData);
                 break;
             case CommandType.DIE:
-                consoleUI.LogToConsole($"{receivedData.PlayerId} HA MUERTO");
+                //consoleUI.LogToConsole($"{receivedData.PlayerId} HA MUERTO");
                 HandleDie(receivedData);
                 break;
             case CommandType.RESPAWN:
-                consoleUI.LogToConsole($"{receivedData.PlayerId} RESPAWN");
+                //consoleUI.LogToConsole($"{receivedData.PlayerId} RESPAWN");
                 HandleRespawn(receivedData);
                 break;
             case CommandType.DISCONNECTED:
-                consoleUI.LogToConsole($"{receivedData.PlayerId} DISCONNECTED");
+                //consoleUI.LogToConsole($"{receivedData.PlayerId} DISCONNECTED");
                 HandleDisconnect(receivedData);
                 break;
             default:
@@ -191,15 +280,21 @@ public class UDP_Server : MonoBehaviour
         //TODO: Instanciate the player that we control right here so it can be deleted from the scene (better(?))
         if (playerData.PlayerId == PlayerSync.Instance.PlayerId)
         {
+            Debug.Log("Añadiendo Host a gamestate");
             AddPlayerToList(playerData);
             return;
         }
 
-        if (!connectedClients.ContainsKey(playerData.PlayerId))
+        if (connectedClients.ContainsKey(playerData.PlayerId) && !gameState.Players.Exists(p => p.PlayerId == playerData.PlayerId))
         {
-            connectedClients[playerData.PlayerId] = remoteEndPoint;
-
+            Debug.Log("Añadiendo nuevo cliente...");
             GameObject playerObject = Instantiate(playerPrefab, playerData.Position, playerData.Rotation);
+            Renderer playerRenderer = playerObject.GetComponentInChildren<Renderer>();
+            if (playerRenderer != null)
+            {
+                playerRenderer.material.color = playerData.PlayerColor;
+                Debug.Log($"Color aplicado al jugador {playerData.PlayerName}: {playerData.PlayerColor}");
+            }
 
             PlayerIdentity playerIdentity = playerObject.GetComponent<PlayerIdentity>();
             if (playerIdentity != null)
@@ -262,7 +357,7 @@ public class UDP_Server : MonoBehaviour
         try
         {
             Debug.Log($"Jugador {player.PlayerId} ha muerto y respawneado.");
-            consoleUI.LogToConsole($"Jugador {player.PlayerId} ha muerto y respawneado.");
+            //consoleUI.LogToConsole($"Jugador {player.PlayerId} ha muerto y respawneado.");
 
             // Código de la función
         }
@@ -310,6 +405,7 @@ public class UDP_Server : MonoBehaviour
 
             // Actualiza el estado del juego
             gameState.Players.RemoveAll(p => p.PlayerId == playerData.PlayerId);
+            lobbyState.Players.RemoveAll(p => p.PlayerId == playerData.PlayerId);
 
             // Notificar a todos los clientes sobre la desconexión
             //BroadcastGameState();
@@ -323,7 +419,7 @@ public class UDP_Server : MonoBehaviour
     void AddPlayerToList(PlayerData playerData)
     {
         gameState.Players.Add(playerData);
-        Debug.Log("Name: " + playerData.PlayerName);
+        Debug.Log("Player added Name: " + playerData.PlayerName);
         Debug.Log("Players: " + gameState.Players.Count);
     }
 
@@ -342,7 +438,7 @@ public class UDP_Server : MonoBehaviour
 
             // Enviar respuesta "pong" al cliente
             socket.SendTo(pongData, clientEndPoint);
-            Debug.Log($"Responded to ping from {clientEndPoint}");
+            //Debug.Log($"Responded to ping from {clientEndPoint}");
         }
         catch (Exception ex)
         {
@@ -350,9 +446,28 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
+    private void AddPlayerToLobby(LobbyPlayerData playerData, EndPoint remoteEndPoint = null)
+    {
+        if (playerData.PlayerId == PlayerSync.Instance.PlayerId)
+        {
+            lobbyState.AddPlayer(playerData);
+        }
+        else
+        {
+            if (!connectedClients.ContainsKey(playerData.PlayerId))
+            {
+                connectedClients[playerData.PlayerId] = remoteEndPoint;
+                lobbyState.AddPlayer(playerData);
+                Debug.Log($"Player {playerData.PlayerName} added to LobbyState.");
+            }
+        }
+        LobbyManager.Instance.UpdateLobbyUI(lobbyState.Players);
+    }
+
+
     void OnApplicationQuit()
     {
         PlayerSync.Instance.HandleDisconnect();
-        StopServer();
+        SocketManager.Instance.CloseSocket();
     }
 }

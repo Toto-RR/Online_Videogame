@@ -18,9 +18,21 @@ public class PlayerShoot : MonoBehaviour
 
     private bool isReloading = false;
 
+    // Audio variables
+    public AudioClip shootSound; // Sound for shooting
+    public AudioClip reloadSound; // Sound for reloading
+    public AudioClip emptyClipSound; // Sound when trying to shoot without bullets
+    public AudioClip hitSound; // Sound for hitting an enemy
+    private AudioSource audioSource;
+
     void Start()
     {
         currentAmmo = maxAmmo;
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     internal void HandleShooting()
@@ -39,20 +51,35 @@ public class PlayerShoot : MonoBehaviour
                 if (targetPlayerId != null)
                 {
                     hitmarker.GetHitmarker();
+
+                    // TODO SFX: Play sound for hitting an enemy
+                    PlaySound(hitSound);
+
                     SendDamage(damage, targetPlayerId);
                 }
 
                 if (shootEffectPrefab != null)
                 {
+                    // TODO FX: Trigger shooting particles at hit point
                     Instantiate(shootEffectPrefab, hit.point, Quaternion.LookRotation(hit.normal));
                 }
             }
 
             currentAmmo--;
+
+            // Play shooting sound
+            // TODO SFX: Shooting sound effect
+            PlaySound(shootSound);
         }
         else if (Input.GetKeyDown(KeyCode.R) && !isReloading) // Reload when R
         {
+            // TODO SFX: Play reloading sound effect
             StartCoroutine(Reload());
+        }
+        else if (currentAmmo <= 0 && !isReloading)
+        {
+            // TODO SFX: Play sound for attempting to shoot without bullets
+            PlaySound(emptyClipSound);
         }
     }
 
@@ -74,8 +101,21 @@ public class PlayerShoot : MonoBehaviour
     private IEnumerator Reload()
     {
         isReloading = true;
+
+        // Play reload sound
+        // TODO SFX: Reloading sound effect
+        PlaySound(reloadSound);
+
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
         isReloading = false;
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 }

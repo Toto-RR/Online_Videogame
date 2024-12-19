@@ -16,10 +16,20 @@ public class PlayerHealth : MonoBehaviour
     public PlayerHealthUI healthBar;
     public ConsoleUI consoleUI;
 
+    // Audio variables
+    public AudioClip takeDamageSound; // Sound for taking damage
+    public AudioClip dieSound; // Sound for dying
+    public AudioClip respawnSound; // Sound for respawn
+    private AudioSource audioSource;
+
     private void Start()
     {
         consoleUI = FindAnyObjectByType<ConsoleUI>();
-
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
     // Setear la salud
     public void SetHealth(float maxHealth)
@@ -34,18 +44,33 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        currentHealth -= damage;
+        if (isDead) return;
+
+        if (currentHealth > 0)
+        {
+            // Play sound for taking damage
+            PlaySound(takeDamageSound);
+
+            currentHealth -= damage;
+            healthBar.UpdateHealthBar(GetCurrentHealth());
+            takeDamageUI.GetTakedamage();
+        }
+
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            isDead = true;
+            healthBar.UpdateHealthBar(GetCurrentHealth());
+            takeDamageUI.GetTakedamage();
+
+            // Play sound for dying
+            PlaySound(dieSound);
+
             Die();
         }
 
-        healthBar.UpdateHealthBar(GetCurrentHealth());
-        takeDamageUI.GetTakedamage();
         OnHealthChanged?.Invoke(currentHealth);
     }
+
 
     public void Heal(float amount)
     {
@@ -60,16 +85,37 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        if (!isDead) return;
+        if (isDead) return; // Verificar si ya está muerto para evitar duplicados
 
-        PlayerSync.Instance.HandleDie();
+        isDead = true;
+
+        PlayerSync.Instance.HandleDie(); // Enviar el mensaje de muerte
+        Debug.Log("HANDLE DIE HECHO");
+
         OnPlayerDeath?.Invoke();
+
         StartCoroutine(RespawnTimer(3f));
     }
+
+    //consoleUI.LogToConsole("INVOKE HECHO");
+
+    //if (deathCanvas != null)
+    //{
+    //    consoleUI.LogToConsole("ACTIVANDO PANTALLA DE MUERTE");
+    //    deathCanvas.SetActive(true);
+    //}
+    //else consoleUI.LogToConsole("PANTALLA DE MUERTE NULL");
+
+    //consoleUI.LogToConsole("EMPEZANDO COROUTINA");
+
 
     private IEnumerator RespawnTimer(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
+
+        // Play sound for respawn
+        PlaySound(respawnSound);
+
         Respawn();
     }
 
@@ -111,4 +157,13 @@ public class PlayerHealth : MonoBehaviour
     {
         return currentHealth;
     }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+    }
+
 }

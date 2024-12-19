@@ -7,19 +7,19 @@ public class FPSController : MonoBehaviour
     public Camera playerCamera;
     public float walkSpeed = 6f;
     public float runSpeed = 12f;
-    public float dashSpeed = 20f; // Dash Speed
+    public float dashSpeed = 20f; // Velocidad del dash
     public float jumpPower = 7f;
     public float gravity = 10f;
-    public float dashDuration = 0.2f; // Dash duration in seconds
-    public float dashCooldown = 1f; // Waiting time between dashes
-    public int energyCostPerDash = 1; // Energy required for a dash
+    public float dashDuration = 0.2f; // Duración del dash en segundos
+    public float dashCooldown = 1f; // Tiempo de espera entre dashes
+    public int energyCostPerDash = 1; // Energía necesaria para un dash
 
     public float lookSpeed = 2f;
     public float lookXLimit = 45f;
 
-    public float dashFOV = 90f; // FOV during dash
-    public float normalFOV = 60f; // Normal FOV
-    public float fovTransitionSpeed = 10f; // FOV transition speed
+    public float normalFOV = 60f; // Campo de visión normal
+    private float dashFOV = 90f; // Campo de visión durante el dash
+    public float fovTransitionSpeed = 10f; // Velocidad de transición de FOV
 
     private Vector3 moveDirection = Vector3.zero;
     private Vector3 dashDirection = Vector3.zero;
@@ -36,12 +36,17 @@ public class FPSController : MonoBehaviour
     private Vector3 lastPos;
     private Quaternion lastRot;
 
+    public AudioClip dashSound; // Sonido para el dash
+    private AudioSource audioSource;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        playerCamera.fieldOfView = normalFOV;
+        playerCamera.fieldOfView = normalFOV; // Aseguramos el FOV inicial
+
+        dashFOV = normalFOV + normalFOV * 0.3f;
 
         lastPos = transform.position;
         lastRot = transform.rotation;
@@ -52,10 +57,14 @@ public class FPSController : MonoBehaviour
         #region Handles Movement
         if (!isDashing)
         {
+            if(!canMove) return; 
+
+            //TODO SFX: Movement (steps o algo asi)
+
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);
 
-            // Normal movement
+            // Movimiento normal
             float curSpeedX = canMove ? walkSpeed * Input.GetAxis("Vertical") : 0;
             float curSpeedY = canMove ? walkSpeed * Input.GetAxis("Horizontal") : 0;
             float movementDirectionY = moveDirection.y;
@@ -130,22 +139,26 @@ public class FPSController : MonoBehaviour
 
     private void StartDash()
     {
-        // Reduce player energy
+        // Reducir la energía del jugador
         Player.Instance.currentEnergy -= energyCostPerDash;
 
         isDashing = true;
         dashTimeRemaining = dashDuration;
         lastDashTime = Time.time;
 
-        // Determine dash direction
+        //TODO SFX: Dash
+        PlayDashSound();
+
+        // Determinar la dirección del dash
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
 
-        float inputVertical = Input.GetAxisRaw("Vertical");
-        float inputHorizontal = Input.GetAxisRaw("Horizontal");
+        float inputVertical = Input.GetAxisRaw("Vertical"); // -1 (atrás), 1 (adelante), 0 (sin input)
+        float inputHorizontal = Input.GetAxisRaw("Horizontal"); // -1 (izquierda), 1 (derecha), 0 (sin input)
 
         dashDirection = (forward * inputVertical + right * inputHorizontal).normalized;
 
+        // Si no hay input, hacer un dash hacia adelante por defecto
         if (dashDirection == Vector3.zero)
         {
             dashDirection = forward;
@@ -157,7 +170,17 @@ public class FPSController : MonoBehaviour
     private void EndDash()
     {
         isDashing = false;
+
+        // Restaurar el FOV a su valor normal
         StartCoroutine(RestoreFOV());
+    }
+    public void SetFOV(float newFOV)
+    {
+        normalFOV = newFOV;
+        if (!isDashing)
+        {
+            playerCamera.fieldOfView = normalFOV;
+        }
     }
 
     private IEnumerator RestoreFOV()
@@ -167,8 +190,9 @@ public class FPSController : MonoBehaviour
             playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, normalFOV, fovTransitionSpeed * Time.deltaTime);
             yield return null;
         }
-        playerCamera.fieldOfView = normalFOV;
+        playerCamera.fieldOfView = normalFOV; // Aseguramos el valor final
     }
+
 
     public void SendMovement()
     {
@@ -178,6 +202,17 @@ public class FPSController : MonoBehaviour
             lastRot = transform.rotation;
 
             PlayerSync.Instance.SendPositionUpdate(transform.position, transform.rotation);
+        }
+    }
+
+    private void PlayDashSound()
+    {
+        if (dashSound != null)
+        {
+            if (!audioSource)
+                audioSource = gameObject.AddComponent<AudioSource>();
+
+            audioSource.PlayOneShot(dashSound);
         }
     }
 }

@@ -26,6 +26,26 @@ public class UDP_Client : MonoBehaviour
     // Cola para manejar mensajes en el hilo principal
     private ConcurrentQueue<string> messageQueue = new ConcurrentQueue<string>();
 
+    // --- Jitter mitigation ---
+    public bool jitter = true;
+    public bool packetLoss = true;
+    public int minJitt = 0;
+    public int maxJitt = 800;
+    public int lossThreshold = 90;
+
+    private List<Message> messageBuffer = new List<Message>();
+    private object myLock = new object();
+    private bool exit = false;
+
+    public struct Message
+    {
+        public byte[] message;
+        public DateTime time;
+        public uint id;
+        public IPEndPoint ip;
+    }
+
+    // --- --- --- --- --- --- ---
     private void Awake()
     {
         Instance = this;
@@ -54,9 +74,56 @@ public class UDP_Client : MonoBehaviour
         isConnected = true;
         //consoleUI.LogToConsole("Connected to server");
 
+        // Iniciar hilo de envío
+        System.Threading.Thread sendThread = new System.Threading.Thread(() => sendMessages(socket));
+        sendThread.Start();
+
         BeginReceive();
     }
 
+    public void sendMessages(Socket socket)
+    {
+        Debug.Log("Iniciando envío de mensajes con jitter...");
+        while (!exit)
+        {
+            DateTime now = DateTime.Now;
+
+            lock (myLock)
+            {
+                for (int i = messageBuffer.Count - 1; i >= 0; i--)
+                {
+                    Message m = messageBuffer[i];
+                    if (m.time <= now)
+                    {
+                        socket.SendTo(m.message, m.message.Length, SocketFlags.None, m.ip);
+                        messageBuffer.RemoveAt(i);
+                        Debug.Log($"Mensaje enviado a {m.ip}");
+                    }
+                }
+            }
+        }
+    }
+
+    public void sendMessage(byte[] text, IPEndPoint ip)
+    {
+        System.Random r = new System.Random();
+        if (((r.Next(0, 100) > lossThreshold) && packetLoss) || !packetLoss)
+        {
+            Message m = new Message
+            {
+                message = text,
+                time = jitter ? DateTime.Now.AddMilliseconds(r.Next(minJitt, maxJitt)) : DateTime.Now,
+                id = 0,
+                ip = ip
+            };
+
+            lock (myLock)
+            {
+                messageBuffer.Add(m);
+            }
+            Debug.Log($"Mensaje programado para {m.time}");
+        }
+    }
     // Enviar mensaje al servidor con PlayerData
     public void SendMessage(PlayerData message)
     {
@@ -68,7 +135,16 @@ public class UDP_Client : MonoBehaviour
 
         string json = JsonUtility.ToJson(message);
         byte[] data = Encoding.UTF8.GetBytes(json);
-        socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
+        //socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
+
+        if(!packetLoss)
+        {
+            IPEndPoint ip = (IPEndPoint)serverEndPoint;
+            sendMessage(data, ip);
+        }
+        else         {
+            socket.SendTo(data, data.Length, SocketFlags.None, serverEndPoint);
+        }
         //Debug.Log($"PlayerData sent: {json}");
     }
 

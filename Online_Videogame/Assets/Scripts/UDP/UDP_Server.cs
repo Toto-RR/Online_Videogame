@@ -26,6 +26,27 @@ public class UDP_Server : MonoBehaviour
 
     private ConcurrentQueue<(string, EndPoint)> messageQueue = new ConcurrentQueue<(string, EndPoint)>();
 
+    // --- Jitter mitigation ---
+    public bool jitter = true;
+    public bool packetLoss = true;
+    public int minJitt = 0;
+    public int maxJitt = 800;
+    public int lossThreshold = 90;
+
+    private List<Message> messageBuffer = new List<Message>();
+    private object myLock = new object();
+    private bool exit = false;
+
+    public struct Message
+    {
+        public byte[] message;
+        public DateTime time;
+        public uint id;
+        public IPEndPoint ip;
+    }
+
+    // --- --- --- --- --- --- ---
+
     private void Awake()
     {
         Instance = this;
@@ -40,28 +61,40 @@ public class UDP_Server : MonoBehaviour
 
     public void StartServer()
     {
+        if (socket != null && socket.IsBound)
+        {
+            Debug.LogWarning("El servidor ya está en ejecución.");
+            return;
+        }
+
         Application.runInBackground = true;
         SocketManager.Instance.InitializeServer(9050); // Inicia el socket del servidor
         socket = SocketManager.Instance.GetSocket();
 
-        Debug.Log($"Server started");
+        Debug.Log("Servidor iniciado.");
         BeginReceive();
     }
+
 
     public void StopServer()
     {
         try
         {
-            socket.Close();
-            socket = null;
+            if (socket != null)
+            {
+                socket.Close();
+                socket = null;
 
-            Debug.Log("Servidor detenido.");
+                Debug.Log("Servidor detenido.");
+            }
         }
         catch (Exception ex)
         {
             Debug.LogError($"Error al detener el servidor: {ex.Message}");
         }
     }
+
+
 
     public void StartManually()
     {
@@ -149,27 +182,51 @@ public class UDP_Server : MonoBehaviour
     // Start to receive messages, recursive
     private void BeginReceive()
     {
+        if (socket == null || !socket.IsBound)
+        {
+            Debug.LogWarning("El socket está cerrado o no está enlazado. Deteniendo recepción.");
+            return;
+        }
+
         EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
-        socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
+        try
         {
-            try
+            socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref remoteEndPoint, (ar) =>
             {
-                int receivedBytes = socket.EndReceiveFrom(ar, ref remoteEndPoint);
-                string jsonData = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
+                try
+                {
+                    if (socket == null || !socket.IsBound)
+                    {
+                        Debug.LogWarning("El socket está cerrado antes de finalizar la recepción.");
+                        return;
+                    }
 
-                // Encolar el mensaje para procesarlo en el hilo principal
-                messageQueue.Enqueue((jsonData, remoteEndPoint));
+                    int receivedBytes = socket.EndReceiveFrom(ar, ref remoteEndPoint);
+                    string jsonData = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
 
-                // Continuar recibiendo
-                BeginReceive();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Error en recepción: {ex.Message}");
-            }
-        }, null);
+                    // Encolar el mensaje para procesarlo en el hilo principal
+                    messageQueue.Enqueue((jsonData, remoteEndPoint));
+
+                    // Continuar recibiendo
+                    BeginReceive();
+                }
+                catch (ObjectDisposedException)
+                {
+                    Debug.LogWarning("El socket fue cerrado mientras se esperaba recepción.");
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error en recepción: {ex.Message}");
+                }
+            }, null);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error al iniciar recepción: {ex.Message}");
+        }
     }
+
 
     // Process the message and broadcast to all clients
     private void HandleMessage(string jsonData, EndPoint remoteEndPoint)
@@ -451,6 +508,7 @@ public class UDP_Server : MonoBehaviour
         if (playerData.PlayerId == PlayerSync.Instance.PlayerId)
         {
             lobbyState.AddPlayer(playerData);
+            Debug.Log("Player Added");
         }
         else
         {
@@ -467,7 +525,21 @@ public class UDP_Server : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        PlayerSync.Instance.HandleDisconnect();
-        SocketManager.Instance.CloseSocket();
+        try
+        {
+            if (socket != null)
+            {
+                socket.Close();
+            }
+
+            PlayerSync.Instance?.HandleDisconnect();
+            SocketManager.Instance?.CloseSocket();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error al cerrar el socket en OnApplicationQuit: {ex.Message}");
+        }
     }
+
+
 }

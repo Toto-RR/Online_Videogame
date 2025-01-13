@@ -41,8 +41,6 @@ public class LobbyManager : MonoBehaviour
             startGameButton.enabled = true;
             readyButton.enabled = false;
             readyButton.transform.gameObject.SetActive(false);
-
-
         }
         else
         {
@@ -121,5 +119,12 @@ public class LobbyManager : MonoBehaviour
         PlayerSync.Instance.SendReadyRequest(playerRenderer.material.color);
         PlayerSync.Instance.SendStartGameRequest();
         Debug.Log("START GAME request sent.");
+    }
+
+    public void GoToStartScene()
+    {
+        PlayerSync.Instance.HandleDisconnect();
+        SocketManager.Instance.CloseSocket();
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Start");
     }
 }

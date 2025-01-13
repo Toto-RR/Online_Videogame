@@ -217,7 +217,7 @@ MonoBehaviour:
   normalFOV: 60
   fovTransitionSpeed: 10
   canMove: 1
-  dashSound: {fileID: 0}
+  dashSound: {fileID: 8300000, guid: dd36e8c8c412dff418de28f3aa7f7a07, type: 3}
 --- !u!114 &7143688981897614042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,10 +240,10 @@ MonoBehaviour:
   damage: 10
   shootRange: 50
   reloadTime: 2
-  shootSound: {fileID: 0}
-  reloadSound: {fileID: 0}
-  emptyClipSound: {fileID: 0}
-  hitSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: a3c1df80236aa864ea1179f0f1f92169, type: 3}
+  reloadSound: {fileID: 8300000, guid: 5144937ae85c3d94d9294440f64ed5e1, type: 3}
+  emptyClipSound: {fileID: 8300000, guid: 7b9d8d4c2650d4f4688e36b011f4af2a, type: 3}
+  hitSound: {fileID: 8300000, guid: a7212a001e843504dbd67b8f5719c2d6, type: 3}
 --- !u!114 &3797746991238266421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,7 +261,7 @@ MonoBehaviour:
   damage: 10
   maxHealth: 100
   currentEnergy: 4
-  healSound: {fileID: 0}
+  healSound: {fileID: 8300000, guid: 5a5ca714980155242b0428dc56d3eac5, type: 3}
 --- !u!114 &2274608920953204265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,9 +279,9 @@ MonoBehaviour:
   deathCanvas: {fileID: 5474187155426840050}
   healthBar: {fileID: 4779617323355880141}
   consoleUI: {fileID: 0}
-  takeDamageSound: {fileID: 0}
-  dieSound: {fileID: 0}
-  respawnSound: {fileID: 0}
+  takeDamageSound: {fileID: 8300000, guid: 26553a23238f1954a9c26f3640b4901f, type: 3}
+  dieSound: {fileID: 8300000, guid: 095d49f23d20cda4bb5f342a234751a2, type: 3}
+  respawnSound: {fileID: 8300000, guid: a3d754dd2eb405243a62010844330145, type: 3}
 --- !u!114 &3930805234507347834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,7 +294,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1606e1be25d289b44a1a2b0b5cfbd121, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBar: {fileID: 0}
+  healthBar: {fileID: 197592185922512998}
 --- !u!114 &4886029735291485342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1682,6 +1682,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7fc3b3a802560cd4eaedbff8d4f58ad4, type: 3}
+--- !u!114 &197592185922512998 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1998926702359238526, guid: 7fc3b3a802560cd4eaedbff8d4f58ad4, type: 3}
+  m_PrefabInstance: {fileID: 1801545633550024472}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4779617323355880141 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6581162671277180373, guid: 7fc3b3a802560cd4eaedbff8d4f58ad4, type: 3}

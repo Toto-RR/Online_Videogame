@@ -502,6 +502,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 55e43d35475edda4d90f5d447d0f662c, type: 3}
+    - target: {fileID: 2239412221519058348, guid: 5527b901a650c3d47b51b31ea6d94901, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2817924534845372451, guid: 5527b901a650c3d47b51b31ea6d94901, type: 3}
       propertyPath: m_Color.g
       value: 0.26666668
@@ -602,6 +606,10 @@ PrefabInstance:
       propertyPath: m_SpriteState.m_HighlightedSprite
       value: 
       objectReference: {fileID: 21300000, guid: f3e3fa14ea7d85b48baad82567ae2305, type: 3}
+    - target: {fileID: 7025365471711826864, guid: 5527b901a650c3d47b51b31ea6d94901, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7025365471711826864, guid: 5527b901a650c3d47b51b31ea6d94901, type: 3}
       propertyPath: m_Transition
       value: 2

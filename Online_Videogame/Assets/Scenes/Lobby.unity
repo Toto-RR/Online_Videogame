@@ -836,7 +836,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1610253531}
         m_TargetAssemblyTypeName: LobbyManager, Assembly-CSharp
-        m_MethodName: ReturnToStart
+        m_MethodName: GoToStartScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

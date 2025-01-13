@@ -94,8 +94,6 @@ public class UDP_Server : MonoBehaviour
         }
     }
 
-
-
     public void StartManually()
     {
         if (Input.GetKeyDown(KeyCode.K))
@@ -148,6 +146,49 @@ public class UDP_Server : MonoBehaviour
         {
             ProcessLobbyMessage(playerData);
             BroadcastLobbyState();
+        }
+    }
+    public void sendMessages(Socket socket)
+    {
+        Debug.Log("Iniciando envío de mensajes con jitter...");
+        while (!exit)
+        {
+            DateTime now = DateTime.Now;
+
+            lock (myLock)
+            {
+                for (int i = messageBuffer.Count - 1; i >= 0; i--)
+                {
+                    Message m = messageBuffer[i];
+                    if (m.time <= now)
+                    {
+                        socket.SendTo(m.message, m.message.Length, SocketFlags.None, m.ip);
+                        messageBuffer.RemoveAt(i);
+                        Debug.Log($"Mensaje enviado a {m.ip}");
+                    }
+                }
+            }
+        }
+    }
+
+    public void sendMessage(byte[] text, IPEndPoint ip)
+    {
+        System.Random r = new System.Random();
+        if (((r.Next(0, 100) > lossThreshold) && packetLoss) || !packetLoss)
+        {
+            Message m = new Message
+            {
+                message = text,
+                time = jitter ? DateTime.Now.AddMilliseconds(r.Next(minJitt, maxJitt)) : DateTime.Now,
+                id = 0,
+                ip = ip
+            };
+
+            lock (myLock)
+            {
+                messageBuffer.Add(m);
+            }
+            Debug.Log($"Mensaje programado para {m.time}");
         }
     }
 
